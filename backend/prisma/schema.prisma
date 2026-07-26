@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Compte utilisateur. Racine de l'identité : un utilisateur porte un rôle
+/// (élève, professeur ou administrateur) qui détermine ses droits.
+model User {
+  /// Identifiant technique (UUID, opaque pour l'extérieur).
+  id                              String          @id @default(uuid())
+  /// Référence lisible par l'homme (ex: ELV-8F3A, PROF-1B2C)
+  reference                       String?         @unique
+  email                           String          @unique
+  motDePasse                      String
+  nomComplet                      String
+  role                            Role            @default(ELEVE)
+  genre                           String?
+  langue                          String          @default("fr")
+  fuseauHoraire                   String          @default("Africa/Dakar")
+  solde                           Int             @default(0)
+  creeLe                          DateTime        @default(now())
+  misAJourLe                      DateTime        @updatedAt
+  avisLaisses                     Avis[]          @relation("AvisEleve")
+  avisRecus                       Avis[]          @relation("AvisProfesseur")
+  disponibilites                  Disponibilite[] @relation("DisponibilitesProfesseur")
+  messagesRecus                   Message[]       @relation("MessageDestinataire")
+  messagesEnvoyes                 Message[]       @relation("MessageExpediteur")
+  notesDeSession                  NoteSession[]   @relation("NoteSessionProfesseur")
+  paiements                       Paiement[]      @relation("PaiementEleve")
+  reservationsEnTantQueEleve      Reservation[]   @relation("ReservationEleve")
+  reservationsEnTantQueProfesseur Reservation[]   @relation("ReservationProfesseur")
+  seancesEnTantQueEleve           SeanceCours[]   @relation("SeanceEleve")
+  seancesEnTantQueProfesseur      SeanceCours[]   @relation("SeanceProfesseur")
+  profilProfesseur                TeacherProfile? @relation("ProfilProfesseur")
+
+  @@map("users")
+}
+
+/// Profil public d'un professeur. Bio, Ijaza (certification), audio de
+/// démonstration, tarif horaire et qiraat par défaut. Créé à la validation
+/// du compte professeur par l'administrateur.
+model TeacherProfile {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  bio                    String?
+  photoUrl               String?
+  /// URL de l'Ijaza (certification) — stockée en R2, référence uniquement.
+  ijazaUrl               String?
+  /// URL d'un audio de démonstration de récitation.
+  audioUrl               String?
+  /// Tarif horaire en FCFA.
+  tarifHoraire           Int      @default(0)
+  /// Qiraat par défaut (Hafs ou Warsh).
+  qiraatParDefaut        Qiraat   @default(HAFS)
+  /// Active la réservation instantanée (contournement de EN_ATTENTE → CONFIRME).
+  reservationInstantanee Boolean  @default(false)
+  /// Statut de validation par l'administrateur.
+  valide                 Boolean  @default(false)
+  creeLe                 DateTime @default(now())
+  misAJourLe             DateTime @updatedAt
+  user                   User     @relation("ProfilProfesseur", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_profiles")
+}
+
+/// Créneau récurrent de disponibilité d'un professeur. Les heures sont
+/// exprimées dans le fuseau horaire du professeur (cf. users.fuseauHoraire) ;
+/// la conversion vers UTC se fait au moment de la réservation.
+model Disponibilite {
+  id           String      @id @default(uuid())
+  professeurId String
+  jour         JourSemaine
+  /// Heure de début, heure locale du professeur ("HH:mm").
+  heureDebut   String
+  /// Heure de fin, heure locale du professeur ("HH:mm").
+  heureFin     String
+  recurrence   Recurrence  @default(HEBDOMADAIRE)
+  creeLe       DateTime    @default(now())
+  professeur   User        @relation("DisponibilitesProfesseur", fields: [professeurId], references: [id], onDelete: Cascade)
+
+  @@index([professeurId, jour])
+  @@map("disponibilites")
+}
+
+/// Réservation d'un cours entre un élève et un professeur.
+model Reservation {
+  id           String            @id @default(uuid())
+  /// Référence lisible par l'homme (ex: RES-9A4F)
+  reference    String?           @unique
+  eleveId      String
+  professeurId String
+  /// Créneau de cours, stocké en UTC (converti depuis le fuseau de l'élève).
+  creneauDebut DateTime
+  creneauFin   DateTime
+  statut       StatutReservation @default(EN_ATTENTE)
+  /// Note libre laissée par l'élève au moment de la demande (optionnelle).
+  noteEleve    String?
+  creeLe       DateTime          @default(now())
+  misAJourLe   DateTime          @updatedAt
+  paiement     Paiement?         @relation("PaiementReservation")
+  eleve        User              @relation("ReservationEleve", fields: [eleveId], references: [id], onDelete: Cascade)
+  professeur   User              @relation("ReservationProfesseur", fields: [professeurId], references: [id])
+
+  @@index([professeurId, creneauDebut])
+  @@index([eleveId, creneauDebut])
+  @@map("reservations")
+}
+
+/// Séance de classe virtuelle rattachée à une réservation. Les identifiants
+/// eleveId / professeurId sont DÉNORMALISÉS ici : le module classe-virtuelle
+/// ne lit jamais la table reservations (règle #2 de découplage). C'est le
+/// créateur de la séance (typiquement le service reservations, au moment du
+/// passage CONFIRME) qui fournit ces deux identifiants.
+model SeanceCours {
+  id                     String        @id @default(uuid())
+  reservationId          String        @unique
+  eleveId                String
+  professeurId           String
+  statut                 StatutSession @default(PLANIFIEE)
+  /// Token/référence de salle Daily.co (ou placeholder en mode dégradé).
+  lienVisio              String?
+  /// L'enregistrement reste OPTIONNEL. Consentement parental obligatoire.
+  enregistrementConsente Boolean       @default(false)
+  enregistrementActif    Boolean       @default(false)
+  enregistrementUrl      String?
+  /// Mode de repli « audio seul » activé automatiquement en cas de bande
+  /// passante insuffisante — la séance continue sans interruption.
+  modeRepliActif         Boolean       @default(false)
+  creeLe                 DateTime      @default(now())
+  misAJourLe             DateTime      @updatedAt
+  etatMushaf             EtatMushaf?
+  eleve                  User          @relation("SeanceEleve", fields: [eleveId], references: [id], onDelete: Cascade)
+  professeur             User          @relation("SeanceProfesseur", fields: [professeurId], references: [id])
+
+  @@index([professeurId])
+  @@index([eleveId])
+  @@map("seances_cours")
+}
+
+/// État de synchronisation du Mushaf d'une séance. Une seule ligne par séance,
+/// mise à jour à chaque événement de surlignage du professeur. Permet à un
+/// client qui se reconnecte de récupérer immédiatement le dernier état.
+model EtatMushaf {
+  id              String      @id @default(uuid())
+  seanceId        String      @unique
+  /// Numéro de sourate (1-114) actuellement affichée.
+  numeroSourate   Int
+  /// Numéro du verset courant (1-based, dans les limites de la sourate).
+  numeroVerset    Int
+  /// Plage de surlignage au format "debut-fin" (ex: "5-9") ou null si aucun.
+  plageSurlignage String?
+  misAJourLe      DateTime    @updatedAt
+  seance          SeanceCours @relation(fields: [seanceId], references: [id], onDelete: Cascade)
+
+  @@map("etats_mushaf")
+}
+
+/// Note pédagogique remplie par le professeur à la fin d'une séance.
+/// Référence la séance ET dénormalise eleveId/professeurId (découplage : ce
+/// module ne lit pas la table seances_cours directement).
+model NoteSession {
+  id               String   @id @default(uuid())
+  seanceId         String   @unique
+  eleveId          String
+  professeurId     String
+  /// Sourate(s) mémorisée(s) pendant la séance (libre, ex: "Al-Fatiha").
+  sourateMemorisee String?
+  /// Sourate(s) révisée(s) pendant la séance.
+  sourateRevisee   String?
+  /// Points de tajwid travaillés (libre).
+  pointsTajwid     String?
+  /// Commentaire libre du professeur.
+  commentaire      String?
+  creeLe           DateTime @default(now())
+  professeur       User     @relation("NoteSessionProfesseur", fields: [professeurId], references: [id], onDelete: Cascade)
+
+  @@index([eleveId, creeLe])
+  @@map("notes_session")
+}
+
+/// Avis laissé par un élève sur un professeur. Note de 1 à 5.
+model Avis {
+  id           String   @id @default(uuid())
+  professeurId String
+  eleveId      String
+  /// Note de 1 à 5 étoiles.
+  note         Int
+  commentaire  String?
+  creeLe       DateTime @default(now())
+  misAJourLe   DateTime @updatedAt
+  eleve        User     @relation("AvisEleve", fields: [eleveId], references: [id], onDelete: Cascade)
+  professeur   User     @relation("AvisProfesseur", fields: [professeurId], references: [id], onDelete: Cascade)
+
+  @@unique([eleveId, professeurId])
+  @@index([professeurId])
+  @@map("avis")
+}
+
+/// Feature flag : active/désactive une fonctionnalité sans redéploiement.
+model FeatureFlag {
+  id          String   @id @default(uuid())
+  /// Clé métier du flag (ex: "paiement.actif", "reservation.instantanee").
+  cle         String   @unique
+  actif       Boolean  @default(false)
+  description String?
+  misAJourLe  DateTime @updatedAt
+
+  @@map("feature_flags")
+}
+
+/// Message asynchrone entre deux utilisateurs (élève ↔ professeur).
+model Message {
+  id             String   @id @default(uuid())
+  expediteurId   String
+  destinataireId String
+  contenu        String
+  /// Le destinataire a-t-il lu le message ?
+  lu             Boolean  @default(false)
+  horodatage     DateTime @default(now())
+  destinataire   User     @relation("MessageDestinataire", fields: [destinataireId], references: [id], onDelete: Cascade)
+  expediteur     User     @relation("MessageExpediteur", fields: [expediteurId], references: [id], onDelete: Cascade)
+
+  @@index([destinataireId, horodatage])
+  @@index([expediteurId, horodatage])
+  @@map("messages")
+}
+
+/// Paiement de cours avec gestion du séquestre (escrow)
+model Paiement {
+  id            String          @id @default(uuid())
+  eleveId       String
+  reservationId String          @unique
+  montant       Int
+  statutEscrow  StatutEscrow    @default(BLOQUE)
+  methode       MethodePaiement
+  creeLe        DateTime        @default(now())
+  misAJourLe    DateTime        @updatedAt
+  eleve         User            @relation("PaiementEleve", fields: [eleveId], references: [id], onDelete: Cascade)
+  reservation   Reservation     @relation("PaiementReservation", fields: [reservationId], references: [id])
+
+  @@map("paiements")
+}
+
+/// Traçabilité des événements sensibles : connexions, changements de rôle,
+/// validations de professeur. Ne contient jamais de données sensibles (pas de
+/// mots de passe, pas de JWT).
+model JournalAudit {
+  id        String   @id @default(uuid())
+  /// Utilisateur qui effectue l'action (null = action système ou anonyme).
+  acteurId  String?
+  /// Utilisateur ciblé par l'action (ex : professeur validé).
+  cibleId   String?
+  /// Code d'événement métier (CONNEXION, CHANGEMENT_ROLE, VALIDATION_PROF…).
+  evenement String
+  /// Données contextuelles optionnelles (IP masquée, ancien/nouveau rôle…).
+  details   Json?
+  creeLe    DateTime @default(now())
+
+  @@index([acteurId])
+  @@index([evenement, creeLe])
+  @@map("journal_audit")
+}
+
+/// Rôles applicatifs. ELEVE couvre aussi les parents (même compte).
+enum Role {
+  ELEVE
+  PROFESSEUR
+  ADMIN
+}
+
+/// Jours de la semaine pour les disponibilités récurrentes d'un professeur.
+enum JourSemaine {
+  LUNDI
+  MARDI
+  MERCREDI
+  JEUDI
+  VENDREDI
+  SAMEDI
+  DIMANCHE
+}
+
+/// Cycle de récurrence d'une disponibilité. Par défaut hebdomadaire.
+enum Recurrence {
+  /// Une seule occurrence (jour précis donné).
+  PONCTUELLE
+  /// Se répète chaque semaine au même jour et aux mêmes heures.
+  HEBDOMADAIRE
+}
+
+/// Cycle de vie d'une réservation, inspiré d'iTalki.
+enum StatutReservation {
+  /// En attente de confirmation par le professeur (flux classique).
+  EN_ATTENTE
+  /// Réservation instantanée ou confirmée manuellement par le professeur.
+  CONFIRME
+  /// Annulée par l'élève ou le professeur.
+  ANNULE
+  /// Le cours a eu lieu.
+  REALISE
+  /// L'élève ne s'est pas présenté.
+  ABSENT
+}
+
+/// Cycle de vie d'une séance de classe virtuelle.
+enum StatutSession {
+  /// La salle est créée mais pas encore ouverte aux participants.
+  PLANIFIEE
+  /// La séance est en cours (au moins un participant connecté).
+  EN_COURS
+  /// La séance est terminée normalement.
+  TERMINEE
+}
+
+/// Lecture coranique (qiraat) par défaut proposée par le professeur.
+/// Warsh DOIT être supportée en plus du Hafs (cahier des charges).
+enum Qiraat {
+  HAFS
+  WARSH
+}
+
+enum StatutEscrow {
+  BLOQUE
+  LIBERE
+  REMBOURSE
+}
+
+enum MethodePaiement {
+  STRIPE
+  PAYDUNYA
+  CINETPAY
+  MANUEL
+}

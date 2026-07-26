@@ -1,0 +1,281 @@
+'use client';
+
+// Messagerie asynchrone pour le professeur : boîte de réception + conversation avec un élève.
+// Gère l'affichage responsive (liste seule -> clic -> conversation sur mobile).
+// Résout les noms des élèves en interrogeant l'API utilisateurs.
+import { useEffect, useRef, useState, type FormEvent, useCallback } from 'react';
+import { apiClient, ErreurApi } from '@/lib/api-client';
+import type { Message, Page } from '@/lib/types';
+import { formaterDateHeure } from '@/lib/fuseau-horaire';
+import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
+
+interface EleveInfo {
+  nomComplet: string;
+  id: string;
+}
+
+export function MessagerieProfesseur() {
+  const { utilisateur } = utiliserAuth();
+  const monId = utilisateur?.id ?? '';
+
+  const [boiteReception, setBoiteReception] = useState<Message[]>([]);
+  const [conversation, setConversation] = useState<Message[]>([]);
+  const [interlocuteurId, setInterlocuteurId] = useState<string | null>(null);
+  const [cacheNoms, setCacheNoms] = useState<Record<string, string>>({});
+  const [contenu, setContenu] = useState('');
+  const [enChargement, setEnChargement] = useState(true);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [enEnvoi, setEnEnvoi] = useState(false);
+  const basRef = useRef<HTMLDivElement>(null);
+
+  // Charger le nom d'un élève et le mettre en cache
+  const chargerNomEleve = useCallback(async (id: string) => {
+    if (cacheNoms[id]) return cacheNoms[id];
+    try {
+      const el = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
+      setCacheNoms((prev) => ({ ...prev, [id]: el.nomComplet }));
+      return el.nomComplet;
+    } catch {
+      const nomF = `Élève ${id.slice(0, 8)}`;
+      setCacheNoms((prev) => ({ ...prev, [id]: nomF }));
+      return nomF;
+    }
+  }, [cacheNoms]);
+
+  // Charger la boîte de réception
+  const chargerBoite = useCallback(async (silencieux = false) => {
+    if (!silencieux) setEnChargement(true);
+    try {
+      const page = await apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50');
+      setBoiteReception(page.donnees);
+      
+      // Charger les noms des élèves en arrière plan
+      const idsUniques = Array.from(new Set(page.donnees.map((m) => m.expediteurId)));
+      idsUniques.forEach((id) => chargerNomEleve(id));
+    } catch (e) {
+      if (!silencieux) {
+        setErreur(e instanceof ErreurApi ? e.message : 'Erreur de chargement');
+      }
+    } finally {
+      if (!silencieux) setEnChargement(false);
+    }
+  }, [chargerNomEleve]);
+
+  // Charger la conversation active
+  const chargerConversation = useCallback(async (idDest: string) => {
+    try {
+      const page = await apiClient.get<Page<Message>>(`/messagerie/conversations/${idDest}?page=1&taille=100`);
+      // Tri chronologique
+      const trie = page.donnees.sort((a, b) => new Date(a.horodatage).getTime() - new Date(b.horodatage).getTime());
+      setConversation(trie);
+      
+      // Marquer comme lus
+      const nonLus = trie.filter((m) => m.destinataireId === monId && !m.lu);
+      if (nonLus.length > 0) {
+        await Promise.all(
+          nonLus.map((m) => apiClient.patch(`/messagerie/messages/${m.id}/lu`))
+        );
+        // Mettre à jour la boîte
+        const majBoite = await apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50');
+        setBoiteReception(majBoite.donnees);
+      }
+    } catch {
+      // ignore
+    }
+  }, [monId]);
+
+  // Polling de la boîte de réception toutes les 30 secondes
+  useEffect(() => {
+    chargerBoite();
+    const intervalle = setInterval(() => {
+      chargerBoite(true);
+    }, 30000);
+    return () => clearInterval(intervalle);
+  }, [chargerBoite]);
+
+  // Polling de la conversation active toutes les 30 secondes
+  useEffect(() => {
+    if (!interlocuteurId) return;
+
+    chargerConversation(interlocuteurId);
+    setTimeout(() => {
+      basRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
+    const intervalle = setInterval(() => {
+      chargerConversation(interlocuteurId);
+    }, 30000);
+
+    return () => clearInterval(intervalle);
+  }, [interlocuteurId, chargerConversation]);
+
+  const envoyer = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!interlocuteurId || !contenu.trim()) return;
+    setEnEnvoi(true);
+    setErreur(null);
+    try {
+      const message = await apiClient.post<Message>('/messagerie/messages', {
+        destinataireId: interlocuteurId,
+        contenu: contenu.trim(),
+      });
+      setConversation((c) => [...c, message]);
+      setContenu('');
+      setTimeout(() => {
+        basRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    } catch (err) {
+      setErreur(err instanceof ErreurApi ? err.message : 'Échec de l\'envoi');
+    } finally {
+      setEnEnvoi(false);
+    }
+  };
+
+  const interlocuteurs = Array.from(
+    new Set(boiteReception.map((m) => m.expediteurId)),
+  );
+
+  if (enChargement) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <p style={{ color: 'var(--texte-secondaire)' }}>Chargement de la messagerie…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[75vh]">
+      {/* 1. Liste des élèves */}
+      <aside
+        className={`overflow-y-auto flex flex-col rounded-2xl p-4 ${
+          interlocuteurId ? 'hidden md:flex' : 'flex'
+        }`}
+        style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}
+      >
+        <h2 className="font-bold text-xs uppercase tracking-widest mb-4 px-1" style={{ color: 'rgba(240,237,230,0.4)' }}>
+          Élèves
+        </h2>
+        {interlocuteurs.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-2xl mb-1">💬</p>
+            <p className="text-xs" style={{ color: 'rgba(240,237,230,0.4)' }}>Aucun message reçu pour le moment.</p>
+          </div>
+        ) : (
+          <ul className="space-y-1 flex-1">
+            {interlocuteurs.map((id) => {
+              const dernier = boiteReception.find((m) => m.expediteurId === id);
+              const nonLus = boiteReception.filter((m) => m.expediteurId === id && !m.lu).length;
+              const nom = cacheNoms[id] || `Élève ${id.slice(0, 8)}`;
+              return (
+                <li key={id}>
+                  <button
+                    type="button"
+                    onClick={() => setInterlocuteurId(id)}
+                    className="w-full text-left px-3 py-2.5 rounded-xl transition-all duration-150"
+                    style={{
+                      background: interlocuteurId === id ? 'rgba(11,94,69,0.35)' : 'transparent',
+                      borderLeft: interlocuteurId === id ? '3px solid #B8923A' : '3px solid transparent',
+                    }}
+                    onMouseEnter={(e) => { if (interlocuteurId !== id) e.currentTarget.style.background = 'rgba(11,94,69,0.15)'; }}
+                    onMouseLeave={(e) => { if (interlocuteurId !== id) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm truncate" style={{ color: '#F0EDE6' }}>{nom}</span>
+                      {nonLus > 0 && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 shrink-0" style={{ background: '#B8923A', color: '#0D1A14' }}>
+                          {nonLus}
+                        </span>
+                      )}
+                    </div>
+                    {dernier && (
+                      <p className="text-xs truncate mt-0.5" style={{ color: 'rgba(240,237,230,0.4)' }}>{dernier.contenu}</p>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </aside>
+
+      {/* 2. Conversation active */}
+      <section
+        className={`md:col-span-2 flex flex-col h-full overflow-hidden rounded-2xl ${
+          interlocuteurId ? 'flex' : 'hidden md:flex'
+        }`}
+        style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}
+      >
+        {!interlocuteurId ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <span className="text-4xl mb-3">💬</span>
+            <p className="font-medium" style={{ color: '#F0EDE6' }}>Messagerie</p>
+            <p className="text-xs mt-1" style={{ color: 'rgba(240,237,230,0.45)' }}>Sélectionnez un élève pour afficher les messages.</p>
+          </div>
+        ) : (
+          <>
+            {/* Topbar conversation */}
+            <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <button type="button" onClick={() => setInterlocuteurId(null)} className="md:hidden text-xs px-2.5 py-1.5 rounded-lg" style={{ color: 'rgba(240,237,230,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                ←
+              </button>
+              <div>
+                <h3 className="font-bold text-sm" style={{ color: '#F0EDE6' }}>
+                  {cacheNoms[interlocuteurId] || `Élève ${interlocuteurId.slice(0, 8)}`}
+                </h3>
+                <p className="text-[10px]" style={{ color: 'rgba(240,237,230,0.4)' }}>En ligne ou asynchrone</p>
+              </div>
+            </div>
+
+            {/* Zone de messages défilante */}
+            <div className="flex-1 overflow-y-auto space-y-3 px-4 py-2">
+              {conversation.length === 0 ? (
+                <p className="text-xs text-center py-6 italic" style={{ color: 'rgba(240,237,230,0.35)' }}>
+                  Début de la conversation. Envoyez un message à l&apos;élève.
+                </p>
+              ) : (
+                conversation.map((m) => {
+                  const envoye = m.expediteurId === monId;
+                  return (
+                    <div key={m.id} className={`max-w-[80%] flex flex-col gap-1 ${envoye ? 'ml-auto items-end' : 'items-start'}`}>
+                      <div
+                        className="px-4 py-2.5 text-sm leading-relaxed"
+                        style={{
+                          background: envoye ? 'linear-gradient(135deg, #0B5E45, #0D7055)' : '#1A2F22',
+                          color: 'white',
+                          border: envoye ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                          borderRadius: envoye ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                        }}
+                      >
+                        <p className="whitespace-pre-wrap">{m.contenu}</p>
+                      </div>
+                      <span className="text-[10px] opacity-50 px-1" style={{ color: '#F0EDE6' }}>{formaterDateHeure(m.horodatage)}</span>
+                    </div>
+                  );
+                })
+              )}
+              <div ref={basRef} />
+            </div>
+
+            {erreur && <p className="text-xs py-1 px-4" style={{ color: '#F87171' }}>{erreur}</p>}
+
+            {/* Saisie fixe en bas */}
+            <form onSubmit={envoyer} className="flex gap-2 px-4 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <input
+                className="flex-1 text-sm outline-none px-4 py-2.5"
+                style={{ background: '#0D1A14', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 24, color: '#F0EDE6' }}
+                placeholder="Écrire une réponse…"
+                value={contenu}
+                onChange={(e) => setContenu(e.target.value)}
+                maxLength={2000}
+                required
+              />
+              <button type="submit" disabled={enEnvoi || !contenu.trim()} className="btn-primaire text-sm !py-2 !px-4 shrink-0">
+                {enEnvoi ? '…' : 'Répondre'}
+              </button>
+            </form>
+          </>
+        )}
+      </section>
+    </div>
+  );
+}

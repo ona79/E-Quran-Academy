@@ -1,0 +1,292 @@
+'use client';
+
+// Accès cours : liste les séances de l'élève par onglets (À venir, En attente, Passés).
+// Permet d'annuler un cours (> 12h avant) ou de laisser un avis sur un cours passé.
+import { useEffect, useState, useCallback, type FormEvent } from 'react';
+import { apiClient, ErreurApi } from '@/lib/api-client';
+import type { Page, Reservation } from '@/lib/types';
+import { CarteCoursEleve } from './carte-cours-eleve';
+import { BoutonPrimaire, BoutonSecondaire } from '@/composants/ui/boutons';
+
+interface ProfInfo {
+  nomComplet: string;
+  userId: string;
+}
+
+type ReservationAvecProf = Reservation & { nomProf?: string };
+
+type Onglet = 'A_VENIR' | 'EN_ATTENTE' | 'PASSES';
+
+export function AccesClasseEleve() {
+  const [reservations, setReservations] = useState<ReservationAvecProf[]>([]);
+  const [enChargement, setEnChargement] = useState(true);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [ongletActif, setOngletActif] = useState<Onglet>('A_VENIR');
+
+  // État pour la modal d'avis
+  const [avisTarget, setAvisTarget] = useState<ReservationAvecProf | null>(null);
+  const [note, setNote] = useState<number>(5);
+  const [commentaire, setCommentaire] = useState('');
+  const [envoiAvis, setEnvoiAvis] = useState(false);
+  const [succesAvis, setSuccesAvis] = useState<string | null>(null);
+  const [erreurAvis, setErreurAvis] = useState<string | null>(null);
+
+  const charger = useCallback(async () => {
+    setEnChargement(true);
+    try {
+      const page = await apiClient.get<Page<Reservation>>('/reservations/moi?page=1&taille=100');
+      const donnees = page.donnees;
+
+      // Récupérer les noms des profs uniques pour limiter les requêtes
+      const profsIds = Array.from(new Set(donnees.map((r) => r.professeurId)));
+      const cacheProfs: Record<string, string> = {};
+      
+      await Promise.all(
+        profsIds.map(async (id) => {
+          try {
+            const prof = await apiClient.get<ProfInfo>(`/utilisateurs/professeurs/${id}`);
+            cacheProfs[id] = prof.nomComplet;
+          } catch {
+            cacheProfs[id] = `Professeur ${id.slice(0, 8)}`;
+          }
+        })
+      );
+
+      const enrichies = donnees.map((r) => ({
+        ...r,
+        nomProf: cacheProfs[r.professeurId]
+      }));
+
+      setReservations(enrichies);
+    } catch (e) {
+      setErreur(e instanceof ErreurApi ? e.message : 'Erreur de chargement');
+    } finally {
+      setEnChargement(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    charger();
+  }, [charger]);
+
+  // Action annuler
+  const gererAnnuler = async (id: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir annuler ce cours ? (Cette action est irréversible)')) return;
+    try {
+      await apiClient.patch(`/reservations/${id}/statut`, {
+        nouveauStatut: 'ANNULE',
+      });
+      alert('Cours annulé avec succès.');
+      charger();
+    } catch (e) {
+      alert(e instanceof ErreurApi ? e.message : 'Impossible d\'annuler le cours');
+    }
+  };
+
+  // Soumettre avis
+  const soumettreAvis = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!avisTarget) return;
+    setEnvoiAvis(true);
+    setSuccesAvis(null);
+    setErreurAvis(null);
+    try {
+      await apiClient.post('/avis', {
+        professeurId: avisTarget.professeurId,
+        note,
+        commentaire: commentaire.trim() || undefined,
+      });
+      setSuccesAvis('Merci ! Votre avis a été enregistré.');
+      setCommentaire('');
+      setNote(5);
+      setTimeout(() => {
+        setAvisTarget(null);
+        setSuccesAvis(null);
+        setErreurAvis(null);
+      }, 1500);
+    } catch (err) {
+      setErreurAvis(err instanceof ErreurApi ? err.message : 'Impossible d\'enregistrer l\'avis');
+    } finally {
+      setEnvoiAvis(false);
+    }
+  };
+
+  // Filtrage par onglet
+  const aVenir = reservations.filter((r) => r.statut === 'CONFIRME');
+  const enAttente = reservations.filter((r) => r.statut === 'EN_ATTENTE');
+  const passes = reservations.filter((r) => r.statut === 'REALISE' || r.statut === 'ABSENT' || r.statut === 'ANNULE');
+
+  const listeAffichee = 
+    ongletActif === 'A_VENIR' ? aVenir :
+    ongletActif === 'EN_ATTENTE' ? enAttente : passes;
+
+  if (enChargement) {
+    return (
+      <div className="space-y-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-24 rounded-2xl animate-pulse" style={{ backgroundColor: 'var(--fond-surface)' }} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {erreur && (
+        <p className="carte" style={{ color: 'var(--erreur)' }}>{erreur}</p>
+      )}
+
+      {/* Onglets */}
+      <div className="flex border-b" style={{ borderColor: 'var(--bordure)' }}>
+        {[
+          { key: 'A_VENIR', libelle: 'À venir', count: aVenir.length },
+          { key: 'EN_ATTENTE', libelle: 'En attente', count: enAttente.length },
+          { key: 'PASSES', libelle: 'Passés', count: passes.length },
+        ].map((o) => (
+          <button
+            key={o.key}
+            onClick={() => setOngletActif(o.key as Onglet)}
+            className="flex-1 py-3 text-sm font-semibold border-b-2 transition-all"
+            style={{
+              borderColor: ongletActif === o.key ? 'var(--couleur-primaire)' : 'transparent',
+              color: ongletActif === o.key ? 'var(--couleur-primaire)' : 'var(--texte-secondaire)',
+            }}
+          >
+            {o.libelle} ({o.count})
+          </button>
+        ))}
+      </div>
+
+      {/* Liste des cours de l'onglet actif */}
+      {listeAffichee.length === 0 ? (
+        <div className="text-center py-12 rounded-2xl border" style={{ borderColor: 'var(--bordure)' }}>
+          <p className="text-4xl mb-2">🎓</p>
+          <p style={{ color: 'var(--texte-secondaire)' }}>Aucun cours dans cette catégorie.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {listeAffichee.map((r) => (
+            <CarteCoursEleve
+              key={r.id}
+              reservation={r}
+              nomProf={r.nomProf}
+              onAnnuler={gererAnnuler}
+              onAvis={(res) => setAvisTarget(res as any)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Modal pour laisser un avis - Dark Premium Edition */}
+      {avisTarget && (
+        <>
+          <div 
+            className="fixed inset-0 z-40" 
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setAvisTarget(null)}
+            aria-hidden
+          />
+          <div 
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md p-7 rounded-3xl"
+            style={{ 
+              background: 'rgba(13,26,20,0.95)', 
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(16px)'
+            }}
+          >
+            <h3 className="text-xl font-bold mb-1" style={{ color: '#F0EDE6' }}>Évaluer le cours</h3>
+            <p className="text-xs mb-6" style={{ color: 'rgba(240,237,230,0.5)' }}>
+              Partagez votre expérience avec {avisTarget.nomProf}
+            </p>
+
+            {succesAvis ? (
+              <div className="py-8 text-center flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full mb-3 flex items-center justify-center text-xl" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
+                  ✓
+                </div>
+                <p className="text-sm font-medium" style={{ color: '#4ade80' }}>
+                  {succesAvis}
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={soumettreAvis} className="space-y-5">
+                <div>
+                  <label className="block text-xs font-medium mb-2" style={{ color: 'rgba(240,237,230,0.7)' }}>Note globale</label>
+                  <div className="flex gap-2 text-3xl">
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setNote(val)}
+                        className="transition-transform hover:scale-110"
+                        style={{ 
+                          color: val <= note ? '#B8923A' : 'rgba(255,255,255,0.1)',
+                          textShadow: val <= note ? '0 0 12px rgba(184,146,58,0.4)' : 'none'
+                        }}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {erreurAvis && (
+                  <div className="p-3 rounded-lg text-sm font-medium" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)' }}>
+                    {erreurAvis}
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="commentaire" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+                    Commentaire <span className="opacity-50">(Optionnel)</span>
+                  </label>
+                  <textarea
+                    id="commentaire"
+                    className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none transition-all"
+                    style={{ 
+                      background: 'rgba(255,255,255,0.03)', 
+                      border: '1px solid rgba(255,255,255,0.06)', 
+                      color: '#F0EDE6' 
+                    }}
+                    onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
+                    onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.06)')}
+                    rows={3}
+                    placeholder="Qu'avez-vous pensé de la pédagogie ?"
+                    value={commentaire}
+                    onChange={(e) => setCommentaire(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setAvisTarget(null)}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(240,237,230,0.8)', border: '1px solid rgba(255,255,255,0.05)' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={envoiAvis}
+                    className="flex-[2] py-2.5 rounded-xl text-sm font-semibold transition-opacity text-white shadow-lg"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #0B5E45, #B8923A)', 
+                      opacity: envoiAvis ? 0.6 : 1,
+                      boxShadow: '0 4px 12px rgba(11,94,69,0.3)'
+                    }}
+                  >
+                    {envoiAvis ? 'Envoi...' : "Envoyer l'avis"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

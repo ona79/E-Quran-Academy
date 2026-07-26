@@ -1,0 +1,66 @@
+# ============================================================
+#  E-Quran Academy — .gitignore racine (monorepo)
+# ============================================================
+
+# ── Dépendances ──────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Variables d'environnement (NE JAMAIS commiter) ──────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+.env.staging
+
+# ── Build / artefacts compilés ───────────────────────────────
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# ── TypeScript incremental ───────────────────────────────────
+*.tsbuildinfo
+
+# ── Python virtual env ───────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ── Prisma ───────────────────────────────────────────────────
+# migrations générées sont à commiter, mais pas les clients générés
+# prisma/client/ — décommenter si vous générez localement
+
+# ── Logs ─────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Éditeurs ─────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── Tests ────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Misc ─────────────────────────────────────────────────────
+*.local
+.cache/
