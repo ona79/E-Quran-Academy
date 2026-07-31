@@ -84,7 +84,7 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
     apiClient.post('/utilisateurs/deconnexion').finally(() => {
       localStorage.removeItem('jeton_ws');
       setUtilisateur(null);
-      router.push('/');
+      window.location.href = '/';
     });
   };
 

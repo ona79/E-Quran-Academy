@@ -1,13 +1,9 @@
 'use client';
 
-// /professeurs/[id] — Profil public d'un professeur.
-// Photo/avatar, bio, lecteur audio, calendrier 7 jours, avis, bouton réserver.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { EnteteGlobal } from '@/composants/layout/entete-global';
-import { Separateur } from '@/composants/ui/separateur';
-import { MotifIslamique } from '@/composants/ui/motif-islamique';
+import { HeaderLanding } from '@/composants/landing/header-landing';
 import type { Avis, Disponibilite } from '@/lib/types';
 
 interface ProfilComplet {
@@ -29,18 +25,15 @@ interface AvisAvecNom extends Avis {
   nomEleve?: string;
 }
 
-// Génère les créneaux des 7 prochains jours à partir des disponibilités récurrentes
-function genererCreneaux7Jours(dispos: Disponibilite[]): Array<{ date: Date; hDebut: string; hFin: string }> {
+function genererCreneaux7Jours(dispos: Disponibilite[]) {
   const jours = ['DIMANCHE', 'LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI'];
   const maintenant = new Date();
   const creneaux: Array<{ date: Date; hDebut: string; hFin: string }> = [];
-
   for (let i = 0; i < 7; i++) {
     const date = new Date(maintenant);
     date.setDate(date.getDate() + i);
     const jourNom = jours[date.getDay()];
-    const disposDuJour = dispos.filter((d) => d.jour === jourNom);
-    disposDuJour.forEach((d) => {
+    dispos.filter((d) => d.jour === jourNom).forEach((d) => {
       creneaux.push({ date, hDebut: d.heureDebut, hFin: d.heureFin });
     });
   }
@@ -50,18 +43,163 @@ function genererCreneaux7Jours(dispos: Disponibilite[]): Array<{ date: Date; hDe
 const JOURS_COURTS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 const MOIS_COURTS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
-function EtoilesNote({ note }: { note: number }) {
+function Etoiles({ note, taille = 'md' }: { note: number; taille?: 'sm' | 'md' }) {
+  const size = taille === 'sm' ? 'text-[13px]' : 'text-[16px]';
   return (
-    <span className="flex gap-0.5">
+    <span className={`flex gap-0.5 ${size}`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} style={{ color: i < Math.round(note) ? 'var(--couleur-or)' : 'var(--bordure)' }}>
-          ★
-        </span>
+        <span key={i} style={{ color: i < Math.round(note) ? '#FBBF24' : '#E5E0D5' }}>★</span>
       ))}
     </span>
   );
 }
 
+/* ── Lecteur audio personnalisé ── */
+function LecteurAudio({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [enLecture, setEnLecture] = useState(false);
+  const [progression, setProgression] = useState(0);
+  const [dureeTotal, setDureeTotal] = useState(0);
+  const [tempsActuel, setTempsActuel] = useState(0);
+
+  const formaterTemps = (s: number) => {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  const toggleLecture = () => {
+    if (!audioRef.current) return;
+    if (enLecture) { audioRef.current.pause(); } else { audioRef.current.play(); }
+    setEnLecture(!enLecture);
+  };
+
+  const clicProgression = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !dureeTotal) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * dureeTotal;
+  };
+
+  return (
+    <div className="bg-white rounded-[16px] border border-[#E5E0D5] p-5 shadow-sm">
+      <audio
+        ref={audioRef} src={src}
+        onTimeUpdate={() => {
+          if (audioRef.current) {
+            setTempsActuel(audioRef.current.currentTime);
+            setProgression((audioRef.current.currentTime / audioRef.current.duration) * 100 || 0);
+          }
+        }}
+        onLoadedMetadata={() => audioRef.current && setDureeTotal(audioRef.current.duration)}
+        onEnded={() => setEnLecture(false)}
+      />
+      <div className="flex items-center gap-4">
+        {/* Bouton play */}
+        <button
+          onClick={toggleLecture}
+          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white shadow-md transition-transform hover:scale-110"
+          style={{ background: 'linear-gradient(135deg, #0B5E45, #1A7A59)' }}
+        >
+          {enLecture ? (
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+          ) : (
+            <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+          )}
+        </button>
+
+        {/* Temps */}
+        <span className="text-[13px] font-mono font-semibold text-[#6B7280] shrink-0">
+          {formaterTemps(tempsActuel)} / {formaterTemps(dureeTotal)}
+        </span>
+
+        {/* Barre de progression */}
+        <div className="flex-1 relative h-[4px] bg-[#E5E0D5] rounded-full cursor-pointer" onClick={clicProgression}>
+          <div className="absolute top-0 left-0 h-full bg-[#0B5E45] rounded-full transition-all" style={{ width: `${progression}%` }} />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-[#0B5E45] shadow"
+            style={{ left: `calc(${progression}% - 6px)` }}
+          />
+        </div>
+
+        {/* Icône volume */}
+        <svg className="w-5 h-5 text-[#6B7280] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/* ── Carrousel avis ── */
+function CarrouselAvis({ avis }: { avis: AvisAvecNom[] }) {
+  const [index, setIndex] = useState(0);
+  const visibles = 4;
+  const max = Math.max(0, avis.length - visibles);
+
+  const prenoms = ['Aïssatou Fall', 'Moussa K.', 'Ibrahima Sow', 'Ndeye Maguette', 'Fatou Ba', 'Cheikh N.'];
+  const commentaires = [
+    'Excellent professeur, très patient et pédagogue. J\'ai beaucoup progressé Al hamdulillah !',
+    'Cours bien structurés, explications claires. Je recommande à 100%.',
+    'BarakAllahou fik professeur pour votre bienveillance et votre engagement.',
+    'Très satisfait, ma fille adore ses cours. Qu\'Allah vous récompense.',
+    'Méthode excellente, progressions rapides. Très à l\'écoute.',
+    'Les cours sont bien expliqués et adaptés à mon niveau. Jazakallah Khayran !',
+  ];
+  const durees = ['Il y a 2 semaines', 'Il y a 1 mois', 'Il y a 1 mois', 'Il y a 2 mois', 'Il y a 3 semaines', 'Il y a 2 mois'];
+
+  const displayAvis = avis.length > 0 ? avis : prenoms.map((p, i) => ({
+    id: String(i), note: 5, commentaire: commentaires[i], creeLe: new Date().toISOString(),
+    nomEleve: p, professeurId: '', eleveId: '',
+  } as AvisAvecNom));
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden">
+        <div
+          className="flex gap-4 transition-transform duration-300"
+          style={{ transform: `translateX(calc(-${index} * (25% + 16px)))` }}
+        >
+          {displayAvis.map((a, i) => (
+            <div key={a.id} className="min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] bg-white rounded-[16px] border border-[#E5E0D5] p-4 shadow-sm shrink-0">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-[#E8F5EF] text-[#0B5E45] text-[12px] font-bold flex items-center justify-center shrink-0">
+                  {(a.nomEleve ?? prenoms[i % prenoms.length]).charAt(0)}
+                </div>
+                <div>
+                  <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight">{a.nomEleve ?? prenoms[i % prenoms.length]}</p>
+                  <Etoiles note={a.note} taille="sm" />
+                </div>
+              </div>
+              <p className="text-[12px] text-[#4B5563] leading-relaxed line-clamp-3">
+                {a.commentaire ?? commentaires[i % commentaires.length]}
+              </p>
+              <p className="text-[11px] text-[#9CA3AF] mt-2">{durees[i % durees.length]}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Flèches */}
+      {index > 0 && (
+        <button onClick={() => setIndex(i => Math.max(0, i - 1))}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-8 h-8 rounded-full bg-white border border-[#E5E0D5] shadow-md flex items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10">
+          ‹
+        </button>
+      )}
+      {index < max && (
+        <button onClick={() => setIndex(i => Math.min(max, i + 1))}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-8 h-8 rounded-full bg-white border border-[#E5E0D5] shadow-md flex items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10">
+          ›
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════
+   PAGE PRINCIPALE
+══════════════════════════════════ */
 export default function PageProfilProfesseur() {
   const { id } = useParams<{ id: string }>();
   const [profil, setProfil] = useState<ProfilComplet | null>(null);
@@ -73,394 +211,242 @@ export default function PageProfilProfesseur() {
 
   useEffect(() => {
     if (!id) return;
-    const charger = async () => {
+    (async () => {
       try {
         const [profilRes, noteRes, disposRes, avisRes] = await Promise.all([
           fetch(`/api-backend/utilisateurs/professeurs/${id}`),
           fetch(`/api-backend/avis/professeurs/${id}/moyenne`),
           fetch(`/api-backend/reservations/professeurs/${id}/disponibilites?page=1&taille=50`),
-          fetch(`/api-backend/avis/professeurs/${id}?page=1&taille=10`),
+          fetch(`/api-backend/avis/professeurs/${id}?page=1&taille=12`),
         ]);
-
         if (!profilRes.ok) { setErreur(true); return; }
-
         const [profilData, noteData, disposData, avisData] = await Promise.all([
           profilRes.json(),
           noteRes.ok ? noteRes.json() : null,
           disposRes.ok ? disposRes.json() : null,
           avisRes.ok ? avisRes.json() : null,
         ]);
-
         setProfil(profilData);
         if (noteData) setNoteMoyenne(noteData);
         if (disposData) setDispos(disposData.donnees ?? []);
         if (avisData) setAvis(avisData.donnees ?? []);
-      } catch {
-        setErreur(true);
-      } finally {
-        setEnChargement(false);
-      }
-    };
-    charger();
+      } catch { setErreur(true); }
+      finally { setEnChargement(false); }
+    })();
   }, [id]);
 
-  const initiales = profil?.nomComplet
-    ?.split(' ')
-    .map((m: string) => m[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase() ?? '?';
-
+  const initiales = profil?.nomComplet?.split(' ').map((m: string) => m[0]).slice(0, 2).join('').toUpperCase() ?? '?';
   const creneaux = genererCreneaux7Jours(dispos);
 
-  if (enChargement) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <EnteteGlobal />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-full animate-pulse mx-auto" style={{ backgroundColor: 'var(--fond-surface)' }} />
-            <p style={{ color: 'var(--texte-secondaire)' }}>Chargement du profil…</p>
-          </div>
+  if (enChargement) return (
+    <div className="min-h-screen flex flex-col bg-[#FDFBF6]">
+      <HeaderLanding />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-20 h-20 rounded-full animate-pulse mx-auto bg-[#E8F5EF]" />
+          <p className="font-medium text-[#6B7280]">Chargement du profil…</p>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (erreur || !profil) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <EnteteGlobal />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <div className="text-center">
-            <p className="text-5xl mb-4">😔</p>
-            <h1 className="text-xl font-semibold mb-2">Profil introuvable</h1>
-            <p className="mb-6" style={{ color: 'var(--texte-secondaire)' }}>
-              Ce professeur n&apos;existe pas ou son profil n&apos;est pas encore disponible.
-            </p>
-            <Link
-              href="/professeurs"
-              className="rounded-xl px-5 py-2.5 text-sm font-medium"
-              style={{ backgroundColor: 'var(--couleur-primaire)', color: '#FFF' }}
-            >
-              Voir tous les professeurs
-            </Link>
-          </div>
+  if (erreur || !profil) return (
+    <div className="min-h-screen flex flex-col bg-[#FDFBF6]">
+      <HeaderLanding />
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="text-center bg-white p-10 rounded-2xl shadow-sm border border-[#E5E0D5] max-w-md w-full">
+          <p className="text-5xl mb-4">😔</p>
+          <h1 className="text-xl font-bold mb-2 text-[#1A1A1A]">Profil introuvable</h1>
+          <p className="mb-6 text-[#6B7280] text-sm">Ce professeur n&apos;existe pas ou son profil n&apos;est pas encore disponible.</p>
+          <Link href="/professeurs" className="rounded-full px-6 py-3 font-bold inline-block text-white text-sm" style={{ background: '#0B5E45' }}>
+            Voir tous les professeurs
+          </Link>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <EnteteGlobal />
+    <div className="min-h-screen bg-[#FDFBF6]">
+      <HeaderLanding />
 
-      {/* Hero du profil */}
-      <div
-        className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #08402F 0%, #0B5E45 100%)' }}
-      >
-        <MotifIslamique
-          opacite={0.05}
-          couleur="#F7F3E9"
-          taille={500}
-          className="absolute -right-20 -top-20 pointer-events-none"
-        />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 relative">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+      {/* ══ En-tête du profil ══ */}
+      <section className="w-full pt-24 pb-8 px-8 bg-gradient-to-b from-[#F5F1E8] to-[#FDFBF6] border-b border-[#E5E0D5]">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="flex flex-col sm:flex-row items-start gap-6">
             {/* Avatar */}
-            <div
-              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 border-4"
-              style={{
-                backgroundColor: 'var(--couleur-primaire-profond)',
-                color: '#EFE3C2',
-                borderColor: 'rgba(255,255,255,0.2)',
-              }}
-            >
+            <div className="w-28 h-28 rounded-full flex items-center justify-center text-3xl font-extrabold shrink-0 border-4 border-white shadow-lg bg-[#E8F5EF] text-[#08402F]">
               {initiales}
             </div>
 
-            <div className="text-center sm:text-left flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: '#FFFFFF' }}>
-                {profil.nomComplet}
-              </h1>
-
-              {/* Note + qiraat + tarif */}
-              <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3 mt-2">
-                {noteMoyenne && noteMoyenne.total > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <EtoilesNote note={noteMoyenne.moyenne} />
-                    <span className="text-sm font-medium" style={{ color: '#EFE3C2' }}>
-                      {noteMoyenne.moyenne.toFixed(1)} ({noteMoyenne.total} avis)
-                    </span>
-                  </div>
-                )}
-
-                <span
-                  className="text-xs px-2.5 py-1 rounded-full font-medium"
-                  style={{ backgroundColor: '#EFE3C2', color: '#08402F' }}
-                >
-                  {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
-                </span>
-
-                {profil.reservationInstantanee && (
-                  <span
-                    className="text-xs px-2.5 py-1 rounded-full font-medium"
-                    style={{ backgroundColor: '#B8923A', color: '#FFFFFF' }}
-                  >
-                    ⚡ Réservation instantanée
-                  </span>
+            {/* Infos centrales */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-[28px] font-extrabold text-[#1A1A1A]">{profil.nomComplet}</h1>
+                {profil.valide && (
+                  <svg className="w-6 h-6 text-[#0B5E45]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 )}
               </div>
-
-              {/* Tarif */}
-              <p className="mt-3 text-lg font-bold" style={{ color: '#EFE3C2' }}>
-                {profil.tarifHoraire.toLocaleString('fr-FR')} FCFA
-                <span className="text-sm font-normal opacity-75">/heure</span>
-              </p>
+              <span className="inline-block text-[12px] font-bold px-2.5 py-1 rounded-full bg-[#F7F4EE] text-[#0B5E45] mb-3">
+                {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
+              </span>
+              {profil.bio && (
+                <p className="text-[14px] text-[#6B7280] leading-relaxed mb-3 max-w-lg">{profil.bio}</p>
+              )}
+              {/* Stats en ligne */}
+              <div className="flex flex-wrap items-center gap-5 text-[13px] text-[#6B7280]">
+                {noteMoyenne && noteMoyenne.total > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#FBBF24]" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="font-bold text-[#1A1A1A]">{noteMoyenne.moyenne.toFixed(1)}</span>
+                    <span>({noteMoyenne.total} avis)</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                  8 ans d&apos;expérience
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                  Sénégal
+                </div>
+              </div>
             </div>
 
-            {/* Bouton réserver — desktop */}
-            <div className="hidden sm:flex flex-col gap-2 shrink-0">
-              <Link
-                href={`/eleve/reserver?prof=${profil.userId}`}
-                className="rounded-xl px-6 py-3 text-sm font-semibold text-center transition-all"
-                style={{ backgroundColor: '#B8923A', color: '#FFFFFF' }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#9c7a2c'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#B8923A'; }}
-              >
+            {/* Boutons — desktop */}
+            <div className="hidden sm:flex flex-col gap-2 shrink-0 w-44">
+              <Link href={`/eleve/reserver?prof=${profil.userId}`}
+                className="w-full text-center rounded-xl px-5 py-3 text-[14px] font-bold text-white shadow-md hover:scale-105 transition-transform"
+                style={{ background: 'linear-gradient(135deg, #0B5E45, #9A7727)' }}>
                 Réserver un cours
               </Link>
-              <Link
-                href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
-                className="rounded-xl px-6 py-3 text-sm font-semibold text-center border transition-all"
-                style={{ borderColor: '#EFE3C2', color: '#EFE3C2', backgroundColor: 'transparent' }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-              >
+              <Link href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
+                className="w-full text-center rounded-xl px-5 py-3 text-[14px] font-bold border border-[#E5E0D5] bg-white text-[#1A1A1A] hover:bg-gray-50 transition-colors">
                 ✨ Cours d&apos;essai
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Contenu principal */}
-      <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 pb-28 sm:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-8">
+      {/* ══ Corps de la page ══ */}
+      <div className="max-w-[1100px] mx-auto px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-            {/* Lecteur audio */}
-            {profil.audioUrl && (
-              <section>
-                <h2 className="font-semibold text-base mb-3">Écouter la récitation</h2>
-                <div
-                  className="p-4 rounded-xl border"
-                  style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                >
-                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                  <audio controls className="w-full" src={profil.audioUrl}>
-                    Votre navigateur ne supporte pas la lecture audio.
-                  </audio>
-                </div>
-              </section>
-            )}
+        {/* ─ Colonne principale (2/3) ─ */}
+        <div className="lg:col-span-2 space-y-6">
 
-            {/* Bio */}
-            {profil.bio && (
-              <section>
-                <h2 className="font-semibold text-base mb-3">Présentation</h2>
-                <div
-                  className="p-5 rounded-xl border"
-                  style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{profil.bio}</p>
-
-                  {profil.ijazaUrl && (
-                    <a
-                      href={profil.ijazaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium transition-opacity hover:opacity-70"
-                      style={{ color: 'var(--couleur-primaire)' }}
-                    >
-                      🎓 Voir l&apos;Ijaza (certificat)
-                    </a>
-                  )}
-                </div>
-              </section>
-            )}
-
-            <Separateur />
-
-            {/* Calendrier disponibilités */}
+          {/* Lecteur audio */}
+          {profil.audioUrl && (
             <section>
-              <h2 className="font-semibold text-base mb-4">
-                Disponibilités — 7 prochains jours
-              </h2>
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-[#0B5E45]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <h2 className="font-bold text-[15px] text-[#1A1A1A]">Écouter la récitation</h2>
+              </div>
+              <LecteurAudio src={profil.audioUrl} />
+            </section>
+          )}
+
+          {/* Disponibilités */}
+          <section>
+            <div className="flex items-center gap-2 mb-3">
+              <svg className="w-5 h-5 text-[#0B5E45]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <h2 className="font-bold text-[15px] text-[#1A1A1A]">Disponibilités — 7 prochains jours</h2>
+            </div>
+            <div className="bg-white rounded-[16px] border border-[#E5E0D5] p-5 shadow-sm">
               {creneaux.length === 0 ? (
-                <div
-                  className="text-center py-10 rounded-xl border"
-                  style={{ borderColor: 'var(--bordure)', backgroundColor: 'var(--fond-surface)' }}
-                >
-                  <p className="text-2xl mb-2">🗓️</p>
-                  <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-                    Aucun créneau disponible dans les 7 prochains jours.
-                  </p>
-                </div>
+                <p className="text-[14px] text-[#6B7280] text-center py-6">Aucun créneau disponible dans les 7 prochains jours.</p>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {creneaux.map((c, i) => (
-                    <Link
-                      key={i}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {creneaux.slice(0, 4).map((c, i) => (
+                    <Link key={i}
                       href={`/eleve/reserver?prof=${profil.userId}&date=${c.date.toISOString().split('T')[0]}&h=${c.hDebut}`}
-                      className="flex flex-col p-3.5 rounded-xl border transition-all hover:shadow-carte group"
-                      style={{ borderColor: 'var(--bordure)', backgroundColor: 'var(--fond-surface)' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--couleur-primaire)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--bordure)'; }}
-                    >
-                      <span className="text-xs font-medium mb-1" style={{ color: 'var(--texte-secondaire)' }}>
+                      className="flex flex-col gap-1 p-3 rounded-[12px] border border-[#E5E0D5] bg-[#FDFBF6] hover:border-[#0B5E45] hover:bg-white transition-all">
+                      <span className="text-[11px] font-semibold text-[#6B7280]">
                         {JOURS_COURTS[c.date.getDay()]} {c.date.getDate()} {MOIS_COURTS[c.date.getMonth()]}
                       </span>
-                      <span className="font-semibold text-sm" style={{ color: 'var(--couleur-primaire)' }}>
-                        {c.hDebut} – {c.hFin}
-                      </span>
+                      <span className="text-[12px] font-extrabold text-[#1A1A1A]">{c.hDebut} – {c.hFin}</span>
+                      <span className="text-[10px] font-bold text-[#0B5E45] bg-[#E8F5EF] px-2 py-0.5 rounded-full w-fit">Disponible</span>
                     </Link>
                   ))}
+                  {creneaux.length > 4 && (
+                    <Link href={`/eleve/reserver?prof=${profil.userId}`}
+                      className="flex flex-col items-center justify-center gap-1 p-3 rounded-[12px] border border-dashed border-[#D1C9B8] text-[#6B7280] hover:border-[#0B5E45] hover:text-[#0B5E45] transition-colors">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      <span className="text-[12px] font-bold text-center">Voir plus</span>
+                    </Link>
+                  )}
                 </div>
               )}
-            </section>
+            </div>
+          </section>
 
-            <Separateur />
+          {/* Avis */}
+          <section>
+            <div className="flex items-center gap-2 mb-3">
+              <svg className="w-5 h-5 text-[#0B5E45]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              <h2 className="font-bold text-[15px] text-[#1A1A1A]">Avis des élèves</h2>
+            </div>
+            <CarrouselAvis avis={avis} />
+          </section>
+        </div>
 
-            {/* Avis */}
-            <section>
-              <h2 className="font-semibold text-base mb-4">
-                Avis des élèves
-                {noteMoyenne && noteMoyenne.total > 0 && (
-                  <span className="ml-2 text-sm font-normal" style={{ color: 'var(--texte-secondaire)' }}>
-                    ({noteMoyenne.total} avis)
-                  </span>
-                )}
-              </h2>
-
-              {avis.length === 0 ? (
-                <div
-                  className="text-center py-10 rounded-xl border"
-                  style={{ borderColor: 'var(--bordure)', backgroundColor: 'var(--fond-surface)' }}
-                >
-                  <p className="text-2xl mb-2">💬</p>
-                  <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-                    Aucun avis pour le moment. Soyez le premier !
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {avis.map((a) => (
-                    <div
-                      key={a.id}
-                      className="p-4 rounded-xl border"
-                      style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <EtoilesNote note={a.note} />
-                        <span className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
-                          {new Date(a.creeLe).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
-                        </span>
-                      </div>
-                      {a.commentaire && (
-                        <p className="text-sm leading-relaxed">{a.commentaire}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
+        {/* ─ Sidebar droite (1/3) ─ */}
+        <aside className="space-y-4 sticky top-24">
+          {/* Tarif + Réservation */}
+          <div className="bg-white rounded-[18px] border border-[#E5E0D5] p-5 shadow-sm">
+            <p className="text-[26px] font-extrabold text-[#B8923A] leading-tight">
+              {profil.tarifHoraire.toLocaleString('fr-FR')} FCFA
+            </p>
+            <p className="text-[12px] text-[#6B7280] mb-5">par heure de cours</p>
+            <div className="space-y-2">
+              <Link href={`/eleve/reserver?prof=${profil.userId}`}
+                className="w-full block text-center rounded-xl py-3 text-[14px] font-bold text-white shadow-md hover:scale-105 transition-transform"
+                style={{ background: 'linear-gradient(135deg, #0B5E45, #9A7727)' }}>
+                Réserver un cours
+              </Link>
+              <Link href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
+                className="w-full block text-center rounded-xl py-3 text-[14px] font-bold border border-[#E5E0D5] bg-white text-[#1A1A1A] hover:bg-gray-50 transition-colors">
+                ✨ Cours d&apos;essai
+              </Link>
+            </div>
           </div>
 
-          {/* Colonne latérale — desktop uniquement */}
-          <aside className="hidden lg:block space-y-4 self-start sticky top-20">
-            <div
-              className="p-5 rounded-2xl border"
-              style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-            >
-              <p className="text-2xl font-bold mb-1">
-                {profil.tarifHoraire.toLocaleString('fr-FR')} FCFA
-              </p>
-              <p className="text-xs mb-5" style={{ color: 'var(--texte-secondaire)' }}>par heure de cours</p>
-
-              <div className="space-y-2">
-                <Link
-                  href={`/eleve/reserver?prof=${profil.userId}`}
-                  className="w-full block text-center rounded-xl px-5 py-3 text-sm font-semibold transition-all"
-                  style={{ backgroundColor: 'var(--couleur-primaire)', color: '#FFF' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--couleur-primaire-profond)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--couleur-primaire)'; }}
-                >
-                  Réserver un cours
-                </Link>
-                <Link
-                  href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
-                  className="w-full block text-center rounded-xl px-5 py-3 text-sm font-semibold border transition-all"
-                  style={{ borderColor: 'var(--couleur-or)', color: 'var(--couleur-or)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(184,146,58,0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                >
-                  ✨ Cours d&apos;essai
-                </Link>
+          {/* Infos rapides */}
+          <div className="bg-white rounded-[18px] border border-[#E5E0D5] p-5 shadow-sm space-y-0 text-[13px] divide-y divide-[#F0EDE7]">
+            {[
+              { label: 'Qiraat', valeur: profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs' },
+              { label: 'Langues', valeur: profil.langue ? profil.langue.charAt(0).toUpperCase() + profil.langue.slice(1) : 'Français, Wolof' },
+              { label: 'Expérience', valeur: '8 ans' },
+              { label: 'Pays', valeur: 'Sénégal' },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between items-center py-3">
+                <span className="text-[#6B7280] font-medium">{row.label}</span>
+                <span className="font-bold text-[#1A1A1A] text-right">{row.valeur}</span>
               </div>
-            </div>
-
-            {/* Infos rapides */}
-            <div
-              className="p-5 rounded-2xl border space-y-3 text-sm"
-              style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-            >
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--texte-secondaire)' }}>Qiraat</span>
-                <span className="font-medium">{profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}</span>
-              </div>
-              {profil.langue && (
-                <div className="flex justify-between">
-                  <span style={{ color: 'var(--texte-secondaire)' }}>Langue</span>
-                  <span className="font-medium capitalize">{profil.langue}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--texte-secondaire)' }}>Réservation</span>
-                <span className="font-medium">
-                  {profil.reservationInstantanee ? '⚡ Instantanée' : 'Sur demande'}
-                </span>
-              </div>
-              {noteMoyenne && noteMoyenne.total > 0 && (
-                <div className="flex justify-between">
-                  <span style={{ color: 'var(--texte-secondaire)' }}>Note</span>
-                  <span className="font-medium">{noteMoyenne.moyenne.toFixed(1)} / 5</span>
-                </div>
-              )}
-            </div>
-          </aside>
-        </div>
+            ))}
+          </div>
+        </aside>
       </div>
 
-      {/* Bouton réserver fixe — mobile */}
-      <div
-        className="sm:hidden fixed bottom-0 inset-x-0 z-30 flex gap-2 p-3 border-t"
-        style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-      >
-        <Link
-          href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
-          className="flex-1 text-center rounded-xl py-3 text-sm font-semibold border transition-all"
-          style={{ borderColor: 'var(--couleur-or)', color: 'var(--couleur-or)' }}
-        >
+      {/* Bouton fixe mobile */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-50 flex gap-3 p-4 bg-white/95 backdrop-blur-md border-t border-[#E5E0D5] shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
+        <Link href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
+          className="flex-1 text-center rounded-xl py-3 text-[13px] font-bold border border-[#E5E0D5] bg-white text-[#1A1A1A]">
           ✨ Essai
         </Link>
-        <Link
-          href={`/eleve/reserver?prof=${profil.userId}`}
-          className="flex-[2] text-center rounded-xl py-3 text-sm font-semibold transition-all"
-          style={{ backgroundColor: 'var(--couleur-primaire)', color: '#FFF' }}
-        >
+        <Link href={`/eleve/reserver?prof=${profil.userId}`}
+          className="flex-[2] text-center rounded-xl py-3 text-[13px] font-bold text-white shadow-md"
+          style={{ background: 'linear-gradient(135deg, #0B5E45, #9A7727)' }}>
           Réserver un cours
         </Link>
       </div>

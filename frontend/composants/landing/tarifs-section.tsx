@@ -4,35 +4,35 @@ import { motion } from 'framer-motion';
 
 export function TarifsSection() {
   return (
-    <section id="tarifs" className="py-[80px] px-6">
+    <section id="tarifs" className="py-12 md:py-[80px] px-4 md:px-6 bg-[#FDFBF6]">
       <div className="max-w-[900px] mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-[32px] font-extrabold" style={{ color: '#F0EDE6' }}>
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-[24px] md:text-[32px] font-extrabold text-[#1A1A1A]">
             Tarifs transparents
           </h2>
           <div
-            className="h-[3px] w-[40px] mx-auto mt-3 mb-2 rounded-full"
+            className="h-[3px] w-[30px] md:w-[40px] mx-auto mt-2 md:mt-3 mb-2 rounded-full"
             style={{ background: '#B8923A' }}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* Carte 1 */}
           <motion.div
-            className="rounded-[20px] p-[28px] flex flex-col"
+            className="rounded-[16px] md:rounded-[20px] p-5 md:p-[28px] flex flex-col bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid #E5E0D5',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
             }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-lg font-bold mb-1" style={{ color: '#F0EDE6' }}>Cours à la carte</h3>
-            <p className="text-[13px] mb-4" style={{ color: 'rgba(240,237,230,0.5)' }}>Idéal pour essayer</p>
+            <h3 className="text-base md:text-lg font-bold mb-1 text-[#1A1A1A]">Cours à la carte</h3>
+            <p className="text-[11px] md:text-[13px] mb-3 md:mb-4 text-[#6B7280]">Idéal pour essayer</p>
             <div
-              className="text-[28px] font-extrabold mb-6"
+              className="text-[20px] md:text-[28px] font-extrabold mb-4 md:mb-6"
               style={{
                 background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
                 WebkitBackgroundClip: 'text',
@@ -41,30 +41,28 @@ export function TarifsSection() {
             >
               À partir de<br />1 500 FCFA
             </div>
-            <ul className="text-[14px] space-y-3 mb-8 flex-1" style={{ color: 'rgba(240,237,230,0.7)' }}>
+            <ul className="text-[12px] md:text-[14px] space-y-2 md:space-y-3 mb-6 md:mb-8 flex-1 text-[#4B5563]">
               <li>✓ 1 heure de cours</li>
               <li>✓ Professeur certifié</li>
               <li>✓ Suivi pédagogique inclus</li>
             </ul>
             <button
               type="button"
-              className="w-full py-3 rounded-xl font-semibold text-sm transition-colors"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#F0EDE6',
-              }}
+              className="w-full py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-colors border text-[#1A1A1A] hover:bg-gray-50"
+              style={{ borderColor: '#E5E0D5' }}
             >
               Commencer
             </button>
           </motion.div>
 
           {/* Carte 2 (Recommandée) */}
-          <motion.div
-            className="rounded-[20px] p-[28px] flex flex-col relative"
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#1F6948] via-[#B8923A] to-[#1F6948] rounded-[20px] md:rounded-[24px] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-pulse" />
+            <motion.div
+              className="rounded-[16px] md:rounded-[20px] p-5 md:p-[28px] flex flex-col relative bg-white transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full"
             style={{
-              background: 'rgba(11,94,69,0.15)',
-              border: '2px solid rgba(11,94,69,0.5)',
+              border: '2px solid #0B5E45',
+              boxShadow: '0 8px 32px rgba(11,94,69,0.08)'
             }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -72,15 +70,15 @@ export function TarifsSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <div
-              className="absolute -top-3 right-6 text-[11px] font-bold px-3 py-1 rounded-full"
-              style={{ background: '#B8923A', color: '#0D1A14' }}
+              className="absolute -top-3 right-4 md:right-6 text-[9px] md:text-[11px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full"
+              style={{ background: '#B8923A', color: '#FFF' }}
             >
               Populaire
             </div>
-            <h3 className="text-lg font-bold mb-1" style={{ color: '#F0EDE6' }}>Pack 5 cours</h3>
-            <p className="text-[13px] mb-4" style={{ color: 'rgba(240,237,230,0.5)' }}>Le meilleur rapport qualité/prix</p>
+            <h3 className="text-base md:text-lg font-bold mb-1 text-[#1A1A1A]">Pack 5 cours</h3>
+            <p className="text-[11px] md:text-[13px] mb-3 md:mb-4 text-[#6B7280]">Le meilleur rapport qualité/prix</p>
             <div
-              className="text-[28px] font-extrabold mb-2"
+              className="text-[20px] md:text-[28px] font-extrabold mb-1.5 md:mb-2"
               style={{
                 background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
                 WebkitBackgroundClip: 'text',
@@ -89,15 +87,15 @@ export function TarifsSection() {
             >
               À partir de<br />6 500 FCFA
             </div>
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6">
               <span
-                className="text-[11px] font-bold px-2 py-0.5 rounded-md"
-                style={{ background: 'rgba(34,197,94,0.2)', color: '#4ADE80' }}
+                className="text-[9px] md:text-[11px] font-bold px-2 py-0.5 rounded-md"
+                style={{ background: '#E8F5EF', color: '#0B5E45' }}
               >
                 Économisez 13%
               </span>
             </div>
-            <ul className="text-[14px] space-y-3 mb-8 flex-1" style={{ color: 'rgba(240,237,230,0.8)' }}>
+            <ul className="text-[12px] md:text-[14px] space-y-2 md:space-y-3 mb-6 md:mb-8 flex-1 text-[#4B5563]">
               <li>✓ 5 heures de cours</li>
               <li>✓ Économisez 13%</li>
               <li>✓ Suivi pédagogique inclus</li>
@@ -105,24 +103,22 @@ export function TarifsSection() {
             </ul>
             <button
               type="button"
-              className="w-full py-3 rounded-xl font-semibold text-sm transition-transform"
-              style={{
-                background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
-                color: 'white',
-              }}
+              className="w-full py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-transform text-white"
+              style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)' }}
               onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
               onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
             >
               Choisir ce pack
             </button>
           </motion.div>
+          </div>
 
           {/* Carte 3 */}
           <motion.div
-            className="rounded-[20px] p-[28px] flex flex-col relative"
+            className="rounded-[16px] md:rounded-[20px] p-5 md:p-[28px] flex flex-col relative bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid #E5E0D5',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
             }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -130,17 +126,16 @@ export function TarifsSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <div
-              className="absolute -top-3 right-6 text-[11px] font-bold px-3 py-1 rounded-full"
-              style={{ background: 'rgba(240,237,230,0.1)', color: 'rgba(240,237,230,0.6)' }}
+              className="absolute -top-3 right-4 md:right-6 text-[9px] md:text-[11px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-gray-100 text-gray-500"
             >
               Bientôt
             </div>
-            <h3 className="text-lg font-bold mb-1" style={{ color: '#F0EDE6' }}>Abonnement</h3>
-            <p className="text-[13px] mb-4" style={{ color: 'rgba(240,237,230,0.5)' }}>Pour un suivi régulier</p>
-            <div className="text-[28px] font-extrabold mb-6" style={{ color: 'rgba(240,237,230,0.8)' }}>
+            <h3 className="text-base md:text-lg font-bold mb-1 text-[#1A1A1A]">Abonnement</h3>
+            <p className="text-[11px] md:text-[13px] mb-3 md:mb-4 text-[#6B7280]">Pour un suivi régulier</p>
+            <div className="text-[20px] md:text-[28px] font-extrabold mb-4 md:mb-6 text-gray-400">
               Sur devis
             </div>
-            <ul className="text-[14px] space-y-3 mb-8 flex-1" style={{ color: 'rgba(240,237,230,0.7)' }}>
+            <ul className="text-[12px] md:text-[14px] space-y-2 md:space-y-3 mb-6 md:mb-8 flex-1 text-[#9CA3AF]">
               <li>✓ Cours illimités</li>
               <li>✓ Professeur dédié</li>
               <li>✓ Tableau de bord famille</li>
@@ -148,19 +143,14 @@ export function TarifsSection() {
             <button
               type="button"
               disabled
-              className="w-full py-3 rounded-xl font-semibold text-sm opacity-50 cursor-not-allowed"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#F0EDE6',
-              }}
+              className="w-full py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm opacity-50 cursor-not-allowed bg-gray-50 text-gray-400 border border-gray-200"
             >
               Bientôt disponible
             </button>
           </motion.div>
         </div>
 
-        <p className="text-center text-[13px] mt-8" style={{ color: 'rgba(240,237,230,0.45)' }}>
+        <p className="text-center text-[10px] md:text-[13px] mt-6 md:mt-8 text-[#6B7280]">
           💳 Paiement Mobile Money, virement et carte bancaire acceptés. Paiement sécurisé.
         </p>
       </div>

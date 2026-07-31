@@ -46,6 +46,23 @@
     font-family: 'Inter', system-ui, sans-serif;
     background-color: var(--fond-page);
     color: var(--texte);
+    scroll-behavior: smooth;
+  }
+
+  /* ───────────────── Thème Clair (Pages publiques) ───────────────── */
+  .theme-clair {
+    --fond-page: #FDFBF6;
+    --fond-surface: #FFFFFF;
+    --fond-surface-2: #F0EDE4;
+    --fond-hero: #F7F4EE;
+    --primaire: #0B5E45;
+    --primaire-clair: #E8F5EF;
+    --primaire-profond: #08402F;
+    --accent: #B8923A;
+    --accent-clair: #FDF4E3;
+    --texte: #1A1A1A;
+    --texte-secondaire: #6B7280;
+    --bordure: #E5E0D5;
   }
 
   body {
