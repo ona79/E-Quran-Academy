@@ -162,11 +162,11 @@ export function ProfesseursSection() {
               return (
                 <motion.div
                   key={prof.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group relative flex flex-col rounded-[16px] md:rounded-[20px] bg-transparent border border-[#F0EBE1] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(31,105,72,0.10)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
+                  initial={{ opacity: 0, y: 35, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="group relative flex flex-col rounded-[16px] md:rounded-[20px] bg-white border border-[#F0EBE1] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(31,105,72,0.12)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
                 >
                   {/* Top colored band */}
                   <div

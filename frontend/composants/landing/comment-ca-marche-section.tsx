@@ -109,45 +109,55 @@ export function CommentCaMarcheSection() {
           <Connecteur />
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 relative z-10">
-            {ETAPES.map((etape, idx) => (
-              <motion.div
-                key={etape.id}
-                className="flex flex-col items-center text-center"
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: idx * 0.2 }}
-              >
-                <div className="relative mb-6 md:mb-8">
-                  <div className="w-[110px] h-[110px] md:w-[160px] md:h-[160px] rounded-[24px] md:rounded-[32px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex items-center justify-center border border-[#F0EBE1]">
-                    <div className="scale-75 md:scale-100">{etape.icone}</div>
+            {ETAPES.map((etape, idx) => {
+              // Variations de transition selon l'étape : gauche, centre, droite
+              const variants = [
+                { initial: { opacity: 0, x: -50, y: 20 }, whileInView: { opacity: 1, x: 0, y: 0 } },
+                { initial: { opacity: 0, scale: 0.85, y: 30 }, whileInView: { opacity: 1, scale: 1, y: 0 } },
+                { initial: { opacity: 0, x: 50, y: 20 }, whileInView: { opacity: 1, x: 0, y: 0 } },
+              ][idx];
+
+              return (
+                <motion.div
+                  key={etape.id}
+                  className="flex flex-col items-center text-center group"
+                  initial={variants.initial}
+                  whileInView={variants.whileInView}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.7, delay: idx * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="relative mb-6 md:mb-8 transition-transform duration-300 group-hover:scale-105">
+                    <div className="w-[110px] h-[110px] md:w-[160px] md:h-[160px] rounded-[24px] md:rounded-[32px] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] flex items-center justify-center border border-[#F0EBE1] group-hover:border-[#1F6948]/30 group-hover:shadow-[0_12px_40px_rgba(31,105,72,0.12)] transition-all">
+                      <div className="scale-75 md:scale-100 transition-transform duration-300 group-hover:scale-110">{etape.icone}</div>
+                    </div>
+                    <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#1F6948] text-white text-[12px] md:text-[14px] font-bold flex items-center justify-center shadow-md">
+                      {etape.id}
+                    </div>
                   </div>
-                  <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#1F6948] text-white text-[12px] md:text-[14px] font-bold flex items-center justify-center">
-                    {etape.id}
+
+                  <h3 className="text-[18px] md:text-[20px] font-extrabold text-[#222222] mb-2 md:mb-3">
+                    {etape.motCle ? (
+                      <>
+                        {etape.titre.split(etape.motCle)[0]}
+                        <span className="text-[#1F6948]">{etape.motCle}</span>
+                        {etape.titre.split(etape.motCle)[1]}
+                      </>
+                    ) : (
+                      <span className="text-[#1F6948]">{etape.titre}</span>
+                    )}
+                  </h3>
+
+                  <p className="text-[13px] md:text-[14px] text-[#777777] leading-relaxed max-w-[260px] mb-4 md:mb-6">
+                    {etape.desc}
+                  </p>
+
+                  <div className="inline-flex items-center gap-1.5 md:gap-2 bg-[#F6F4EE] rounded-full px-3 py-1.5 md:px-4 md:py-2 text-[11px] md:text-[13px] font-semibold text-[#444444] border border-[#EAE5D9] group-hover:border-[#B8923A]/40 transition-colors">
+                    <span className="opacity-70">{etape.badge.icon}</span>
+                    {etape.badge.label}
                   </div>
-                </div>
-
-                <h3 className="text-[18px] md:text-[20px] font-extrabold text-[#222222] mb-2 md:mb-3">
-                  {etape.motCle ? (
-                    <>
-                      {etape.titre.split(etape.motCle)[0]}
-                      <span className="text-[#1F6948]">{etape.motCle}</span>
-                      {etape.titre.split(etape.motCle)[1]}
-                    </>
-                  ) : (
-                    <span className="text-[#1F6948]">{etape.titre}</span>
-                  )}
-                </h3>
-
-                <p className="text-[13px] md:text-[14px] text-[#777777] leading-relaxed max-w-[260px] mb-4 md:mb-6">
-                  {etape.desc}
-                </p>
-
-                <div className="inline-flex items-center gap-1.5 md:gap-2 bg-[#F6F4EE] rounded-full px-3 py-1.5 md:px-4 md:py-2 text-[11px] md:text-[13px] font-semibold text-[#444444]">
-                  <span className="opacity-70">{etape.badge.icon}</span>
-                  {etape.badge.label}
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 

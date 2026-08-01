@@ -123,10 +123,11 @@ export function StatsSection() {
           {STATS.map((stat, idx) => (
             <motion.div
               key={idx}
-              className="relative flex flex-col items-center justify-center text-center p-2 md:p-6 rounded-[12px] md:rounded-[24px] bg-white border border-[#F0EBE1] shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 overflow-hidden min-h-[90px] md:min-h-auto"
-              initial={{ opacity: 0, y: 25 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="relative flex flex-col items-center justify-center text-center p-2 md:p-6 rounded-[12px] md:rounded-[24px] bg-white border border-[#F0EBE1] shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden min-h-[90px] md:min-h-auto"
+              initial={{ opacity: 0, y: 35, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: idx * 0.12, ease: [0.22, 1, 0.36, 1] }}
             >
               {/* Decorative glow circle in corner */}
               <div

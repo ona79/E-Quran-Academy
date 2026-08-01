@@ -63,14 +63,20 @@ export function TemoignagesSection() {
 
   return (
     <section className="pt-6 pb-12 md:pt-8 md:pb-16 bg-gradient-to-b from-[#FDFBF6] to-[#F5F1E8] overflow-hidden relative">
-      <div className="text-center mb-6 md:mb-12 px-4 md:px-6 relative z-10">
+      <motion.div 
+        className="text-center mb-6 md:mb-12 px-4 md:px-6 relative z-10"
+        initial={{ opacity: 0, y: 25, scale: 0.96 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      >
         <h2 className="text-[24px] md:text-[42px] font-extrabold text-[#222222] mb-1 md:mb-4">
           Ce que disent nos <span className="text-[#1F6948]">étudiants</span>
         </h2>
         <p className="text-[14px] md:text-[16px] text-[#666666] max-w-xl mx-auto">
           Découvrez les expériences de ceux qui nous font confiance pour leur apprentissage.
         </p>
-      </div>
+      </motion.div>
 
       <div 
         className="relative w-full max-w-6xl mx-auto h-[320px] md:h-[360px] flex items-center justify-center"

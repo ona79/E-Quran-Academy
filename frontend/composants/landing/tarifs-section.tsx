@@ -24,10 +24,10 @@ export function TarifsSection() {
               border: '1px solid #E5E0D5',
               boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
             }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, x: -40, y: 20 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <h3 className="text-sm md:text-lg font-bold mb-1 text-[#1A1A1A]">Cours à la carte</h3>
             <p className="text-[10px] md:text-[13px] mb-2 md:mb-4 text-[#6B7280]">Idéal pour essayer</p>
@@ -56,62 +56,64 @@ export function TarifsSection() {
           </motion.div>
 
           {/* Carte 2 (Recommandée) */}
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#1F6948] via-[#B8923A] to-[#1F6948] rounded-[20px] md:rounded-[24px] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-pulse" />
-            <motion.div
-              className="rounded-[16px] md:rounded-[20px] p-4 md:p-[28px] flex flex-col relative bg-white transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full"
-            style={{
-              border: '2px solid #0B5E45',
-              boxShadow: '0 8px 32px rgba(11,94,69,0.08)'
-            }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <motion.div 
+            className="relative group"
+            initial={{ opacity: 0, scale: 0.88, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#1F6948] via-[#B8923A] to-[#1F6948] rounded-[20px] md:rounded-[24px] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-pulse" />
             <div
-              className="absolute -top-2.5 right-3 md:right-6 text-[8px] md:text-[11px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full"
-              style={{ background: '#B8923A', color: '#FFF' }}
-            >
-              Populaire
-            </div>
-            <h3 className="text-sm md:text-lg font-bold mb-1 text-[#1A1A1A]">Pack 5 cours</h3>
-            <p className="text-[10px] md:text-[13px] mb-2 md:mb-4 text-[#6B7280]">Le meilleur rapport qualité/prix</p>
-            <div
-              className="text-[18px] md:text-[28px] font-extrabold mb-1 md:mb-2"
+              className="rounded-[16px] md:rounded-[20px] p-4 md:p-[28px] flex flex-col relative bg-white transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full"
               style={{
-                background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                border: '2px solid #0B5E45',
+                boxShadow: '0 8px 32px rgba(11,94,69,0.08)'
               }}
             >
-              À partir de<br />6 500 FCFA
-            </div>
-            <div className="mb-3 md:mb-6">
-              <span
-                className="text-[8px] md:text-[11px] font-bold px-1.5 py-0.5 rounded-md"
-                style={{ background: '#E8F5EF', color: '#0B5E45' }}
+              <div
+                className="absolute -top-2.5 right-3 md:right-6 text-[8px] md:text-[11px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full shadow-sm"
+                style={{ background: '#B8923A', color: '#FFF' }}
               >
-                Économisez 13%
-              </span>
+                Populaire
+              </div>
+              <h3 className="text-sm md:text-lg font-bold mb-1 text-[#1A1A1A]">Pack 5 cours</h3>
+              <p className="text-[10px] md:text-[13px] mb-2 md:mb-4 text-[#6B7280]">Le meilleur rapport qualité/prix</p>
+              <div
+                className="text-[18px] md:text-[28px] font-extrabold mb-1 md:mb-2"
+                style={{
+                  background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                À partir de<br />6 500 FCFA
+              </div>
+              <div className="mb-3 md:mb-6">
+                <span
+                  className="text-[8px] md:text-[11px] font-bold px-1.5 py-0.5 rounded-md"
+                  style={{ background: '#E8F5EF', color: '#0B5E45' }}
+                >
+                  Économisez 13%
+                </span>
+              </div>
+              <ul className="text-[11px] md:text-[14px] space-y-1.5 md:space-y-3 mb-4 md:mb-8 flex-1 text-[#4B5563]">
+                <li>✓ 5 heures de cours</li>
+                <li>✓ Économisez 13%</li>
+                <li>✓ Suivi pédagogique inclus</li>
+                <li>✓ Priorité de réservation</li>
+              </ul>
+              <button
+                type="button"
+                className="w-full py-2 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-transform text-white shadow-md"
+                style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              >
+                Choisir ce pack
+              </button>
             </div>
-            <ul className="text-[11px] md:text-[14px] space-y-1.5 md:space-y-3 mb-4 md:mb-8 flex-1 text-[#4B5563]">
-              <li>✓ 5 heures de cours</li>
-              <li>✓ Économisez 13%</li>
-              <li>✓ Suivi pédagogique inclus</li>
-              <li>✓ Priorité de réservation</li>
-            </ul>
-            <button
-              type="button"
-              className="w-full py-2 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-transform text-white"
-              style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)' }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-            >
-              Choisir ce pack
-            </button>
           </motion.div>
-          </div>
 
           {/* Carte 3 */}
           <motion.div
@@ -120,10 +122,10 @@ export function TarifsSection() {
               border: '1px solid #E5E0D5',
               boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
             }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, x: 40, y: 20 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
             <div
               className="absolute -top-2.5 right-3 md:right-6 text-[8px] md:text-[11px] font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-gray-100 text-gray-500"
