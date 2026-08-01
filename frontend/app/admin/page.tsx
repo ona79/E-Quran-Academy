@@ -189,7 +189,7 @@ export default function PageAdmin() {
               [...Array(5)].map((_, i) => <Squelette key={i} />)
             ) : (
               <>
-                  <StatCard icone="🎓" valeur={stats?.totalEleves ?? '—'} libelle="Élèves inscrits" href="/admin/utilisateurs?role=ELEVE" couleur="var(--primaire)" />
+                  <StatCard icone="🎓" valeur={stats?.totalEleves ?? '—'} libelle="Étudiants inscrits" href="/admin/utilisateurs?role=ELEVE" couleur="var(--primaire)" />
                   <StatCard icone="📖" valeur={stats?.totalProfesseurs ?? '—'} libelle="Professeurs actifs" href="/admin/professeurs" couleur="var(--accent)" />
                   <StatCard icone="⏳" valeur={stats?.professeursEnAttente ?? '—'} libelle="En attente validation" href="/admin/professeurs" couleur="var(--accent)" badge={(stats?.professeursEnAttente ?? 0) > 0} />
                   <StatCard icone="📅" valeur={stats?.coursAujourdhui ?? '—'} libelle="Cours aujourd'hui" couleur="var(--texte)" />

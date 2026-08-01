@@ -4,7 +4,7 @@
 // Gère :
 // - la connexion WebSocket et le rejoignage de la room (reconnexion sans perte) ;
 // - l'état du Mushaf (réception des mises à jour du professeur) ;
-// - le rôle (estProfesseur) qui détermine la lecture seule pour l'élève ;
+// - le rôle (estProfesseur) qui détermine la lecture seule pour l'étudiant ;
 // - le mode de repli audio ;
 // - les erreurs remontées par le serveur.
 import { useEffect, useRef, useState, useCallback } from 'react';

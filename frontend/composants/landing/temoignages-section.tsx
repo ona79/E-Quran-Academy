@@ -65,7 +65,7 @@ export function TemoignagesSection() {
     <section className="pt-6 pb-12 md:pt-8 md:pb-16 bg-gradient-to-b from-[#FDFBF6] to-[#F5F1E8] overflow-hidden relative">
       <div className="text-center mb-6 md:mb-12 px-4 md:px-6 relative z-10">
         <h2 className="text-[24px] md:text-[42px] font-extrabold text-[#222222] mb-1 md:mb-4">
-          Ce que disent nos <span className="text-[#1F6948]">élèves</span>
+          Ce que disent nos <span className="text-[#1F6948]">étudiants</span>
         </h2>
         <p className="text-[14px] md:text-[16px] text-[#666666] max-w-xl mx-auto">
           Découvrez les expériences de ceux qui nous font confiance pour leur apprentissage.
@@ -124,7 +124,7 @@ export function TemoignagesSection() {
                     <svg className="w-3.5 h-3.5 text-[#1F6948]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p className="text-[11px] md:text-[12px] font-medium text-[#1F6948]">Élève vérifié</p>
+                    <p className="text-[11px] md:text-[12px] font-medium text-[#1F6948]">Étudiant vérifié</p>
                   </div>
                 </div>
               </div>

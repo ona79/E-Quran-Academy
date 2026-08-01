@@ -74,7 +74,7 @@ export default function PageDetailProfesseur({ params }: { params: { id: string 
           texte:
             act === 'valider'
               ? '✅ Compte validé avec succès'
-              : '🚫 Compte rejeté — l\'utilisateur est repassé en élève',
+              : '🚫 Compte rejeté — l\'utilisateur est repassé en étudiant',
         });
       }
     } catch (err) {
@@ -214,7 +214,7 @@ export default function PageDetailProfesseur({ params }: { params: { id: string 
                         disabled={action != null}
                         className="rounded-xl px-6 py-3 text-sm font-semibold text-center border border-red-500/50 text-red-200 transition-all hover:bg-red-500/10 disabled:opacity-50 mt-2"
                       >
-                        {action === 'rejeter' ? 'Rejet…' : '✗ Rejeter (repasse élève)'}
+                        {action === 'rejeter' ? 'Rejet…' : '✗ Rejeter (repasse étudiant)'}
                       </button>
                     </div>
                   </div>

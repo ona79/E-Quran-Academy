@@ -95,7 +95,7 @@ export function ShellConnecte({ children, sansPadding = false }: { children: Rea
     ? 'Administration'
     : utilisateur.role === 'PROFESSEUR'
     ? 'Espace Professeur'
-    : 'Espace Élève';
+    : 'Espace Étudiant';
 
   return (
     <div

@@ -1,6 +1,6 @@
 'use client';
 
-// Espace élève — réservation d'un cours.
+// Espace étudiant — réservation d'un cours.
 import { GardeRoute } from '@/composants/auth/garde-route';
 import { ShellConnecte } from '@/composants/layout/shell-connecte';
 import { ReservationCours } from '@/composants/eleve/reservation';

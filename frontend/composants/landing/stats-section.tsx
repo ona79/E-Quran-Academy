@@ -50,7 +50,7 @@ const STATS = [
     ),
     value: 500,
     suffix: '+',
-    label: 'Élèves satisfaits',
+    label: 'Étudiants satisfaits',
     color: '#1F6948',
     bg: '#E8F5EF',
   },

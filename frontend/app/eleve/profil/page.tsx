@@ -1,6 +1,6 @@
 'use client';
 
-// Espace élève — gestion du profil.
+// Espace étudiant — gestion du profil.
 // Permet de modifier le nom, la langue et le fuseau horaire. L'e-mail reste fixe.
 import { useEffect, useState, type FormEvent } from 'react';
 import { GardeRoute } from '@/composants/auth/garde-route';

@@ -4,7 +4,7 @@
 // le surlignage.
 //
 // CONTRAINTE NON NÉGOCIABLE :
-// - Seul le professeur peut surligner. L'élève est en lecture seule (aucun
+// - Seul le professeur peut surligner. L'étudiant est en lecture seule (aucun
 //   contrôle de saisie ne lui est présenté).
 // - Le payload de synchronisation ne contient que des références
 //   (numeroSourate, numeroVerset, plageSurlignage) — jamais d'image.

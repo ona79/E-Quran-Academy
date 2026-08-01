@@ -1,4 +1,4 @@
-// Espace élève — accès salle de classe.
+// Espace étudiant — accès salle de classe.
 import { GardeRoute } from '@/composants/auth/garde-route';
 import { ShellConnecte } from '@/composants/layout/shell-connecte';
 import { AccesClasseEleve } from '@/composants/eleve/acces-classe';

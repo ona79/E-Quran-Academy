@@ -1,6 +1,6 @@
 'use client';
 
-// Tableau de bord élève : salutation, prochains cours (max 3) avec nom du prof,
+// Tableau de bord étudiant : salutation, prochains cours (max 3) avec nom du prof,
 // bouton Rejoindre actif 15min avant, stats du mois, raccourcis.
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';

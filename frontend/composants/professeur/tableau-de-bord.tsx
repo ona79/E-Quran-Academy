@@ -41,7 +41,7 @@ export function TableauDeBordProfesseur() {
       ]);
       setProfil(p);
 
-      // Enrichir avec noms des élèves
+      // Enrichir avec noms des étudiants
       const elevesIds = Array.from(new Set(page.donnees.map((r) => r.eleveId)));
       const cacheEleves: Record<string, string> = {};
       await Promise.all(
@@ -50,7 +50,7 @@ export function TableauDeBordProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cacheEleves[id] = e.nomComplet;
           } catch {
-            cacheEleves[id] = `Élève ${id.slice(0, 8)}`;
+            cacheEleves[id] = `Étudiant ${id.slice(0, 8)}`;
           }
         })
       );
@@ -92,7 +92,7 @@ export function TableauDeBordProfesseur() {
         <p className="text-5xl">⏳</p>
         <p className="text-lg font-semibold" style={{ color: 'var(--texte)' }}>Compte en cours de validation</p>
         <p className="text-sm leading-relaxed" style={{ color: 'var(--texte-secondaire)' }}>
-          Un administrateur doit valider votre profil avant que les élèves puissent vous trouver.
+          Un administrateur doit valider votre profil avant que les étudiants puissent vous trouver.
         </p>
         <Link href="/professeur/profil" className="btn-primaire inline-block">
           Compléter mon profil →
@@ -159,7 +159,7 @@ export function TableauDeBordProfesseur() {
               <div className="carte text-center py-8">
                 <p className="text-3xl mb-2">🗓️</p>
                 <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-                  Aucun cours confirmé à venir. Attendez les confirmations d&apos;élèves.
+                  Aucun cours confirmé à venir. Attendez les confirmations d&apos;étudiants.
                 </p>
               </div>
             ) : (
@@ -175,7 +175,7 @@ export function TableauDeBordProfesseur() {
                           {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-semibold text-sm">{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</p>
+                          <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
                           <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
                             {formaterDateHeure(r.creneauDebut)}
                           </p>
@@ -220,7 +220,7 @@ export function TableauDeBordProfesseur() {
                         {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm">{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</p>
+                        <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
                         <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
                           {formaterDateHeure(r.creneauDebut)}
                         </p>
@@ -269,7 +269,7 @@ export function TableauDeBordProfesseur() {
                   <div key={r.id} className="carte" style={{ borderLeft: '3px solid #B8923A' }}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
-                        <p className="font-semibold text-sm">{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</p>
+                        <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
                         <p className="text-xs mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
                           📅 {formaterDateHeure(r.creneauDebut)}
                         </p>

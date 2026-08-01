@@ -1,6 +1,6 @@
 'use client';
 
-// Accès cours : liste les séances de l'élève par onglets (À venir, En attente, Passés).
+// Accès cours : liste les séances de l'étudiant par onglets (À venir, En attente, Passés).
 // Permet d'annuler un cours (> 12h avant) ou de laisser un avis sur un cours passé.
 import { useEffect, useState, useCallback, type FormEvent } from 'react';
 import { apiClient, ErreurApi } from '@/lib/api-client';

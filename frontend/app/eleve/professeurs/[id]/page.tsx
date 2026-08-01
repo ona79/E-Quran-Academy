@@ -279,10 +279,10 @@ export default function PageProfilProfesseurEleve() {
                     </div>
                   </div>
 
-                  {/* Avis des élèves */}
+                  {/* Avis des étudiants */}
                   <div className="rounded-2xl border bg-white p-4 shadow-sm mb-8">
                     <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--texte)' }}>
-                      Avis des élèves
+                      Avis des étudiants
                     </h3>
                     
                     {avis.length === 0 ? (

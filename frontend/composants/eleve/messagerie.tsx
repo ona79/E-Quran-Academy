@@ -1,7 +1,7 @@
 'use client';
 
 // Messagerie asynchrone : boîte de réception + conversation.
-// L'élève voit les messages, ouvre une conversation et peut répondre.
+// L'étudiant voit les messages, ouvre une conversation et peut répondre.
 // Gère l'affichage responsive (liste seule -> clic -> conversation sur mobile).
 import { useEffect, useRef, useState, type FormEvent, useCallback } from 'react';
 import { apiClient, ErreurApi } from '@/lib/api-client';

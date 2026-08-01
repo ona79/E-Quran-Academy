@@ -1,7 +1,7 @@
 'use client';
 
 // Formulaire d'inscription en stepper 2 étapes.
-// Permet de s'inscrire en tant qu'élève (redirection immédiate)
+// Permet de s'inscrire en tant qu'étudiant (redirection immédiate)
 // ou professeur (compte en cours de validation).
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
@@ -191,7 +191,7 @@ export function FormulaireInscription() {
                 />
                 <span className="text-3xl">{r === 'ELEVE' ? '🎓' : '📖'}</span>
                 <span className="text-xs font-semibold text-center" style={{ color: 'var(--texte)' }}>
-                  {r === 'ELEVE' ? 'Je suis un élève' : 'Je suis un professeur'}
+                  {r === 'ELEVE' ? 'Je suis un étudiant' : 'Je suis un professeur'}
                 </span>
               </label>
             ))}

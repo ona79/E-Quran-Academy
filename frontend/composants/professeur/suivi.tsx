@@ -43,7 +43,7 @@ export function SuiviProfesseur() {
       ]);
       setNotes(notesPage.donnees);
 
-      // Extraire les élèves uniques (des réservations ET des notes)
+      // Extraire les étudiants uniques (des réservations ET des notes)
       const elevesIds = Array.from(new Set([
         ...resPage.donnees.map((r) => r.eleveId),
         ...notesPage.donnees.map((n) => n.eleveId)
@@ -149,7 +149,7 @@ export function SuiviProfesseur() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 items-end">
             
             <div className="lg:col-span-1">
-              <label htmlFor="eleveId" className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Élève</label>
+              <label htmlFor="eleveId" className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Étudiant</label>
               <select
                 id="eleveId"
                 className="champ text-sm py-2 px-2 h-10 w-full bg-white"
@@ -255,7 +255,7 @@ export function SuiviProfesseur() {
             <span className="text-gray-400 group-focus-within:text-[#0B5E45] transition-colors text-sm">🔍</span>
             <input
               type="text"
-              placeholder="Nom ou ID de l'élève..."
+              placeholder="Nom ou ID de l'étudiant..."
               className="champ text-sm py-1 border-none bg-transparent min-w-[180px] sm:min-w-[220px] h-auto focus:ring-0 outline-none w-full"
               value={filtreHistoriqueEleve}
               onChange={(e) => setFiltreHistoriqueEleve(e.target.value)}
@@ -275,7 +275,7 @@ export function SuiviProfesseur() {
         ) : notesFiltrees.length === 0 ? (
           <div className="carte text-center py-10" style={{ color: 'var(--texte-secondaire)' }}>
             <span className="text-4xl mb-3 block">🔍</span>
-            Aucun historique trouvé pour cet élève.
+            Aucun historique trouvé pour cet étudiant.
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,6 +1,6 @@
 'use client';
 
-// Navigation mobile bas d'écran (élève et professeur). 5 icônes max.
+// Navigation mobile bas d'écran (étudiant et professeur). 5 icônes max.
 // Visible uniquement sur petits écrans (md:hidden).
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

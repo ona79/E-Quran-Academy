@@ -38,7 +38,7 @@ export function CoursProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cache[id] = e.nomComplet;
           } catch {
-            cache[id] = `Élève ${id.slice(0, 8)}`;
+            cache[id] = `Étudiant ${id.slice(0, 8)}`;
           }
         })
       );
@@ -114,7 +114,7 @@ export function CoursProfesseur() {
                     {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm truncate">{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</p>
+                    <p className="font-semibold text-sm truncate">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
                     <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
                       {formaterDateHeure(r.creneauDebut)}
                     </p>

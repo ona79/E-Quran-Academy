@@ -99,7 +99,7 @@ export function ProfilProfesseurForm() {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Mon profil professeur</h1>
             <p className="text-xs sm:text-sm mt-1 text-[#6B7280]">
-              Ces informations sont visibles par les élèves sur votre fiche.
+              Ces informations sont visibles par les étudiants sur votre fiche.
             </p>
           </div>
           {profil && (

@@ -34,7 +34,7 @@ export function RevenusProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cache[id] = e.nomComplet;
           } catch {
-            cache[id] = `Élève ${id.slice(0, 8)}`;
+            cache[id] = `Étudiant ${id.slice(0, 8)}`;
           }
         })
       );
@@ -108,7 +108,7 @@ export function RevenusProfesseur() {
               <thead>
                 <tr style={{ color: 'var(--texte-secondaire)' }}>
                   <th className="text-left pb-3 pr-4">Date</th>
-                  <th className="text-left pb-3 pr-4">Élève</th>
+                  <th className="text-left pb-3 pr-4">Étudiant</th>
                   <th className="text-right pb-3">Montant</th>
                 </tr>
               </thead>
@@ -122,7 +122,7 @@ export function RevenusProfesseur() {
                           style={{ backgroundColor: 'var(--accent)' }}>
                           {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                         </div>
-                        <span>{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</span>
+                        <span>{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</span>
                       </div>
                     </td>
                     <td className="py-3 text-right font-semibold">

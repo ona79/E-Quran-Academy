@@ -9,7 +9,7 @@ import type { Utilisateur, Role } from '@/lib/types';
 
 const ROLES: Array<{ valeur: string; libelle: string }> = [
   { valeur: '', libelle: 'Tous' },
-  { valeur: 'ELEVE', libelle: 'Élèves' },
+  { valeur: 'ELEVE', libelle: 'Étudiants' },
   { valeur: 'PROFESSEUR', libelle: 'Professeurs' },
   { valeur: 'ADMIN', libelle: 'Admins' },
 ];

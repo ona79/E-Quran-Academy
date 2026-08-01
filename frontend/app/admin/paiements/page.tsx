@@ -194,7 +194,7 @@ export default function PageAdminPaiements() {
               <input
                 id="email-credit"
                 type="email"
-                placeholder="Email de l'élève"
+                placeholder="Email de l'étudiant"
                 value={emailCredit}
                 onChange={(e) => setEmailCredit(e.target.value)}
                 className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2"
@@ -273,7 +273,7 @@ export default function PageAdminPaiements() {
                       style={{ backgroundColor: 'var(--fond)', color: 'var(--texte-secondaire)' }}
                     >
                       <th className="px-6 py-3 font-medium">Date</th>
-                      <th className="px-6 py-3 font-medium">Élève</th>
+                      <th className="px-6 py-3 font-medium">Étudiant</th>
                       <th className="px-6 py-3 font-medium">Cours</th>
                       <th className="px-6 py-3 font-medium">Méthode</th>
                       <th className="px-6 py-3 font-medium">Statut</th>

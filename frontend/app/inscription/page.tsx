@@ -463,7 +463,7 @@ export default function PageInscription() {
                           </div>
 
                           <div className="flex flex-row gap-3 mb-4">
-                            {/* Carte Élève */}
+                            {/* Carte Étudiant */}
                             <motion.button
                               type="button"
                               onClick={() => setRole('ELEVE')}
@@ -479,7 +479,7 @@ export default function PageInscription() {
                               }}
                             >
                               <GraduationCap size={24} color="#34D399" className="mb-1" />
-                              <h3 className="font-semibold text-white text-[13px]">Élève</h3>
+                              <h3 className="font-semibold text-white text-[13px]">Étudiant</h3>
                             </motion.button>
 
                             {/* Carte Professeur */}

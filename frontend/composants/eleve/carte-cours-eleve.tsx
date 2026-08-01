@@ -1,7 +1,7 @@
 'use client';
 
-// CarteCoursEleve — carte de réservation dans l'espace élève.
-// Affiche : nom du prof, date/heure dans le fuseau élève, statut,
+// CarteCoursEleve — carte de réservation dans l'espace étudiant.
+// Affiche : nom du prof, date/heure dans le fuseau étudiant, statut,
 // bouton "Rejoindre" (actif 15 min avant), "Annuler", "Laisser un avis".
 import Link from 'next/link';
 import type { Reservation, StatutReservation } from '@/lib/types';
@@ -68,7 +68,7 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
             </div>
           </div>
 
-          {/* Note élève si présente */}
+          {/* Note étudiant si présente */}
           {reservation.noteEleve && (
             <p className="text-xs italic mt-1 line-clamp-1" style={{ color: 'var(--texte-secondaire)' }}>
               🎯 {reservation.noteEleve}

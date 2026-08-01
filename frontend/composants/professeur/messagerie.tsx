@@ -1,8 +1,8 @@
 'use client';
 
-// Messagerie asynchrone pour le professeur : boîte de réception + conversation avec un élève.
+// Messagerie asynchrone pour le professeur : boîte de réception + conversation avec un étudiant.
 // Gère l'affichage responsive (liste seule -> clic -> conversation sur mobile).
-// Résout les noms des élèves en interrogeant l'API utilisateurs.
+// Résout les noms des étudiants en interrogeant l'API utilisateurs.
 import { useEffect, useRef, useState, type FormEvent, useCallback } from 'react';
 import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { Message, Page } from '@/lib/types';
@@ -28,7 +28,7 @@ export function MessagerieProfesseur() {
   const [enEnvoi, setEnEnvoi] = useState(false);
   const basRef = useRef<HTMLDivElement>(null);
 
-  // Charger le nom d'un élève et le mettre en cache
+  // Charger le nom d'un étudiant et le mettre en cache
   const chargerNomEleve = useCallback(async (id: string) => {
     if (cacheNoms[id]) return cacheNoms[id];
     try {
@@ -36,7 +36,7 @@ export function MessagerieProfesseur() {
       setCacheNoms((prev) => ({ ...prev, [id]: el.nomComplet }));
       return el.nomComplet;
     } catch {
-      const nomF = `Élève ${id.slice(0, 8)}`;
+      const nomF = `Étudiant ${id.slice(0, 8)}`;
       setCacheNoms((prev) => ({ ...prev, [id]: nomF }));
       return nomF;
     }
@@ -49,7 +49,7 @@ export function MessagerieProfesseur() {
       const page = await apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50');
       setBoiteReception(page.donnees);
       
-      // Charger les noms des élèves en arrière plan
+      // Charger les noms des étudiants en arrière plan
       const idsUniques = Array.from(new Set(page.donnees.map((m) => m.expediteurId)));
       idsUniques.forEach((id) => chargerNomEleve(id));
     } catch (e) {
@@ -145,7 +145,7 @@ export function MessagerieProfesseur() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[75vh]">
-      {/* 1. Liste des élèves */}
+      {/* 1. Liste des étudiants */}
       <aside
         className={`overflow-y-auto flex flex-col rounded-2xl p-4 ${
           interlocuteurId ? 'hidden md:flex' : 'flex'
@@ -153,7 +153,7 @@ export function MessagerieProfesseur() {
         style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
       >
         <h2 className="font-bold text-xs uppercase tracking-widest mb-4 px-1" style={{ color: 'var(--texte-secondaire)' }}>
-          Élèves
+          Étudiants
         </h2>
         {interlocuteurs.length === 0 ? (
           <div className="text-center py-10">
@@ -165,7 +165,7 @@ export function MessagerieProfesseur() {
             {interlocuteurs.map((id) => {
               const dernier = boiteReception.find((m) => m.expediteurId === id);
               const nonLus = boiteReception.filter((m) => m.expediteurId === id && !m.lu).length;
-              const nom = cacheNoms[id] || `Élève ${id.slice(0, 8)}`;
+              const nom = cacheNoms[id] || `Étudiant ${id.slice(0, 8)}`;
               return (
                 <li key={id}>
                   <button
@@ -207,7 +207,7 @@ export function MessagerieProfesseur() {
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
             <span className="text-4xl mb-3">💬</span>
             <p className="font-medium" style={{ color: 'var(--texte)' }}>Messagerie</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>Sélectionnez un élève pour afficher les messages.</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>Sélectionnez un étudiant pour afficher les messages.</p>
           </div>
         ) : (
           <>
@@ -218,7 +218,7 @@ export function MessagerieProfesseur() {
               </button>
               <div>
                 <h3 className="font-bold text-sm" style={{ color: 'var(--texte)' }}>
-                  {cacheNoms[interlocuteurId] || `Élève ${interlocuteurId.slice(0, 8)}`}
+                  {cacheNoms[interlocuteurId] || `Étudiant ${interlocuteurId.slice(0, 8)}`}
                 </h3>
                 <p className="text-[10px]" style={{ color: 'var(--texte-secondaire)' }}>En ligne ou asynchrone</p>
               </div>
@@ -228,7 +228,7 @@ export function MessagerieProfesseur() {
             <div className="flex-1 overflow-y-auto space-y-3 px-4 py-2" style={{ background: 'var(--fond-page)' }}>
               {conversation.length === 0 ? (
                 <p className="text-xs text-center py-6 italic" style={{ color: 'var(--texte-secondaire)' }}>
-                  Début de la conversation. Envoyez un message à l&apos;élève.
+                  Début de la conversation. Envoyez un message à l&apos;étudiant.
                 </p>
               ) : (
                 conversation.map((m) => {

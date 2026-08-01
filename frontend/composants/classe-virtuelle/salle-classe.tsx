@@ -4,7 +4,7 @@
 // Layout : Vidéo gauche 60% + Mushaf droite 40% (desktop)
 //          Onglets "Vidéo" / "Mushaf" (mobile)
 //
-// Rôle élève : surlignage Mushaf en lecture seule, bouton "Mode audio seul",
+// Rôle étudiant : surlignage Mushaf en lecture seule, bouton "Mode audio seul",
 //              bouton "Terminer le cours" avec modal de confirmation.
 // Rôle professeur : contrôles de surlignage actifs, bouton "Terminer" →
 //                   /professeur/suivi/[sessionId].
@@ -242,7 +242,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
   const basculerEnregistrement = useCallback(async () => {
     if (!seance || role !== 'PROFESSEUR') return;
     if (!seance.enregistrementConsente) {
-      const ok = confirm("Confirmez-vous avoir obtenu le consentement parental pour enregistrer cet élève ?");
+      const ok = confirm("Confirmez-vous avoir obtenu le consentement parental pour enregistrer cet étudiant ?");
       if (!ok) return;
       try {
         const maj = await apiClient.post<SeanceCours>(
@@ -362,7 +362,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
                   )}
                 </div>
 
-                {/* Élève */}
+                {/* Étudiant */}
                 <div className="relative aspect-video rounded-xl bg-[#1b2b35] border border-gray-700 flex flex-col items-center justify-center overflow-hidden">
                   {camActive ? (
                     <div
@@ -375,7 +375,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
                     <span className="text-gray-400 text-xs">Caméra off</span>
                   )}
                   <span className="absolute bottom-1 left-2 text-[10px] bg-black/60 px-1.5 rounded">
-                    {role === 'ELEVE' ? 'Moi' : 'Élève'}
+                    {role === 'ELEVE' ? 'Moi' : 'Étudiant'}
                   </span>
                 </div>
               </div>
@@ -417,7 +417,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         className="rounded-2xl border p-4 space-y-3"
         style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
       >
-        {/* Mode audio seul (élève) */}
+        {/* Mode audio seul (étudiant) */}
         {role === 'ELEVE' && (
           <button
             onClick={() => setModeAudioSeul(!modeAudioSeul)}
@@ -457,7 +457,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
           </div>
         )}
 
-        {/* Rappels pour l'élève */}
+        {/* Rappels pour l'étudiant */}
         {role === 'ELEVE' && (
           <div className="rounded-lg p-3 text-xs space-y-1" style={{ backgroundColor: 'var(--fond)', color: 'var(--texte-secondaire)' }}>
             <p className="font-semibold" style={{ color: 'var(--texte)' }}>Rappels :</p>
@@ -484,7 +484,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
 
   const panneauMushaf = (
     <div className="h-full flex flex-col">
-      {/* Badge lecture seule pour l'élève */}
+      {/* Badge lecture seule pour l'étudiant */}
       {role === 'ELEVE' && (
         <div
           className="mb-2 px-3 py-2 rounded-xl text-xs font-medium border"
