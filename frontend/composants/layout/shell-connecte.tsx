@@ -36,7 +36,7 @@ const LIENS_PAR_ROLE: Record<Role, LienSidebar[]> = {
   ],
 };
 
-export function ShellConnecte({ children }: { children: ReactNode }) {
+export function ShellConnecte({ children, sansPadding = false }: { children: ReactNode, sansPadding?: boolean }) {
   const { utilisateur, deconnexion } = utiliserAuth();
   const pathname = usePathname();
   const [valide, setValide] = useState<boolean | null>(null);
@@ -180,7 +180,7 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
         </header>
 
         {/* Contenu — scroll interne uniquement */}
-        <main className={`flex-1 overflow-y-auto custom-scrollbar w-full px-4 sm:px-6 py-6 ${utilisateur.role === 'ADMIN' ? 'pb-6' : 'pb-24 md:pb-6'}`}>
+        <main className={`flex-1 overflow-y-auto custom-scrollbar w-full ${sansPadding ? '' : 'px-4 sm:px-6 py-6'} ${utilisateur.role === 'ADMIN' ? 'pb-6' : 'pb-24 md:pb-6'}`}>
           {enChargementValide ? (
             <div className="flex items-center gap-3 py-10">
               <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--primaire)', borderTopColor: 'transparent' }} />

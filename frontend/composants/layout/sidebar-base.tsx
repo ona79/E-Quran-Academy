@@ -63,7 +63,7 @@ export function SidebarBase({
       >
         {/* Logo et Toggle */}
         <div
-          className={`px-4 py-5 flex items-center h-20 group relative ${reduite ? 'justify-center cursor-pointer' : 'justify-between'}`}
+          className={`px-4 flex items-center h-14 group relative ${reduite ? 'justify-center cursor-pointer' : 'justify-between'}`}
           style={{ borderBottom: '1px solid rgba(255,255,255,0.12)', color: '#FFFFFF' }}
           onClick={reduite ? () => toggleReduite(false) : undefined}
           title={reduite ? "Agrandir le menu" : undefined}

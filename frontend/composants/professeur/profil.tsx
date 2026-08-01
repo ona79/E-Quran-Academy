@@ -13,7 +13,7 @@ const SI = {
 function Champ({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="etiquette !text-[11px]">
+      <label htmlFor={id} className="etiquette !text-[11px] sm:!text-xs mb-1 block">
         {label}
       </label>
       {children}
@@ -76,17 +76,17 @@ export function ProfilProfesseurForm() {
 
   if (enChargement) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full min-h-[200px]">
         <div className="w-6 h-6 rounded-full border-2 animate-spin" style={{ borderColor: 'var(--primaire)', borderTopColor: 'transparent' }} />
       </div>
     );
   }
 
   return (
-    <form onSubmit={soumettre} className="h-full flex flex-col max-w-3xl mx-auto w-full">
+    <form onSubmit={soumettre} className="flex flex-col max-w-3xl mx-auto w-full pb-8 gap-4 sm:gap-6">
       {/* En-tête */}
       <div 
-        className="relative mb-6 rounded-2xl overflow-hidden p-6 border border-[#E5E0D5]"
+        className="relative rounded-2xl overflow-hidden p-4 sm:p-6 border border-[#E5E0D5] shrink-0 shadow-sm"
         style={{
           backgroundImage: 'url("/mascotte/image_fond_avant_footer.png")',
           backgroundSize: 'cover',
@@ -94,17 +94,17 @@ export function ProfilProfesseurForm() {
           backgroundColor: '#FDFBF6'
         }}
       >
-        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-0"></div>
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="absolute inset-0 bg-white/70 sm:bg-white/60 backdrop-blur-[2px] z-0"></div>
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">Mon profil professeur</h1>
-            <p className="text-sm mt-1 text-[#6B7280]">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Mon profil professeur</h1>
+            <p className="text-xs sm:text-sm mt-1 text-[#6B7280]">
               Ces informations sont visibles par les élèves sur votre fiche.
             </p>
           </div>
           {profil && (
             <span
-              className="text-[13px] font-semibold px-4 py-1.5 rounded-full shrink-0 flex items-center gap-1.5 bg-white shadow-sm"
+              className="text-xs sm:text-[13px] font-semibold px-3 py-1 sm:px-4 sm:py-1.5 rounded-full shrink-0 flex items-center gap-1.5 bg-white shadow-sm"
               style={{
                 color: profil.valide ? '#0B5E45' : '#92751F',
                 border: `1px solid ${profil.valide ? 'rgba(11,94,69,0.3)' : 'rgba(184,146,58,0.3)'}`,
@@ -112,7 +112,7 @@ export function ProfilProfesseurForm() {
             >
               {profil.valide ? (
                 <>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#0B5E45" stroke="#0B5E45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#0B5E45" stroke="#0B5E45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[18px] sm:h-[18px]">
                     <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
                     <path stroke="#FFF" d="m9 12 2 2 4-4"/>
                   </svg>
@@ -125,10 +125,10 @@ export function ProfilProfesseurForm() {
       </div>
 
       {/* Corps : 2 colonnes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
         {/* Colonne gauche */}
-        <div className="rounded-2xl p-4 space-y-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
-          <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#B8923A' }}>
+        <div className="rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+          <p className="text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2" style={{ color: '#B8923A' }}>
             Identité &amp; Justificatifs
           </p>
           <Champ id="photoUrl" label="URL de votre photo">
@@ -165,8 +165,8 @@ export function ProfilProfesseurForm() {
         </div>
 
         {/* Colonne droite */}
-        <div className="rounded-2xl p-4 space-y-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
-          <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#B8923A' }}>
+        <div className="rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+          <p className="text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2" style={{ color: '#B8923A' }}>
             Enseignement &amp; Tarification
           </p>
           <Champ id="tarif" label="Tarif horaire (FCFA/h)">
@@ -205,7 +205,7 @@ export function ProfilProfesseurForm() {
       </div>
 
       {/* Retours + bouton */}
-      <div className="mt-4 space-y-2">
+      <div className="space-y-2 mt-2 shrink-0">
         {erreur && (
           <p className="text-xs px-3 py-2 rounded-lg" style={{ color: '#DC2626', background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}>
             ⚠️ {erreur}
@@ -218,7 +218,7 @@ export function ProfilProfesseurForm() {
         )}
         <button
           type="submit" disabled={enEnvoi}
-          className="btn-primaire w-full !py-3"
+          className="btn-primaire w-full !py-3 font-semibold shadow-sm"
         >
           {enEnvoi ? 'Enregistrement…' : 'Enregistrer le profil'}
         </button>

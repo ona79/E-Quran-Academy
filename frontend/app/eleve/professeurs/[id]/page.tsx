@@ -2,7 +2,7 @@
 
 import { GardeRoute } from '@/composants/auth/garde-route';
 import { ShellConnecte } from '@/composants/layout/shell-connecte';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -19,6 +19,79 @@ interface ProfilComplet {
   valide: boolean;
   langue?: string;
   genre?: string | null;
+}
+
+/* ── Lecteur audio personnalisé ── */
+function LecteurAudio({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [enLecture, setEnLecture] = useState(false);
+  const [progression, setProgression] = useState(0);
+  const [dureeTotal, setDureeTotal] = useState(0);
+  const [tempsActuel, setTempsActuel] = useState(0);
+
+  const formaterTemps = (s: number) => {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  const toggleLecture = () => {
+    if (!audioRef.current) return;
+    if (enLecture) { audioRef.current.pause(); } else { audioRef.current.play(); }
+    setEnLecture(!enLecture);
+  };
+
+  const clicProgression = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !dureeTotal) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * dureeTotal;
+  };
+
+  return (
+    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col gap-3">
+      <audio
+        ref={audioRef} src={src}
+        onTimeUpdate={() => {
+          if (audioRef.current) {
+            setTempsActuel(audioRef.current.currentTime);
+            setProgression((audioRef.current.currentTime / audioRef.current.duration) * 100 || 0);
+          }
+        }}
+        onLoadedMetadata={() => audioRef.current && setDureeTotal(audioRef.current.duration)}
+        onEnded={() => setEnLecture(false)}
+      />
+      <div className="flex items-center gap-4">
+        {/* Bouton play */}
+        <button
+          onClick={toggleLecture}
+          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white shadow-sm transition-transform hover:scale-105"
+          style={{ backgroundColor: 'var(--primaire)' }}
+        >
+          {enLecture ? (
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+          ) : (
+            <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+          )}
+        </button>
+
+        {/* Barre de progression */}
+        <div className="flex-1 relative h-1.5 bg-gray-200 rounded-full cursor-pointer" onClick={clicProgression}>
+          <div className="absolute top-0 left-0 h-full rounded-full transition-all" style={{ width: `${progression}%`, backgroundColor: 'var(--primaire)' }} />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 shadow"
+            style={{ left: `calc(${progression}% - 6px)`, borderColor: 'var(--primaire)' }}
+          />
+        </div>
+        
+        {/* Temps */}
+        <span className="text-xs font-medium text-gray-500 shrink-0">
+          {formaterTemps(tempsActuel)}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 function Champ({ label, valeur }: { label: string; valeur: React.ReactNode }) {
@@ -56,168 +129,192 @@ export default function PageProfilProfesseurEleve() {
     charger();
   }, [id]);
 
+  // Simulation d'une liste d'avis vide (pour l'instant, l'API ne renvoie pas d'avis)
+  const avis: any[] = [];
+
   return (
     <GardeRoute rolesAutorises={['ELEVE']}>
-      <ShellConnecte>
-        <div className="max-w-6xl w-full h-full flex flex-col mx-auto">
-          {/* Retour */}
-          <div className="flex items-center justify-between flex-wrap gap-3 shrink-0 mb-4">
-            <button
-              onClick={() => router.back()}
-              className="text-sm flex items-center gap-1 hover:underline"
-              style={{ color: 'var(--primaire)' }}
-            >
-              ← Retour à la liste
-            </button>
-          </div>
+      <ShellConnecte sansPadding>
+        <div 
+          className="w-full min-h-full relative flex flex-col"
+          style={{
+            backgroundImage: 'url(/mascotte/image_fond_avant_footer.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            backgroundColor: '#FAFAFA',
+            backgroundBlendMode: 'overlay'
+          }}
+        >
+          {/* Contenu principal défilant naturellement */}
+          <div className="flex-1 pb-10">
+            <div className="max-w-6xl mx-auto w-full pt-6 px-4 sm:px-6">
+              
+              {/* Plus de bouton retour ici, on utilise l'espace complet */}
 
-          {/* Contenu principal défilant */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
-            {chargement ? (
-              <div className="space-y-4 px-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-24 rounded-2xl animate-pulse" style={{ backgroundColor: 'var(--fond-surface)' }} />
-                ))}
-              </div>
-            ) : !profil ? (
-              <p className="px-6" style={{ color: 'var(--erreur)' }}>Professeur introuvable.</p>
-            ) : (
-              <div className="space-y-8">
-                {/* Hero du profil */}
-                <div
-                  className="relative overflow-hidden rounded-b-3xl sm:rounded-3xl mx-0 sm:mx-6 border"
-                  style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                >
-                  <div className="px-6 py-10 relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                    {/* Avatar */}
-                    <div
-                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 border-4"
-                      style={{
-                        backgroundColor: 'var(--accent)',
-                        color: '#FFFFFF',
-                        borderColor: 'var(--bordure)',
-                      }}
-                    >
-                      {profil.nomComplet.charAt(0).toUpperCase()}
-                    </div>
-
-                    <div className="text-center sm:text-left flex-1">
-                      <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--texte)' }}>
-                        {profil.nomComplet}
-                      </h1>
-                      
-                      <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3 mt-4">
-                        <span
-                          className="text-xs px-2.5 py-1 rounded-full font-medium"
-                          style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)' }}
-                        >
-                          {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
-                        </span>
-                        {profil.valide && (
-                          <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}>
-                            ✓ Validé
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="mt-4 text-lg font-bold" style={{ color: 'var(--primaire)' }}>
-                        {profil.tarifHoraire ? `${profil.tarifHoraire.toLocaleString('fr-FR')} FCFA` : 'Tarif non défini'}
-                        <span className="text-sm font-normal" style={{ color: 'var(--texte-secondaire)' }}> / heure</span>
-                      </p>
-                    </div>
-
-                    {/* Actions : Réserver */}
-                    <div className="flex flex-col gap-2 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
-                      <Link
-                        href={`/eleve/reserver?prof=${profil.userId}`}
-                        className="btn-primaire w-full text-center"
-                      >
-                        Réserver un cours
-                      </Link>
-                    </div>
-                  </div>
+              {chargement ? (
+                <div className="space-y-4">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-24 rounded-2xl animate-pulse bg-white border" />
+                  ))}
                 </div>
+              ) : !profil ? (
+                <p className="bg-white p-6 rounded-xl border" style={{ color: 'var(--erreur)' }}>Professeur introuvable.</p>
+              ) : (
+                <div className="space-y-6">
+                  {/* Hero du profil */}
+                  <div className="relative overflow-hidden rounded-2xl border bg-white shadow-sm p-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      
+                      <div className="flex flex-row items-center gap-4 w-full sm:w-auto">
+                        {/* Avatar */}
+                        <div
+                          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold shrink-0 border border-gray-100 shadow-sm"
+                          style={{ backgroundColor: '#E5E7EB', color: '#4B5563' }}
+                        >
+                          {profil.nomComplet.charAt(0).toUpperCase()}
+                        </div>
 
-                <div className="px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Colonne Gauche : Infos & Medias */}
-                  <div className="lg:col-span-1 space-y-6">
-                    {/* Infos compte */}
-                    <div
-                      className="rounded-2xl border p-6 space-y-5"
-                      style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                    >
-                      <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--texte)' }}>
-                        Informations
-                      </h3>
-                      <Champ label="Langue parlée" valeur={profil.langue ?? 'Français'} />
-                      <Champ label="Genre" valeur={profil.genre === 'F' ? 'Femme' : profil.genre === 'M' ? 'Homme' : 'Non précisé'} />
-                    </div>
-
-                    {/* Documents */}
-                    {(profil.ijazaUrl || profil.audioUrl) && (
-                      <div
-                        className="rounded-2xl border p-6 space-y-5"
-                        style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                      >
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--texte)' }}>
-                          Documents & Médias
-                        </h3>
-                        {profil.audioUrl && (
-                          <div>
-                            <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: 'var(--texte-secondaire)' }}>
-                              Récitation audio
-                            </p>
-                            <audio controls src={profil.audioUrl} className="w-full h-10" />
+                        {/* Nom et Badges (Mobile) */}
+                        <div className="flex-1 sm:hidden">
+                          <h1 className="text-xl font-bold mb-1 leading-tight" style={{ color: 'var(--texte)' }}>
+                            {profil.nomComplet}
+                          </h1>
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
+                              {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
+                            </span>
+                            {profil.valide && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#D1FAE5', color: '#059669' }}>
+                                ✓ Validé
+                              </span>
+                            )}
                           </div>
-                        )}
-                        {profil.ijazaUrl && (
-                          <div className={profil.audioUrl ? 'mt-4' : ''}>
-                            <p className="text-xs font-medium uppercase tracking-wide mb-1" style={{ color: 'var(--texte-secondaire)' }}>
-                              Ijaza
-                            </p>
-                            <a
-                              href={profil.ijazaUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm font-medium transition-opacity hover:opacity-70 flex items-center gap-1"
-                              style={{ color: 'var(--primaire)' }}
-                            >
-                              🎓 Voir le certificat ↗
-                            </a>
-                          </div>
-                        )}
+                        </div>
                       </div>
-                    )}
+
+                      <div className="hidden sm:block flex-1 text-left">
+                        <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--texte)' }}>
+                          {profil.nomComplet}
+                        </h1>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
+                            {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
+                          </span>
+                          {profil.valide && (
+                            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: '#D1FAE5', color: '#059669' }}>
+                              ✓ Validé
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-3 text-base font-bold" style={{ color: 'var(--primaire)' }}>
+                          {profil.tarifHoraire ? `${profil.tarifHoraire.toLocaleString('fr-FR')} FCFA` : 'Tarif non défini'}
+                          <span className="text-xs font-normal" style={{ color: 'var(--texte-secondaire)' }}> / heure</span>
+                        </p>
+                      </div>
+
+                      {/* Actions : Réserver */}
+                      <div className="shrink-0 w-full sm:w-auto flex items-center justify-between sm:block border-t sm:border-t-0 border-gray-100 pt-3 sm:pt-0">
+                        <div className="sm:hidden">
+                          <p className="text-base font-bold" style={{ color: 'var(--primaire)' }}>
+                            {profil.tarifHoraire ? `${profil.tarifHoraire.toLocaleString('fr-FR')} FCFA` : 'N/A'}
+                            <span className="text-[10px] font-normal" style={{ color: 'var(--texte-secondaire)' }}> / h</span>
+                          </p>
+                        </div>
+                        <Link
+                          href={`/eleve/reserver?prof=${profil.userId}`}
+                          className="btn-primaire text-center px-6 py-2.5 rounded-xl shadow-sm font-semibold text-sm w-auto"
+                        >
+                          Réserver
+                        </Link>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Colonne Droite : Bio */}
-                  <div className="lg:col-span-2 space-y-6">
-                    {profil.bio ? (
-                      <div
-                        className="rounded-2xl border p-6"
-                        style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                      >
-                        <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--texte)' }}>
+                  {/* Bloc fusionné : Infos + Bio + Audio */}
+                  <div className="rounded-2xl border bg-white p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row gap-5">
+                    
+                    {/* Colonne Informations (gauche) */}
+                    <div className="sm:w-1/3 flex flex-col gap-4">
+                      <div>
+                        <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--texte-secondaire)' }}>
+                          Informations
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-1 gap-3">
+                          <Champ label="Langue" valeur={profil.langue ?? 'Français'} />
+                          <Champ label="Genre" valeur={profil.genre === 'F' ? 'Femme' : profil.genre === 'M' ? 'Homme' : 'Non précisé'} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Séparateur */}
+                    <div className="hidden sm:block w-px bg-gray-100 shrink-0" />
+                    <div className="block sm:hidden h-px w-full bg-gray-100" />
+
+                    {/* Colonne Biographie & Audio (droite) */}
+                    <div className="sm:w-2/3 flex flex-col gap-5">
+                      <div>
+                        <h3 className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--texte-secondaire)' }}>
                           Biographie
                         </h3>
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--texte)' }}>
-                          {profil.bio}
-                        </p>
+                        {profil.bio ? (
+                          <p className="text-[13px] leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--texte)' }}>
+                            {profil.bio}
+                          </p>
+                        ) : (
+                          <p className="text-[13px] italic" style={{ color: 'var(--texte-secondaire)' }}>
+                            Aucune biographie renseignée.
+                          </p>
+                        )}
                       </div>
+
+                      {profil.audioUrl && (
+                        <div>
+                          <h3 className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--texte-secondaire)' }}>
+                            Récitation audio
+                          </h3>
+                          <LecteurAudio src={profil.audioUrl} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Avis des élèves */}
+                  <div className="rounded-2xl border bg-white p-4 shadow-sm mb-8">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--texte)' }}>
+                      Avis des élèves
+                    </h3>
+                    
+                    {avis.length === 0 ? (
+                      <p className="text-sm italic" style={{ color: 'var(--texte-secondaire)' }}>
+                        Aucun avis pour ce professeur pour le moment.
+                      </p>
                     ) : (
-                      <div
-                        className="rounded-2xl border p-6 text-center"
-                        style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
-                      >
-                        <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-                          Aucune biographie renseignée.
-                        </p>
+                      <div className="space-y-6">
+                        {avis.map((a, i) => (
+                          <div key={i} className="flex gap-4 border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+                              {a.nom.charAt(0)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <p className="font-bold text-sm">{a.nom}</p>
+                                <span className="text-[10px] text-gray-400">{a.date}</span>
+                              </div>
+                              <div className="flex text-yellow-400 text-xs mb-2">★★★★★</div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {a.commentaire}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
+
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </ShellConnecte>

@@ -135,7 +135,7 @@ export function DisponibilitesProfesseur() {
   }
 
   return (
-    <div className="h-full flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4">
       {erreur && (
         <div className="carte text-sm font-semibold shrink-0" style={{ color: '#DC2626', background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}>
           ⚠️ {erreur}
@@ -168,7 +168,7 @@ export function DisponibilitesProfesseur() {
       </section>
 
       {/* Calendrier 7 Jours */}
-      <section className="flex-1 flex flex-col min-h-0">
+      <section className="flex flex-col">
         <div className="flex items-center justify-between mb-3 shrink-0">
           <div>
             <h2 className="text-lg font-bold text-[var(--texte)]">Calendrier hebdomadaire</h2>
@@ -178,8 +178,8 @@ export function DisponibilitesProfesseur() {
           </div>
         </div>
 
-        {/* VUE DESKTOP : Grille 7 colonnes alignées en haut, scroll global si nécessaire */}
-        <div className="hidden md:grid grid-cols-7 gap-2 flex-1 min-h-0 items-start overflow-y-auto pr-2 custom-scrollbar pb-4">
+        {/* Grille responsive : 2 colonnes sur mobile, 7 colonnes sur ordinateur */}
+        <div className="grid grid-cols-2 md:grid-cols-7 gap-2 items-stretch pb-4">
           {JOURS.map((j) => {
             const creneauxJour = dispos
               .filter((d) => d.jour === j)
@@ -188,7 +188,7 @@ export function DisponibilitesProfesseur() {
             return (
               <div 
                 key={j} 
-                className="flex flex-col rounded-2xl p-2 h-fit"
+                className="flex flex-col rounded-2xl p-2 h-full"
                 style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
               >
                 <div className="border-b pb-2 mb-2 text-center shrink-0" style={{ borderColor: 'var(--bordure)' }}>
@@ -221,87 +221,22 @@ export function DisponibilitesProfesseur() {
                   ))}
                 </div>
 
-                {/* Bouton d'ajout */}
-                <button
-                  type="button"
-                  onClick={() => ouvrirModalAjout(j)}
-                  className="w-full mt-2 py-1.5 rounded-lg border border-dashed text-[10px] font-medium transition-colors shrink-0"
-                  style={{ borderColor: 'var(--bordure)', color: 'var(--texte-secondaire)' }}
-                >
-                  + Ajouter
-                </button>
+                <div className="mt-auto pt-2">
+                  <button
+                    type="button"
+                    onClick={() => ouvrirModalAjout(j)}
+                    className="w-full py-1.5 rounded-lg border border-dashed text-[10px] font-medium transition-colors shrink-0"
+                    style={{ borderColor: 'var(--bordure)', color: 'var(--texte-secondaire)' }}
+                  >
+                    + Ajouter
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* VUE MOBILE : Liste par onglets (sans grille) */}
-        <div className="md:hidden flex-1 flex flex-col min-h-0">
-          {/* Sélecteur de jour horizontal (scroll) */}
-          <div className="flex gap-2 overflow-x-auto pb-2 shrink-0 scrollbar-none">
-            {JOURS.map((j) => {
-              const count = dispos.filter((d) => d.jour === j).length;
-              const actif = jourActifMobile === j;
-              return (
-                <button
-                  key={j}
-                  type="button"
-                  onClick={() => setJourActifMobile(j)}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold border shrink-0 transition-all"
-                  style={{
-                    background: actif ? 'var(--primaire)' : '#FFFFFF',
-                    color: actif ? '#FFF' : 'var(--texte-secondaire)',
-                    borderColor: actif ? 'var(--primaire)' : 'var(--bordure)',
-                  }}
-                >
-                  {libelleJour(j).slice(0, 3)} ({count})
-                </button>
-              );
-            })}
-          </div>
 
-          {/* Liste des créneaux pour le jour sélectionné */}
-          <div className="flex-1 overflow-y-auto rounded-2xl p-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
-            <div className="flex justify-between items-center pb-2 border-b mb-3" style={{ borderColor: 'var(--bordure)' }}>
-              <span className="font-bold text-xs text-[#B8923A]">{libelleJour(jourActifMobile)}</span>
-              <button 
-                type="button" 
-                onClick={() => ouvrirModalAjout(jourActifMobile)} 
-                className="px-2 py-1 text-[10px] rounded bg-[var(--primaire)] text-white"
-              >
-                + Ajouter
-              </button>
-            </div>
-
-            {dispos.filter((d) => d.jour === jourActifMobile).length === 0 ? (
-              <p className="text-xs italic text-center py-6 text-[var(--texte)] opacity-60">
-                Aucune disponibilité définie.
-              </p>
-            ) : (
-              <div className="grid grid-cols-2 gap-2">
-                {dispos
-                  .filter((d) => d.jour === jourActifMobile)
-                  .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut))
-                  .map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => confirmerSuppression(c.id)}
-                      className="text-center p-2 rounded-xl text-[10px] font-bold border flex flex-col items-center justify-center transition-all hover:bg-red-900/30 hover:border-red-500 hover:text-red-300"
-                      style={{
-                        background: 'rgba(27,94,59,0.1)',
-                        borderColor: 'rgba(11,94,69,0.5)',
-                        color: 'var(--texte)'
-                      }}
-                    >
-                      <span>{c.heureDebut} - {c.heureFin}</span>
-                      {c.recurrence === 'PONCTUELLE' && <span className="text-[8px] opacity-60 font-normal">Ponctuel</span>}
-                    </button>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
       </section>
 
       {/* Modal d'ajout de créneau */}
