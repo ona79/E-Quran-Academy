@@ -34,10 +34,14 @@ export function CarteProf({ profil, nomComplet, noteMoyenne, lienProfil }: Carte
       <div className="flex items-start gap-2 sm:gap-3">
         {/* Avatar */}
         <div
-          className="w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xs sm:text-base font-medium shrink-0"
+          className="w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xs sm:text-base font-medium shrink-0 overflow-hidden"
           style={{ backgroundColor: 'var(--couleur-primaire)', color: 'var(--couleur-ivoire)' }}
         >
-          {initiales}
+          {profil.photoUrl ? (
+            <img src={profil.photoUrl.startsWith('/') ? `/api-backend${profil.photoUrl}` : profil.photoUrl} alt={nomComplet ?? 'Professeur'} className="w-full h-full object-cover" />
+          ) : (
+            initiales
+          )}
         </div>
 
         <div className="flex-1 min-w-0">

@@ -34,7 +34,7 @@ export function HeroSection() {
             x: { duration: 0.8 },
             backgroundPosition: { duration: 4, repeat: Infinity, ease: 'linear' }
           }}
-          className="text-3xl md:text-5xl lg:text-[64px] font-bold leading-tight mt-10 md:mt-16 mb-4 md:mb-5"
+          className="text-3xl md:text-5xl lg:text-[64px] font-bold leading-normal py-4 mt-10 md:mt-16 mb-2 md:mb-3"
           style={{ 
             fontFamily: "'Amiri', 'Traditional Arabic', serif", 
             direction: 'rtl',
@@ -43,6 +43,7 @@ export function HeroSection() {
             backgroundSize: '200% auto',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            lineHeight: '1.6' // Permet d'éviter que les harakat soient coupés par le backgroundClip
           }}
         >
           خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ
@@ -149,12 +150,12 @@ export function HeroSection() {
                   <div className="space-y-0 md:space-y-0.5">
                     <p className="text-[9px] md:text-[11px] font-medium text-[#666666] flex items-center gap-1 md:gap-1.5">
                       <span className="text-[10px] md:text-[12px]">🏅</span>
-                      8 ans d&apos;expérience
+                      Professeur certifié
                     </p>
                     <div className="flex items-center gap-1 md:gap-1.5 mt-0.5">
                       <span className="text-[10px] md:text-[12px]">⭐</span>
-                      <span className="text-[9px] md:text-[11px] font-extrabold text-[#1A1A1A]">4.9</span>
-                      <span className="text-[9px] md:text-[11px] text-[#999999]">(128 avis)</span>
+                      <span className="text-[9px] md:text-[11px] font-extrabold text-[#1A1A1A]">Top noté</span>
+                      <span className="text-[9px] md:text-[11px] text-[#999999]">(Avis vérifiés)</span>
                     </div>
                   </div>
                 </div>

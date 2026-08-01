@@ -5,10 +5,11 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AuditModule } from './audit/audit.module';
+import { FichiersModule } from './fichiers/fichiers.module';
 
 @Global()
 @Module({
-  imports: [PrismaModule, AuthModule, AuditModule],
-  exports: [PrismaModule, AuthModule, AuditModule],
+  imports: [PrismaModule, AuthModule, AuditModule, FichiersModule],
+  exports: [PrismaModule, AuthModule, AuditModule, FichiersModule],
 })
 export class PartagesModule {}

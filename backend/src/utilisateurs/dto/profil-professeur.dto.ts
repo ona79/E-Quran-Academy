@@ -12,9 +12,10 @@ export class MettreAJourProfilProfesseurDto {
   @MaxLength(2000)
   bio?: string;
 
-  @ApiPropertyOptional({ example: 'https://r2.example.com/avatar.jpg' })
+  @ApiPropertyOptional({ example: '/uploads/profils/avatar.jpg' })
   @IsOptional()
-  @EstUrlExterneSecurisee()
+  @IsString()
+  @MaxLength(500)
   photoUrl?: string;
 
   @ApiPropertyOptional({ example: 'https://r2.example.com/ijaza.pdf' })

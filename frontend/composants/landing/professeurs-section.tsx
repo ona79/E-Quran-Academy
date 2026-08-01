@@ -8,18 +8,14 @@ interface ProfilProfesseur {
   id: string;
   userId: string;
   nomComplet: string;
+  photoUrl?: string;
   bioCourte?: string;
   qiraats: string[];
   tarifHoraire: number;
   noteMoyenne?: number;
+  totalAvis?: number;
 }
 
-const DUMMY_PROFS: ProfilProfesseur[] = [
-  { id: '1', userId: 'u1', nomComplet: 'Malick Diallo', bioCourte: "Professeur certifié Ijaza en lecture coranique avec plus de 10 ans d'expérience pédagogique.", qiraats: ['Hafs'], tarifHoraire: 10000, noteMoyenne: 5.0 },
-  { id: '2', userId: 'u2', nomComplet: 'Moussa Kouyaté', bioCourte: "Hafiz certifié, spécialisé dans la récitation Warsh. Approche douce et méthodique.", qiraats: ['Warsh'], tarifHoraire: 1500, noteMoyenne: 5.0 },
-  { id: '3', userId: 'u3', nomComplet: 'Aïssatou Fall', bioCourte: "Professeure passionnée avec une approche personnalisée, idéale pour les débutants.", qiraats: ['Hafs'], tarifHoraire: 2000, noteMoyenne: 4.9 },
-  { id: '4', userId: 'u4', nomComplet: 'Ousmane Ba', bioCourte: "Spécialiste en Tajweed et Makhraj avec une méthode interactive et efficace.", qiraats: ['Hafs', 'Warsh'], tarifHoraire: 1000, noteMoyenne: 4.8 },
-];
 
 const AVATAR_COLORS = [
   { bg: '#E8F1EC', text: '#1F6948', ring: '#1F6948' },
@@ -71,8 +67,8 @@ export function ProfesseursSection() {
             try {
               const r = await fetch(`/api-backend/avis/professeurs/${p.userId}/moyenne`);
               if (r.ok) {
-                const { moyenne } = await r.json();
-                return { ...p, noteMoyenne: moyenne };
+                const { moyenne, total } = await r.json();
+                return { ...p, noteMoyenne: moyenne, totalAvis: total };
               }
             } catch (err) {
               console.error(err);
@@ -81,9 +77,9 @@ export function ProfesseursSection() {
           })
         );
         
-        setProfesseurs(profsAvecNotes.length === 0 ? DUMMY_PROFS : profsAvecNotes);
+        setProfesseurs(profsAvecNotes);
       } catch {
-        setProfesseurs(DUMMY_PROFS);
+        setProfesseurs([]);
       } finally {
         setChargement(false);
       }
@@ -113,7 +109,7 @@ export function ProfesseursSection() {
             <span className="text-[11px] font-bold text-[#B8923A] uppercase tracking-widest">Nos enseignants</span>
           </div>
 
-          <div className="h-[50px] md:h-[70px] relative w-full flex justify-center items-center mb-3">
+          <div className="h-[80px] md:h-[100px] relative w-full flex justify-center items-center mb-3">
             <AnimatePresence mode="wait">
               <motion.h2
                 key={indexCitation}
@@ -129,13 +125,14 @@ export function ProfesseursSection() {
                   y: { duration: 0.5 },
                   backgroundPosition: { duration: 3, repeat: Infinity, ease: 'linear' }
                 }}
-                className="text-[32px] md:text-[46px] font-extrabold leading-tight font-arabic absolute text-center w-full"
+                className="text-[32px] md:text-[46px] font-extrabold leading-normal py-4 font-arabic absolute text-center w-full"
                 dir="rtl"
                 style={{
                   backgroundImage: 'linear-gradient(to right, #1F6948, #B8923A, #22C55E, #1F6948)',
                   backgroundSize: '200% auto',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
+                  lineHeight: '1.6',
                 }}
               >
                 {CITATIONS[indexCitation]}
@@ -169,12 +166,16 @@ export function ProfesseursSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group relative flex flex-col rounded-[16px] md:rounded-[20px] bg-white border border-[#F0EBE1] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(31,105,72,0.10)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
+                  className="group relative flex flex-col rounded-[16px] md:rounded-[20px] bg-transparent border border-[#F0EBE1] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(31,105,72,0.10)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden"
                 >
                   {/* Top colored band */}
                   <div
                     className="h-[60px] md:h-[80px] w-full relative flex-shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${colors.ring}22, ${colors.ring}08)` }}
+                    style={{ 
+                      backgroundImage: "url('/mascotte/image_fond_avant_footer.png')",
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
                   >
                     {/* Online indicator */}
                     <div className="absolute top-2 right-2 md:top-3 md:right-3 flex items-center gap-1 md:gap-1.5 bg-white/80 backdrop-blur-sm rounded-full px-1.5 py-0.5 md:px-2 md:py-1 text-[7px] md:text-[9px] font-bold text-[#1F6948]">
@@ -184,12 +185,16 @@ export function ProfesseursSection() {
                   </div>
 
                   {/* Avatar — overlapping the band */}
-                  <div className="px-3 pb-3 md:px-5 md:pb-5 flex flex-col flex-1 -mt-6 md:-mt-9">
+                  <div className="px-3 pb-3 md:px-5 md:pb-5 flex flex-col flex-1 -mt-6 md:-mt-9 relative z-10">
                     <div
-                      className="w-[44px] h-[44px] md:w-[60px] md:h-[60px] rounded-xl md:rounded-2xl flex items-center justify-center font-extrabold text-[16px] md:text-[22px] mb-2 md:mb-3 shadow-md border-2 md:border-4 border-white"
+                      className="w-[44px] h-[44px] md:w-[60px] md:h-[60px] rounded-xl md:rounded-2xl flex items-center justify-center font-extrabold text-[16px] md:text-[22px] mb-2 md:mb-3 shadow-md border-2 md:border-4 border-white overflow-hidden"
                       style={{ background: colors.bg, color: colors.text }}
                     >
-                      {initiales}
+                      {prof.photoUrl ? (
+                        <img src={prof.photoUrl.startsWith('/') ? `/api-backend${prof.photoUrl}` : prof.photoUrl} alt={prof.nomComplet} className="w-full h-full object-cover" />
+                      ) : (
+                        initiales
+                      )}
                     </div>
 
                     <h3 className="font-extrabold text-[12px] md:text-[15px] text-[#1A1A1A] mb-1 truncate">{prof.nomComplet}</h3>
@@ -209,7 +214,7 @@ export function ProfesseursSection() {
                     <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-3">
                       <div className="scale-75 md:scale-100 origin-left"><EtoileNote note={prof.noteMoyenne ?? 5} /></div>
                       <span className="text-[10px] md:text-[12px] font-bold text-[#1A1A1A]">{(prof.noteMoyenne ?? 5).toFixed(1)}</span>
-                      <span className="text-[9px] md:text-[11px] text-[#BBBBBB]">(32 avis)</span>
+                      <span className="text-[9px] md:text-[11px] text-[#BBBBBB]">({prof.totalAvis ?? 0} avis)</span>
                     </div>
 
                     {/* Price */}

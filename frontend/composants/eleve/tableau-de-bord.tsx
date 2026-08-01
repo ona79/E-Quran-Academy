@@ -13,9 +13,10 @@ import { CarteStatistique } from '@/composants/ui/carte-statistique';
 interface ProfInfo {
   nomComplet: string;
   userId: string;
+  photoUrl?: string;
 }
 
-type ReservationAvecProf = Reservation & { nomProf?: string };
+type ReservationAvecProf = Reservation & { nomProf?: string, photoProf?: string };
 
 // Calcule les stats du mois courant à partir des notes pédagogiques
 interface StatsMois {
@@ -72,7 +73,7 @@ export function TableauDeBordEleve() {
         aVenir.map(async (r) => {
           try {
             const prof = await apiClient.get<ProfInfo>(`/utilisateurs/professeurs/${r.professeurId}`);
-            return { ...r, nomProf: prof.nomComplet };
+            return { ...r, nomProf: prof.nomComplet, photoProf: prof.photoUrl };
           } catch {
             return r;
           }
@@ -189,6 +190,7 @@ export function TableauDeBordEleve() {
                 key={r.id}
                 reservation={r}
                 nomProf={r.nomProf}
+                photoProf={r.photoProf}
               />
             ))}
           </div>

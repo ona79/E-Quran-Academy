@@ -34,6 +34,8 @@ export function ProfilProfesseurForm() {
   const [enEnvoi, setEnEnvoi] = useState(false);
   const [enChargement, setEnChargement] = useState(true);
 
+  const [enUpload, setEnUpload] = useState(false);
+
   useEffect(() => {
     apiClient
       .get<ProfilProfesseur>('/utilisateurs/professeurs/moi')
@@ -49,6 +51,42 @@ export function ProfilProfesseurForm() {
       .catch(() => undefined)
       .finally(() => setEnChargement(false));
   }, []);
+
+  const gererUploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      setErreur("L'image est trop volumineuse (maximum 3 Mo).");
+      return;
+    }
+
+    setErreur(null);
+    setEnUpload(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const rep = await fetch('/api-backend/fichiers/upload', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!rep.ok) {
+        throw new Error("Erreur lors de l'upload");
+      }
+
+      const data = await rep.json();
+      setPhotoUrl(data.url);
+      setSucces("Photo importée avec succès. N'oubliez pas d'enregistrer.");
+      setTimeout(() => setSucces(null), 3000);
+    } catch (err) {
+      setErreur("L'importation de la photo a échoué.");
+    } finally {
+      setEnUpload(false);
+    }
+  };
 
   const soumettre = async (e: FormEvent) => {
     e.preventDefault();
@@ -131,15 +169,21 @@ export function ProfilProfesseurForm() {
           <p className="text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2" style={{ color: '#B8923A' }}>
             Identité &amp; Justificatifs
           </p>
-          <Champ id="photoUrl" label="URL de votre photo">
-            <input
-              id="photoUrl" type="url"
-              className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
-              placeholder="https://exemples.com/photo.jpg"
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
-              value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)}
-            />
+          <Champ id="photoUpload" label="Photo de profil (max 3 Mo)">
+            <div className="flex items-center gap-4">
+              {photoUrl && (
+                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border shadow-sm">
+                  <img src={photoUrl.startsWith('/') ? `/api-backend${photoUrl}` : photoUrl} alt="Aperçu" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <input
+                id="photoUpload" type="file" accept="image/png, image/jpeg, image/webp"
+                className="w-full rounded-xl px-3 py-2 text-sm outline-none file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#E8F5EF] file:text-[#0B5E45] hover:file:bg-[#D1EAE0]"
+                onChange={gererUploadPhoto}
+                disabled={enUpload}
+              />
+            </div>
+            {enUpload && <p className="text-xs text-[#0B5E45] mt-1">Importation en cours...</p>}
           </Champ>
           <Champ id="bio" label="Biographie professionnelle">
             <textarea

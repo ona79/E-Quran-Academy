@@ -77,10 +77,14 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
           {/* Avatar + nom prof */}
           <div className="flex items-center gap-2 mb-2">
             <div
-              className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden"
               style={{ backgroundColor: 'var(--primaire)', color: '#FFFFFF' }}
             >
-              {(nomProf ?? 'P').split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
+              {photoProf ? (
+                <img src={photoProf.startsWith('/') ? `/api-backend${photoProf}` : photoProf} alt={nomProf} className="w-full h-full object-cover" />
+              ) : (
+                (nomProf ?? 'P').split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
+              )}
             </div>
             <div>
               <p className="font-semibold text-sm leading-tight" style={{ color: 'var(--texte)' }}>

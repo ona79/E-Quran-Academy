@@ -135,14 +135,18 @@ export default function PageDetailProfesseur({ params }: { params: { id: string 
                   <div className="px-6 py-10 relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     {/* Avatar */}
                     <div
-                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 border-4"
+                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 border-4 overflow-hidden"
                       style={{
                         backgroundColor: 'var(--accent)',
                         color: '#FFFFFF',
                         borderColor: 'rgba(255,255,255,0.2)',
                       }}
                     >
-                      {utilisateur.nomComplet.charAt(0).toUpperCase()}
+                      {profil?.photoUrl ? (
+                        <img src={profil.photoUrl.startsWith('/') ? `/api-backend${profil.photoUrl}` : profil.photoUrl} alt={utilisateur.nomComplet} className="w-full h-full object-cover" />
+                      ) : (
+                        utilisateur.nomComplet.charAt(0).toUpperCase()
+                      )}
                     </div>
 
                     <div className="text-center sm:text-left flex-1">

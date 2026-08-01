@@ -11,6 +11,7 @@ interface ProfilComplet {
   userId: string;
   nomComplet: string;
   bio?: string | null;
+  photoUrl?: string | null;
   ijazaUrl?: string | null;
   audioUrl?: string | null;
   tarifHoraire: number;
@@ -145,21 +146,11 @@ function CarrouselAvis({ avis }: { avis: AvisAvecNom[] }) {
     });
   };
 
-  const prenoms = ['Aïssatou Fall', 'Moussa K.', 'Ibrahima Sow', 'Ndeye Maguette', 'Fatou Ba', 'Cheikh N.'];
-  const commentaires = [
-    'Excellent professeur, très patient et pédagogue. J\'ai beaucoup progressé Al hamdulillah !',
-    'Cours bien structurés, explications claires. Je recommande à 100%.',
-    'BarakAllahou fik professeur pour votre bienveillance et votre engagement.',
-    'Très satisfait, ma fille adore ses cours. Qu\'Allah vous récompense.',
-    'Méthode excellente, progressions rapides. Très à l\'écoute.',
-    'Les cours sont bien expliqués et adaptés à mon niveau. Jazakallah Khayran !',
-  ];
-  const durees = ['Il y a 2 semaines', 'Il y a 1 mois', 'Il y a 1 mois', 'Il y a 2 mois', 'Il y a 3 semaines', 'Il y a 2 mois'];
+  const displayAvis = avis;
 
-  const displayAvis = avis.length > 0 ? avis : prenoms.map((p, i) => ({
-    id: String(i), note: 5, commentaire: commentaires[i], creeLe: new Date().toISOString(),
-    nomEleve: p, professeurId: '', eleveId: '',
-  } as AvisAvecNom));
+  if (displayAvis.length === 0) {
+    return <p className="text-[14px] text-[#6B7280] text-center py-6">Aucun avis pour le moment.</p>;
+  }
 
   return (
     <div className="relative group">
@@ -173,17 +164,19 @@ function CarrouselAvis({ avis }: { avis: AvisAvecNom[] }) {
           <div key={a.id} className="snap-start w-[75%] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)] shrink-0 bg-white rounded-[16px] border border-[#E5E0D5] p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-full bg-[#E8F5EF] text-[#0B5E45] text-[12px] font-bold flex items-center justify-center shrink-0">
-                {(a.nomEleve ?? prenoms[i % prenoms.length]).charAt(0)}
+                {(a.nomEleve ?? 'É').charAt(0)}
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight">{a.nomEleve ?? prenoms[i % prenoms.length]}</p>
+                <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight">{a.nomEleve ?? 'Étudiant'}</p>
                 <Etoiles note={a.note} taille="sm" />
               </div>
             </div>
             <p className="text-[12px] text-[#4B5563] leading-relaxed line-clamp-3">
-              {a.commentaire ?? commentaires[i % commentaires.length]}
+              {a.commentaire ?? 'Aucun commentaire.'}
             </p>
-            <p className="text-[11px] text-[#9CA3AF] mt-2">{durees[i % durees.length]}</p>
+            <p className="text-[11px] text-[#9CA3AF] mt-2">
+              {new Date(a.creeLe).toLocaleDateString('fr-FR')}
+            </p>
           </div>
         ))}
       </div>
@@ -288,8 +281,12 @@ export default function PageProfilProfesseur() {
         <div className="max-w-[1100px] mx-auto relative z-10">
           <div className="flex flex-col sm:flex-row items-start gap-6">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-extrabold shrink-0 border-4 border-white shadow-lg bg-[#E8F5EF] text-[#08402F]">
-              {initiales}
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-extrabold shrink-0 border-4 border-white shadow-lg bg-[#E8F5EF] text-[#08402F] overflow-hidden">
+              {profil.photoUrl ? (
+                <img src={profil.photoUrl.startsWith('/') ? `/api-backend${profil.photoUrl}` : profil.photoUrl} alt={`Photo de ${profil.nomComplet}`} className="w-full h-full object-cover" />
+              ) : (
+                initiales
+              )}
             </div>
 
             {/* Infos centrales */}
