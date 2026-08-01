@@ -10,7 +10,7 @@ export default function PageReserverEleve() {
   return (
     <GardeRoute rolesAutorises={['ELEVE']}>
       <ShellConnecte>
-        <div className="space-y-6 max-w-5xl">
+        <div className="space-y-6 w-full max-w-7xl mx-auto">
           <div>
             <h1 className="text-2xl font-bold">Trouver un professeur</h1>
             <p className="text-sm mt-1 mb-4" style={{ color: 'var(--texte-secondaire)' }}>

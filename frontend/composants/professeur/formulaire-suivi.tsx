@@ -136,7 +136,7 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
               type="button"
               onClick={() => setNoteGlobale(val)}
               className="text-3xl transition-transform hover:scale-110"
-              style={{ color: val <= noteGlobale ? 'var(--couleur-or)' : 'var(--bordure)' }}
+              style={{ color: val <= noteGlobale ? 'var(--accent)' : 'var(--bordure)' }}
               aria-label={`${val} étoile${val > 1 ? 's' : ''}`}
             >
               ★
@@ -149,7 +149,7 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
       </div>
 
       {erreur && <p className="text-sm font-medium" role="alert" style={{ color: 'var(--erreur)' }}>{erreur}</p>}
-      {succes && <p className="text-sm font-medium" role="status" style={{ color: 'var(--couleur-primaire)' }}>{succes}</p>}
+      {succes && <p className="text-sm font-medium" role="status" style={{ color: 'var(--primaire)' }}>{succes}</p>}
 
       <BoutonPrimaire type="submit" disabled={enEnvoi} pleineLargeur>
         {enEnvoi ? 'Enregistrement…' : 'Enregistrer le suivi'}

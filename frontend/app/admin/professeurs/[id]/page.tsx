@@ -137,8 +137,8 @@ export default function PageDetailProfesseur({ params }: { params: { id: string 
                     <div
                       className="w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 border-4"
                       style={{
-                        backgroundColor: 'var(--couleur-primaire-profond)',
-                        color: '#EFE3C2',
+                        backgroundColor: 'var(--accent)',
+                        color: '#FFFFFF',
                         borderColor: 'rgba(255,255,255,0.2)',
                       }}
                     >
@@ -275,7 +275,7 @@ export default function PageDetailProfesseur({ params }: { params: { id: string 
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm font-medium transition-opacity hover:opacity-70"
-                              style={{ color: 'var(--couleur-primaire)' }}
+                              style={{ color: 'var(--primaire)' }}
                             >
                               🎓 Voir le certificat ↗
                             </a>

@@ -69,8 +69,8 @@ export default function PageProfilEleve() {
       <ShellConnecte>
         <div className="h-full flex flex-col justify-center max-w-md mx-auto w-full">
           <div className="mb-4">
-            <h1 className="text-xl font-bold" style={{ color: '#F0EDE6' }}>Mon profil</h1>
-            <p className="text-xs mt-1" style={{ color: 'rgba(240,237,230,0.55)' }}>
+            <h1 className="text-xl font-bold" style={{ color: 'var(--texte)' }}>Mon profil</h1>
+            <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>
               Gérez vos informations personnelles et préférences.
             </p>
           </div>
@@ -79,13 +79,13 @@ export default function PageProfilEleve() {
             onSubmit={soumettre}
             className="rounded-2xl p-5 space-y-3"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.07)',
+              backgroundColor: 'var(--fond-surface)',
+              border: '1px solid var(--bordure)',
             }}
           >
             {/* Nom complet */}
             <div>
-              <label htmlFor="nomComplet" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+              <label htmlFor="nomComplet" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--texte)' }}>
                 Nom complet
               </label>
               <input
@@ -95,12 +95,12 @@ export default function PageProfilEleve() {
                 maxLength={120}
                 className="w-full rounded-xl px-3 py-2 text-sm outline-none transition-all"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#F0EDE6',
+                  backgroundColor: 'var(--fond)',
+                  border: '1px solid var(--bordure)',
+                  color: 'var(--texte)',
                 }}
-                onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+                onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
                 value={nomComplet}
                 onChange={(e) => setNomComplet(e.target.value)}
               />
@@ -108,18 +108,18 @@ export default function PageProfilEleve() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+              <label htmlFor="email" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--texte)' }}>
                 Adresse e-mail <span className="opacity-50">(non modifiable)</span>
               </label>
               <input
                 id="email"
                 type="email"
                 disabled
-                className="w-full rounded-xl px-3 py-2 text-sm opacity-40 cursor-not-allowed"
+                className="w-full rounded-xl px-3 py-2 text-sm opacity-60 cursor-not-allowed"
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  color: '#F0EDE6',
+                  backgroundColor: 'var(--fond)',
+                  border: '1px solid var(--bordure)',
+                  color: 'var(--texte)',
                 }}
                 value={email}
               />
@@ -127,31 +127,31 @@ export default function PageProfilEleve() {
 
             {/* Langue */}
             <div>
-              <label htmlFor="langue" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+              <label htmlFor="langue" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--texte)' }}>
                 Langue de préférence
               </label>
               <select
                 id="langue"
-                className="w-full rounded-xl px-3 py-2 text-sm outline-none"
+                className="w-full rounded-xl px-3 py-2 text-sm outline-none transition-all"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#F0EDE6',
+                  backgroundColor: 'var(--fond)',
+                  border: '1px solid var(--bordure)',
+                  color: 'var(--texte)',
                 }}
-                onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+                onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
                 value={langue}
                 onChange={(e) => setLangue(e.target.value)}
               >
-                <option value="fr" className="bg-[#131F18]">Français</option>
-                <option value="ar" className="bg-[#131F18]">العربية (Arabe)</option>
-                <option value="en" className="bg-[#131F18]">English (Anglais)</option>
+                <option value="fr">Français</option>
+                <option value="ar">العربية (Arabe)</option>
+                <option value="en">English (Anglais)</option>
               </select>
             </div>
 
             {/* Fuseau horaire */}
             <div>
-              <label htmlFor="fuseauHoraire" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+              <label htmlFor="fuseauHoraire" className="block text-xs font-medium mb-1.5" style={{ color: 'var(--texte)' }}>
                 Fuseau horaire
               </label>
               <input
@@ -160,28 +160,28 @@ export default function PageProfilEleve() {
                 required
                 className="w-full rounded-xl px-3 py-2 text-sm outline-none transition-all"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#F0EDE6',
+                  backgroundColor: 'var(--fond)',
+                  border: '1px solid var(--bordure)',
+                  color: 'var(--texte)',
                 }}
-                onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+                onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
                 value={fuseauHoraire}
                 onChange={(e) => setFuseauHoraire(e.target.value)}
                 placeholder="Ex: Africa/Dakar, Europe/Paris"
               />
-              <p className="text-[10px] mt-1" style={{ color: 'rgba(240,237,230,0.4)' }}>
+              <p className="text-[10px] mt-1" style={{ color: 'var(--texte-secondaire)' }}>
                 Détermine l&apos;affichage de vos cours selon votre heure locale.
               </p>
             </div>
 
             {erreur && (
-              <p className="text-xs px-3 py-2 rounded-lg" role="alert" style={{ color: '#fca5a5', background: 'rgba(185,28,28,0.15)', border: '1px solid rgba(185,28,28,0.25)' }}>
+              <p className="text-xs px-3 py-2 rounded-lg" role="alert" style={{ color: '#b91c1c', backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
                 {erreur}
               </p>
             )}
             {succes && (
-              <p className="text-xs px-3 py-2 rounded-lg" role="status" style={{ color: '#4ade80', background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.25)' }}>
+              <p className="text-xs px-3 py-2 rounded-lg" role="status" style={{ color: '#15803d', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
                 {succes}
               </p>
             )}
@@ -191,7 +191,7 @@ export default function PageProfilEleve() {
               disabled={enEnvoi}
               className="w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity mt-2"
               style={{
-                background: 'linear-gradient(135deg, #0B5E45, #B8923A)',
+                backgroundColor: 'var(--primaire)',
                 opacity: enEnvoi ? 0.6 : 1,
               }}
             >

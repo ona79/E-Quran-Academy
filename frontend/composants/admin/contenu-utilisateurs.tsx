@@ -37,8 +37,8 @@ export function ContenuUtilisateurs() {
   const [messages, setMessages] = useState<Record<string, { type: 'succes' | 'erreur'; texte: string }>>({});
   const [menuOuvert, setMenuOuvert] = useState<string | null>(null);
 
-  const charger = useCallback(async () => {
-    setChargement(true);
+  const charger = useCallback(async (silencieux = false) => {
+    if (!silencieux) setChargement(true);
     try {
       const url = roleFiltre ? `/utilisateurs?role=${roleFiltre}` : '/utilisateurs';
       const data = await apiClient.get<Utilisateur[]>(url);
@@ -46,7 +46,7 @@ export function ContenuUtilisateurs() {
     } catch {
       /* ignore */
     } finally {
-      setChargement(false);
+      if (!silencieux) setChargement(false);
     }
   }, [roleFiltre]);
 
@@ -65,7 +65,7 @@ export function ContenuUtilisateurs() {
     try {
       await apiClient.patch(`/utilisateurs/${id}/role`, { role: nouveauRole });
       setMessages((p) => ({ ...p, [id]: { type: 'succes', texte: `✅ Rôle changé → ${nouveauRole}` } }));
-      await charger();
+      await charger(true);
     } catch (err) {
       setMessages((p) => ({
         ...p,
@@ -82,7 +82,7 @@ export function ContenuUtilisateurs() {
     try {
       await apiClient.patch(`/utilisateurs/${id}/statut`, { statut: 'SUSPENDU' });
       setMessages((p) => ({ ...p, [id]: { type: 'succes', texte: '🔒 Compte suspendu' } }));
-      await charger();
+      await charger(true);
     } catch (err) {
       setMessages((p) => ({
         ...p,

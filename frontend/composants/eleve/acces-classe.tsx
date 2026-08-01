@@ -177,42 +177,41 @@ export function AccesClasseEleve() {
         </div>
       )}
 
-      {/* Modal pour laisser un avis - Dark Premium Edition */}
+      {/* Modal pour laisser un avis */}
       {avisTarget && (
         <>
           <div 
             className="fixed inset-0 z-40" 
-            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}
             onClick={() => setAvisTarget(null)}
             aria-hidden
           />
           <div 
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md p-7 rounded-3xl"
             style={{ 
-              background: 'rgba(13,26,20,0.95)', 
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(16px)'
+              background: '#FFFFFF', 
+              border: '1px solid var(--bordure)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
             }}
           >
-            <h3 className="text-xl font-bold mb-1" style={{ color: '#F0EDE6' }}>Évaluer le cours</h3>
-            <p className="text-xs mb-6" style={{ color: 'rgba(240,237,230,0.5)' }}>
+            <h3 className="text-xl font-bold mb-1" style={{ color: 'var(--texte)' }}>Évaluer le cours</h3>
+            <p className="text-xs mb-6" style={{ color: 'var(--texte-secondaire)' }}>
               Partagez votre expérience avec {avisTarget.nomProf}
             </p>
 
             {succesAvis ? (
               <div className="py-8 text-center flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full mb-3 flex items-center justify-center text-xl" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
+                <div className="w-12 h-12 rounded-full mb-3 flex items-center justify-center text-xl" style={{ background: 'rgba(22,163,74,0.1)', border: '1px solid rgba(22,163,74,0.2)', color: '#16A34A' }}>
                   ✓
                 </div>
-                <p className="text-sm font-medium" style={{ color: '#4ade80' }}>
+                <p className="text-sm font-medium" style={{ color: '#16A34A' }}>
                   {succesAvis}
                 </p>
               </div>
             ) : (
               <form onSubmit={soumettreAvis} className="space-y-5">
                 <div>
-                  <label className="block text-xs font-medium mb-2" style={{ color: 'rgba(240,237,230,0.7)' }}>Note globale</label>
+                  <label className="etiquette">Note globale</label>
                   <div className="flex gap-2 text-3xl">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <button
@@ -221,8 +220,8 @@ export function AccesClasseEleve() {
                         onClick={() => setNote(val)}
                         className="transition-transform hover:scale-110"
                         style={{ 
-                          color: val <= note ? '#B8923A' : 'rgba(255,255,255,0.1)',
-                          textShadow: val <= note ? '0 0 12px rgba(184,146,58,0.4)' : 'none'
+                          color: val <= note ? '#B8923A' : '#E5E0D5',
+                          textShadow: val <= note ? '0 0 12px rgba(184,146,58,0.3)' : 'none'
                         }}
                       >
                         ★
@@ -232,25 +231,18 @@ export function AccesClasseEleve() {
                 </div>
 
                 {erreurAvis && (
-                  <div className="p-3 rounded-lg text-sm font-medium" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)' }}>
+                  <div className="p-3 rounded-lg text-sm font-medium" style={{ background: 'rgba(220,38,38,0.06)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}>
                     {erreurAvis}
                   </div>
                 )}
 
                 <div>
-                  <label htmlFor="commentaire" className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.7)' }}>
+                  <label htmlFor="commentaire" className="etiquette">
                     Commentaire <span className="opacity-50">(Optionnel)</span>
                   </label>
                   <textarea
                     id="commentaire"
-                    className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none transition-all"
-                    style={{ 
-                      background: 'rgba(255,255,255,0.03)', 
-                      border: '1px solid rgba(255,255,255,0.06)', 
-                      color: '#F0EDE6' 
-                    }}
-                    onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                    onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.06)')}
+                    className="champ resize-none"
                     rows={3}
                     placeholder="Qu'avez-vous pensé de la pédagogie ?"
                     value={commentaire}
@@ -262,22 +254,14 @@ export function AccesClasseEleve() {
                   <button
                     type="button"
                     onClick={() => setAvisTarget(null)}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(240,237,230,0.8)', border: '1px solid rgba(255,255,255,0.05)' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    className="btn-secondaire flex-1"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
                     disabled={envoiAvis}
-                    className="flex-[2] py-2.5 rounded-xl text-sm font-semibold transition-opacity text-white shadow-lg"
-                    style={{ 
-                      background: 'linear-gradient(135deg, #0B5E45, #B8923A)', 
-                      opacity: envoiAvis ? 0.6 : 1,
-                      boxShadow: '0 4px 12px rgba(11,94,69,0.3)'
-                    }}
+                    className="btn-primaire flex-[2]"
                   >
                     {envoiAvis ? 'Envoi...' : "Envoyer l'avis"}
                   </button>

@@ -23,13 +23,29 @@ export function HeroSection() {
       <div className="max-w-[800px] mx-auto w-full flex flex-col items-center text-center relative z-10">
         
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-2xl md:text-4xl lg:text-[50px] font-bold text-[#1F6948] leading-tight mt-10 md:mt-16 mb-2 md:mb-3"
-          style={{ fontFamily: "'Amiri', 'Traditional Arabic', serif", direction: 'rtl' }}
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ 
+            opacity: 1, 
+            x: 0,
+            backgroundPosition: ['0% center', '200% center']
+          }}
+          transition={{ 
+            opacity: { duration: 0.8 },
+            x: { duration: 0.8 },
+            backgroundPosition: { duration: 4, repeat: Infinity, ease: 'linear' }
+          }}
+          className="text-3xl md:text-5xl lg:text-[64px] font-bold leading-tight mt-10 md:mt-16 mb-4 md:mb-5"
+          style={{ 
+            fontFamily: "'Amiri', 'Traditional Arabic', serif", 
+            direction: 'rtl',
+            wordSpacing: '0.15em',
+            backgroundImage: 'linear-gradient(to right, #1F6948, #B8923A, #222222, #1F6948)',
+            backgroundSize: '200% auto',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
         >
-          خَيْرُكُمْ مَنْ <span className="text-[#222222]">تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ</span>
+          خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ
         </motion.h1>
 
         <motion.p

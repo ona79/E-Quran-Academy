@@ -4,41 +4,41 @@
 
 /* ───────────────── Design system E-Quran Academy ─────────────────
  * Thème coranique — modèle iTalki.
- * Palette : vert émeraude, or, ivoire. Mode sombre : bleu nuit.
+ * Palette : vert émeraude, or, fond clair ivoire/blanc.
  * Typographies : Inter (interface), Amiri (texte coranique, RTL).
  * Contrastes : WCAG AA.
  */
 
 @layer base {
   :root {
-    /* Nouvelle palette Dark Dashboard */
-    --fond-page: #0D1A14;
-    --fond-surface: #131F18;
-    --fond-surface-2: #172418;
-    --fond-sidebar: #08402F;
-    --bordure: rgba(255, 255, 255, 0.07);
-    --texte: #F0EDE6;
-    --texte-secondaire: rgba(240, 237, 230, 0.55);
-    --primaire: #0B5E45;
+    /* Palette Thème Clair */
+    --fond-page: #F8F9FA;
+    --fond-surface: #FFFFFF;
+    --fond-surface-2: #F0EDE4;
+    --fond-sidebar: #1B5E3B;
+    --bordure: #E5E0D5;
+    --texte: #1A1A1A;
+    --texte-secondaire: #6B7280;
+    --primaire: #1B5E3B;
     --accent: #B8923A;
-    --succes: #22C55E;
-    --erreur: #EF4444;
+    --succes: #16A34A;
+    --erreur: #DC2626;
 
-    /* Palette ancienne (rétro-compatibilité si besoin, on alias vers les nouvelles valeurs) */
+    /* Alias rétro-compatibilité */
     --couleur-primaire: var(--primaire);
-    --couleur-primaire-profond: #08402f;
+    --couleur-primaire-profond: #145A32;
     --couleur-or: var(--accent);
-    --couleur-or-clair: #efe3c2;
-    --couleur-ivoire: var(--texte);
-    --couleur-ivoire-fonce: #ede8dc;
-    --couleur-nuit: var(--fond-page);
+    --couleur-or-clair: #FDF4E3;
+    --couleur-ivoire: #FDFBF6;
+    --couleur-ivoire-fonce: #F0EDE4;
+    --couleur-nuit: #0D1A14;
     --couleur-card-sombre: var(--fond-surface);
     --couleur-sidebar-sombre: var(--fond-sidebar);
 
     --fond: var(--fond-page);
     --primaire-contraste: #FFFFFF;
-    --primaire-hover: #08402F;
-    --secondaire-hover: rgba(11, 94, 69, 0.1);
+    --primaire-hover: #145A32;
+    --secondaire-hover: rgba(27,94,59,0.08);
     --accent-hover: #9c7a2c;
   }
 
@@ -47,22 +47,7 @@
     background-color: var(--fond-page);
     color: var(--texte);
     scroll-behavior: smooth;
-  }
-
-  /* ───────────────── Thème Clair (Pages publiques) ───────────────── */
-  .theme-clair {
-    --fond-page: #FDFBF6;
-    --fond-surface: #FFFFFF;
-    --fond-surface-2: #F0EDE4;
-    --fond-hero: #F7F4EE;
-    --primaire: #0B5E45;
-    --primaire-clair: #E8F5EF;
-    --primaire-profond: #08402F;
-    --accent: #B8923A;
-    --accent-clair: #FDF4E3;
-    --texte: #1A1A1A;
-    --texte-secondaire: #6B7280;
-    --bordure: #E5E0D5;
+    color-scheme: light;
   }
 
   body {
@@ -78,15 +63,15 @@
 }
 
 @layer components {
-  /* Bouton primaire : dégradé vert → or */
+  /* Bouton primaire : vert plein */
   .btn-primaire {
     @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-semibold text-white transition-all duration-150;
-    background: linear-gradient(135deg, #0B5E45, #B8923A);
-    box-shadow: 0 4px 20px rgba(11,94,69,0.3);
+    background: #1B5E3B;
+    box-shadow: 0 2px 8px rgba(27,94,59,0.18);
   }
   .btn-primaire:hover:not(:disabled) {
-    transform: scale(1.01);
-    box-shadow: 0 6px 24px rgba(11,94,69,0.45);
+    background: #145A32;
+    box-shadow: 0 4px 16px rgba(27,94,59,0.28);
   }
   .btn-primaire:disabled {
     opacity: 0.5;
@@ -96,23 +81,24 @@
   /* Bouton secondaire */
   .btn-secondaire {
     @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium transition-all duration-150;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: #F0EDE6;
+    background: #FFFFFF;
+    border: 1px solid var(--bordure);
+    color: var(--texte);
   }
   .btn-secondaire:hover:not(:disabled) {
-    background: rgba(255,255,255,0.1);
+    background: #F5F3EE;
+    border-color: #D0CBC0;
   }
 
   /* Bouton danger */
   .btn-danger {
     @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium transition-all duration-150;
-    background: rgba(239,68,68,0.15);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #F87171;
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(220,38,38,0.2);
+    color: #DC2626;
   }
   .btn-danger:hover:not(:disabled) {
-    background: rgba(239,68,68,0.25);
+    background: rgba(220,38,38,0.15);
   }
 
   /* Bouton accent (or) */
@@ -128,64 +114,65 @@
   /* Carte de contenu standard */
   .carte {
     @apply rounded-2xl p-5 transition-all duration-200;
-    background: #131F18;
-    border: 1px solid rgba(255,255,255,0.07);
-    color: #F0EDE6;
+    background: #FFFFFF;
+    border: 1px solid var(--bordure);
+    color: var(--texte);
   }
   .carte:is(a):hover, .carte.cliquable:hover {
-    background: #172418;
-    border-color: rgba(11,94,69,0.4);
+    background: #FAFAF7;
+    border-color: rgba(27,94,59,0.3);
+    box-shadow: 0 2px 12px rgba(27,94,59,0.06);
   }
 
   /* Champ de formulaire */
   .champ {
     @apply w-full rounded-xl px-4 py-2.5 border outline-none transition-all duration-200;
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-    color: #F0EDE6;
+    background: #FFFFFF;
+    border-color: var(--bordure);
+    color: var(--texte);
   }
   .champ::placeholder {
-    color: rgba(240,237,230,0.35);
+    color: #9CA3AF;
   }
   .champ:focus {
-    border-color: #0B5E45;
-    box-shadow: 0 0 0 3px rgba(11,94,69,0.2);
+    border-color: #1B5E3B;
+    box-shadow: 0 0 0 3px rgba(27,94,59,0.12);
   }
 
   .etiquette {
     @apply block text-sm font-medium mb-1.5;
-    color: rgba(240,237,230,0.7);
+    color: #374151;
   }
 
   /* Badges statuts */
   .badge-valide {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-    background: rgba(34,197,94,0.15);
-    border: 1px solid rgba(34,197,94,0.3);
-    color: #4ADE80;
+    background: rgba(22,163,74,0.1);
+    border: 1px solid rgba(22,163,74,0.2);
+    color: #16A34A;
   }
   .badge-attente {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-    background: rgba(184,146,58,0.15);
-    border: 1px solid rgba(184,146,58,0.3);
-    color: #E0B954;
+    background: rgba(184,146,58,0.1);
+    border: 1px solid rgba(184,146,58,0.2);
+    color: #92751F;
   }
   .badge-erreur {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-    background: rgba(239,68,68,0.15);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #F87171;
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(220,38,38,0.2);
+    color: #DC2626;
   }
   .badge-qiraat {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-    background: rgba(11,94,69,0.2);
-    border: 1px solid rgba(11,94,69,0.4);
-    color: #33997A;
+    background: rgba(27,94,59,0.08);
+    border: 1px solid rgba(27,94,59,0.2);
+    color: #1B5E3B;
   }
 }
 
 @layer utilities {
-  /* Scrollbar personnalisée élégante par défaut pour TOUTE l'application */
+  /* Scrollbar personnalisée élégante */
   ::-webkit-scrollbar, .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -194,10 +181,10 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb, .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.12);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb:hover, .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.2);
   }
 }

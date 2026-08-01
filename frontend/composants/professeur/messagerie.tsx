@@ -150,15 +150,15 @@ export function MessagerieProfesseur() {
         className={`overflow-y-auto flex flex-col rounded-2xl p-4 ${
           interlocuteurId ? 'hidden md:flex' : 'flex'
         }`}
-        style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}
+        style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
       >
-        <h2 className="font-bold text-xs uppercase tracking-widest mb-4 px-1" style={{ color: 'rgba(240,237,230,0.4)' }}>
+        <h2 className="font-bold text-xs uppercase tracking-widest mb-4 px-1" style={{ color: 'var(--texte-secondaire)' }}>
           Élèves
         </h2>
         {interlocuteurs.length === 0 ? (
           <div className="text-center py-10">
             <p className="text-2xl mb-1">💬</p>
-            <p className="text-xs" style={{ color: 'rgba(240,237,230,0.4)' }}>Aucun message reçu pour le moment.</p>
+            <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>Aucun message reçu pour le moment.</p>
           </div>
         ) : (
           <ul className="space-y-1 flex-1">
@@ -173,22 +173,20 @@ export function MessagerieProfesseur() {
                     onClick={() => setInterlocuteurId(id)}
                     className="w-full text-left px-3 py-2.5 rounded-xl transition-all duration-150"
                     style={{
-                      background: interlocuteurId === id ? 'rgba(11,94,69,0.35)' : 'transparent',
-                      borderLeft: interlocuteurId === id ? '3px solid #B8923A' : '3px solid transparent',
+                      background: interlocuteurId === id ? 'rgba(27,94,59,0.08)' : 'transparent',
+                      borderLeft: interlocuteurId === id ? '3px solid var(--primaire)' : '3px solid transparent',
                     }}
-                    onMouseEnter={(e) => { if (interlocuteurId !== id) e.currentTarget.style.background = 'rgba(11,94,69,0.15)'; }}
-                    onMouseLeave={(e) => { if (interlocuteurId !== id) e.currentTarget.style.background = 'transparent'; }}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm truncate" style={{ color: '#F0EDE6' }}>{nom}</span>
+                      <span className="font-semibold text-sm truncate" style={{ color: 'var(--texte)' }}>{nom}</span>
                       {nonLus > 0 && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 shrink-0" style={{ background: '#B8923A', color: '#0D1A14' }}>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 shrink-0" style={{ background: 'var(--accent)', color: '#FFFFFF' }}>
                           {nonLus}
                         </span>
                       )}
                     </div>
                     {dernier && (
-                      <p className="text-xs truncate mt-0.5" style={{ color: 'rgba(240,237,230,0.4)' }}>{dernier.contenu}</p>
+                      <p className="text-xs truncate mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>{dernier.contenu}</p>
                     )}
                   </button>
                 </li>
@@ -203,33 +201,33 @@ export function MessagerieProfesseur() {
         className={`md:col-span-2 flex flex-col h-full overflow-hidden rounded-2xl ${
           interlocuteurId ? 'flex' : 'hidden md:flex'
         }`}
-        style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}
+        style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
       >
         {!interlocuteurId ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
             <span className="text-4xl mb-3">💬</span>
-            <p className="font-medium" style={{ color: '#F0EDE6' }}>Messagerie</p>
-            <p className="text-xs mt-1" style={{ color: 'rgba(240,237,230,0.45)' }}>Sélectionnez un élève pour afficher les messages.</p>
+            <p className="font-medium" style={{ color: 'var(--texte)' }}>Messagerie</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>Sélectionnez un élève pour afficher les messages.</p>
           </div>
         ) : (
           <>
             {/* Topbar conversation */}
-            <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <button type="button" onClick={() => setInterlocuteurId(null)} className="md:hidden text-xs px-2.5 py-1.5 rounded-lg" style={{ color: 'rgba(240,237,230,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid var(--bordure)' }}>
+              <button type="button" onClick={() => setInterlocuteurId(null)} className="md:hidden btn-secondaire !text-xs !py-1 !px-2">
                 ←
               </button>
               <div>
-                <h3 className="font-bold text-sm" style={{ color: '#F0EDE6' }}>
+                <h3 className="font-bold text-sm" style={{ color: 'var(--texte)' }}>
                   {cacheNoms[interlocuteurId] || `Élève ${interlocuteurId.slice(0, 8)}`}
                 </h3>
-                <p className="text-[10px]" style={{ color: 'rgba(240,237,230,0.4)' }}>En ligne ou asynchrone</p>
+                <p className="text-[10px]" style={{ color: 'var(--texte-secondaire)' }}>En ligne ou asynchrone</p>
               </div>
             </div>
 
             {/* Zone de messages défilante */}
-            <div className="flex-1 overflow-y-auto space-y-3 px-4 py-2">
+            <div className="flex-1 overflow-y-auto space-y-3 px-4 py-2" style={{ background: 'var(--fond-page)' }}>
               {conversation.length === 0 ? (
-                <p className="text-xs text-center py-6 italic" style={{ color: 'rgba(240,237,230,0.35)' }}>
+                <p className="text-xs text-center py-6 italic" style={{ color: 'var(--texte-secondaire)' }}>
                   Début de la conversation. Envoyez un message à l&apos;élève.
                 </p>
               ) : (
@@ -240,15 +238,16 @@ export function MessagerieProfesseur() {
                       <div
                         className="px-4 py-2.5 text-sm leading-relaxed"
                         style={{
-                          background: envoye ? 'linear-gradient(135deg, #0B5E45, #0D7055)' : '#1A2F22',
-                          color: 'white',
-                          border: envoye ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                          background: envoye ? 'var(--primaire)' : '#FFFFFF',
+                          color: envoye ? '#FFFFFF' : 'var(--texte)',
+                          border: envoye ? 'none' : '1px solid var(--bordure)',
                           borderRadius: envoye ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                          boxShadow: envoye ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
                         }}
                       >
                         <p className="whitespace-pre-wrap">{m.contenu}</p>
                       </div>
-                      <span className="text-[10px] opacity-50 px-1" style={{ color: '#F0EDE6' }}>{formaterDateHeure(m.horodatage)}</span>
+                      <span className="text-[10px] px-1" style={{ color: 'var(--texte-secondaire)' }}>{formaterDateHeure(m.horodatage)}</span>
                     </div>
                   );
                 })
@@ -256,13 +255,13 @@ export function MessagerieProfesseur() {
               <div ref={basRef} />
             </div>
 
-            {erreur && <p className="text-xs py-1 px-4" style={{ color: '#F87171' }}>{erreur}</p>}
+            {erreur && <p className="text-xs py-1 px-4" style={{ color: 'var(--erreur)' }}>{erreur}</p>}
 
             {/* Saisie fixe en bas */}
-            <form onSubmit={envoyer} className="flex gap-2 px-4 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <form onSubmit={envoyer} className="flex gap-2 px-4 py-3" style={{ borderTop: '1px solid var(--bordure)' }}>
               <input
                 className="flex-1 text-sm outline-none px-4 py-2.5"
-                style={{ background: '#0D1A14', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 24, color: '#F0EDE6' }}
+                style={{ background: 'var(--fond-page)', border: '1px solid var(--bordure)', borderRadius: 24, color: 'var(--texte)' }}
                 placeholder="Écrire une réponse…"
                 value={contenu}
                 onChange={(e) => setContenu(e.target.value)}

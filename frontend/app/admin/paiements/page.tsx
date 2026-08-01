@@ -79,15 +79,15 @@ export default function PageAdminPaiements() {
   const [message, setMessage] = useState<{ type: 'succes' | 'erreur'; texte: string } | null>(null);
   const [filtre, setFiltre] = useState<'TOUS' | 'BLOQUE' | 'LIBERE' | 'REMBOURSE'>('TOUS');
 
-  const charger = useCallback(async () => {
-    setChargement(true);
+  const charger = useCallback(async (silencieux = false) => {
+    if (!silencieux) setChargement(true);
     try {
       const data = await apiGet<LigneTransactions[]>('/paiement/historique');
       setTransactions(data);
     } catch {
       setMessage({ type: 'erreur', texte: 'Impossible de charger les transactions.' });
     } finally {
-      setChargement(false);
+      if (!silencieux) setChargement(false);
     }
   }, []);
 
@@ -113,7 +113,7 @@ export default function PageAdminPaiements() {
       });
       setEmailCredit('');
       setMontantCredit('');
-      await charger();
+      await charger(true);
     } catch (err) {
       setMessage({
         type: 'erreur',

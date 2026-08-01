@@ -185,20 +185,17 @@ export function ReservationCours() {
       {/* 1. Cas : Professeur sélectionné -> afficher son panneau de réservation */}
       {professeurSelectionne ? (
         <div className="flex-1 flex flex-col items-center justify-center min-h-0">
-          <div className="w-full max-w-xl rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="flex items-center justify-between mb-4 border-b pb-4" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+          <div className="w-full max-w-xl rounded-2xl p-5" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+            <div className="flex items-center justify-between mb-4 border-b pb-4" style={{ borderColor: 'var(--bordure)' }}>
               <div>
-                <h2 className="text-lg font-bold text-[#F0EDE6]">Réserver avec {professeurSelectionne.nomComplet}</h2>
-                <p className="text-[11px] text-[#B8923A] mt-0.5">
+                <h2 className="text-lg font-bold" style={{ color: 'var(--texte)' }}>Réserver avec {professeurSelectionne.nomComplet}</h2>
+                <p className="text-[11px] mt-0.5" style={{ color: 'var(--accent)' }}>
                   Qiraat : {professeurSelectionne.qiraatParDefaut} · Tarif : {professeurSelectionne.tarifHoraire} FCFA/h
                 </p>
               </div>
               <button
                 type="button" onClick={annulerSelection}
-                className="px-3 py-1.5 text-[10px] rounded-lg border transition-colors shrink-0"
-                style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(240,237,230,0.7)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#B8923A'; e.currentTarget.style.color = '#B8923A'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(240,237,230,0.7)'; }}
+                className="btn-secondaire !text-[10px] !px-3 !py-1.5"
               >
                 Changer de prof
               </button>
@@ -207,42 +204,36 @@ export function ReservationCours() {
             <form onSubmit={soumettre} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="jour" className="block text-[11px] font-medium mb-1.5 text-[#F0EDE6] opacity-70">Jour</label>
+                  <label htmlFor="jour" className="etiquette !text-[11px]">Jour</label>
                   <select
                     id="jour"
-                    className="w-full rounded-xl px-3 py-2 text-sm outline-none"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F0EDE6' }}
-                    onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                    onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                    className="champ !text-sm"
                     value={jour}
                     onChange={(e) => { setJour(e.target.value as JourSemaine); setHeureChoisie(''); }}
                   >
-                    {JOURS.map((j) => <option key={j} value={j} className="bg-[#131F18]">{libelleJour(j)}</option>)}
+                    {JOURS.map((j) => <option key={j} value={j}>{libelleJour(j)}</option>)}
                   </select>
                 </div>
 
                 <div>
-                  <label htmlFor="heure" className="block text-[11px] font-medium mb-1.5 text-[#F0EDE6] opacity-70">
+                  <label htmlFor="heure" className="etiquette !text-[11px]">
                     Heure ({fuseauNavigateur()})
                   </label>
                   {enChargementDispo ? (
-                    <p className="text-[11px] py-2 text-[#F0EDE6] opacity-50">Chargement…</p>
+                    <p className="text-[11px] py-2" style={{ color: 'var(--texte-secondaire)' }}>Chargement…</p>
                   ) : disposJour.length === 0 ? (
-                    <p className="text-[11px] py-2 text-red-400 opacity-80">Aucune dispo</p>
+                    <p className="text-[11px] py-2" style={{ color: 'var(--erreur)' }}>Aucune dispo</p>
                   ) : (
                     <select
                       id="heure"
-                      className="w-full rounded-xl px-3 py-2 text-sm outline-none"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F0EDE6' }}
-                      onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                      onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                      className="champ !text-sm"
                       value={heureChoisie}
                       onChange={(e) => setHeureChoisie(e.target.value)}
                       required
                     >
-                      <option value="" className="bg-[#131F18]">— Choisir —</option>
+                      <option value="">— Choisir —</option>
                       {disposJour.map((d) => (
-                        <option key={d.id} value={d.heureDebut} className="bg-[#131F18]">{d.heureDebut} – {d.heureFin}</option>
+                        <option key={d.id} value={d.heureDebut}>{d.heureDebut} – {d.heureFin}</option>
                       ))}
                     </select>
                   )}
@@ -250,13 +241,10 @@ export function ReservationCours() {
               </div>
 
               <div>
-                <label htmlFor="note" className="block text-[11px] font-medium mb-1.5 text-[#F0EDE6] opacity-70">Objectif du cours (Optionnel)</label>
+                <label htmlFor="note" className="etiquette !text-[11px]">Objectif du cours (Optionnel)</label>
                 <textarea
                   id="note"
-                  className="w-full rounded-xl px-3 py-2 text-sm outline-none resize-none"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F0EDE6' }}
-                  onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-                  onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+                  className="champ !text-sm resize-none"
                   rows={2}
                   maxLength={500}
                   placeholder="Ex: Réviser Tajwid sourate Al-Mulk..."
@@ -266,13 +254,12 @@ export function ReservationCours() {
               </div>
 
               <div className="pt-2 space-y-2">
-                {erreur && <p className="text-[11px] px-3 py-2 rounded-lg" style={{ color: '#fca5a5', background: 'rgba(185,28,28,0.15)', border: '1px solid rgba(185,28,28,0.25)' }}>⚠️ {erreur}</p>}
-                {succes && <p className="text-[11px] px-3 py-2 rounded-lg" style={{ color: '#4ade80', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.25)' }}>✅ {succes}</p>}
+                {erreur && <p className="text-[11px] px-3 py-2 rounded-lg" style={{ color: '#DC2626', background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}>⚠️ {erreur}</p>}
+                {succes && <p className="text-[11px] px-3 py-2 rounded-lg" style={{ color: '#16A34A', background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.15)' }}>✅ {succes}</p>}
                 
                 <button
                   type="submit" disabled={enEnvoi || !heureChoisie}
-                  className="w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity"
-                  style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)', opacity: (enEnvoi || !heureChoisie) ? 0.5 : 1 }}
+                  className="btn-primaire w-full !text-sm"
                 >
                   {enEnvoi ? 'En cours…' : 'Confirmer la réservation'}
                 </button>
@@ -283,29 +270,27 @@ export function ReservationCours() {
       ) : (
         // 2. Cas : Aucun professeur sélectionné -> Grille de professeurs avec filtres
         <div className="flex-1 flex flex-col min-h-0 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 items-end p-3 rounded-2xl shrink-0" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="flex-1 min-w-[150px]">
-              <label htmlFor="qiraatFilter" className="block text-[10px] font-medium mb-1 text-[#F0EDE6] opacity-60">Qiraat</label>
+          <div className="flex flex-row gap-2 sm:gap-3 items-end p-3 rounded-2xl shrink-0 overflow-x-auto custom-scrollbar" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+            <div className="flex-1 min-w-[120px]">
+              <label htmlFor="qiraatFilter" className="etiquette !text-[10px]">Qiraat</label>
               <select
                 id="qiraatFilter"
-                className="w-full rounded-lg px-2 py-1.5 text-xs outline-none"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F0EDE6' }}
+                className="champ !text-xs !rounded-lg !px-2 !py-1.5"
                 value={qiraat}
                 onChange={(e) => setQiraat(e.target.value as any)}
               >
-                <option value="" className="bg-[#131F18]">Tous</option>
-                <option value="HAFS" className="bg-[#131F18]">Hafs</option>
-                <option value="WARSH" className="bg-[#131F18]">Warsh</option>
+                <option value="">Tous</option>
+                <option value="HAFS">Hafs</option>
+                <option value="WARSH">Warsh</option>
               </select>
             </div>
             
-            <div className="flex-1 min-w-[150px]">
-              <label htmlFor="tarifMaxFilter" className="block text-[10px] font-medium mb-1 text-[#F0EDE6] opacity-60">Tarif max (FCFA/h)</label>
+            <div className="flex-1 min-w-[120px]">
+              <label htmlFor="tarifMaxFilter" className="etiquette !text-[10px]">Tarif max (FCFA/h)</label>
               <input
                 id="tarifMaxFilter"
                 type="number" step="500" min="0" placeholder="Ex: 5000"
-                className="w-full rounded-lg px-2 py-1.5 text-xs outline-none"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#F0EDE6' }}
+                className="champ !text-xs !rounded-lg !px-2 !py-1.5"
                 value={tarifMax}
                 onChange={(e) => setTarifMax(e.target.value)}
               />
@@ -313,10 +298,7 @@ export function ReservationCours() {
 
             <button
               type="button" onClick={() => { setQiraat(''); setTarifMax(''); }}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium border shrink-0 transition-colors"
-              style={{ borderColor: 'rgba(255,255,255,0.1)', color: '#F0EDE6' }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              className="btn-secondaire !text-xs !px-3 !py-1.5"
             >
               Réinitialiser
             </button>
@@ -324,18 +306,18 @@ export function ReservationCours() {
 
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4">
             {enChargementProfs ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-40 rounded-2xl animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+                  <div key={i} className="h-40 rounded-2xl animate-pulse" style={{ background: 'var(--fond-surface-2)' }} />
                 ))}
               </div>
             ) : professeurs.length === 0 ? (
-              <div className="text-center py-12 rounded-2xl border flex flex-col items-center justify-center" style={{ borderColor: 'rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.01)' }}>
+              <div className="text-center py-12 rounded-2xl border flex flex-col items-center justify-center" style={{ borderColor: 'var(--bordure)', background: '#FFFFFF' }}>
                 <p className="text-4xl mb-3 opacity-50">🔍</p>
-                <p className="text-sm text-[#F0EDE6] opacity-60">Aucun professeur trouvé pour vos critères.</p>
+                <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>Aucun professeur trouvé pour vos critères.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 {professeurs.map((prof) => (
                   <div 
                     key={prof.id} 
@@ -346,6 +328,7 @@ export function ReservationCours() {
                       profil={prof} 
                       nomComplet={prof.nomComplet} 
                       noteMoyenne={prof.noteMoyenne}
+                      lienProfil={`/eleve/professeurs/${prof.userId}`}
                     />
                   </div>
                 ))}

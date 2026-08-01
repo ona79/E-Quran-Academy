@@ -96,7 +96,7 @@ export function TableauDeBordEleve() {
           <div
             key={i}
             className="h-20 rounded-xl animate-pulse"
-            style={{ backgroundColor: 'var(--fond-surface)' }}
+            style={{ backgroundColor: 'var(--fond-surface-2)' }}
           />
         ))}
       </div>
@@ -104,20 +104,36 @@ export function TableauDeBordEleve() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      {/* Salutation */}
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: '#F0EDE6' }}>
-          🌙 Assalamu alaykum, {prenom}
-        </h1>
-        <p className="text-sm mt-1" style={{ color: 'rgba(240,237,230,0.55)' }}>
-          Bienvenue dans votre espace d&apos;apprentissage coranique.
-        </p>
+    <div className="space-y-8 w-full max-w-7xl mx-auto">
+      {/* Bannière de bienvenue */}
+      <div
+        className="rounded-2xl p-6 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #E8F5EF 0%, #D4EDE1 100%)',
+          border: '1px solid rgba(27,94,59,0.12)',
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+          >
+            <span className="text-2xl">🌙</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold" style={{ color: '#1A1A1A' }}>
+              Assalamu alaykum, {prenom}
+            </h1>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
+              Bienvenue dans votre espace d&apos;apprentissage coranique.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Statistiques du mois */}
       <section>
-        <h2 className="text-base font-semibold mb-3">Ce mois-ci</h2>
+        <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--texte)' }}>Ce mois-ci</h2>
         <div className="grid grid-cols-3 gap-3">
           <CarteStatistique
             etiquette="Cours réalisés"
@@ -140,11 +156,11 @@ export function TableauDeBordEleve() {
       {/* Prochains cours */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold">Prochains cours</h2>
+          <h2 className="text-base font-semibold" style={{ color: 'var(--texte)' }}>Prochains cours</h2>
           <Link
             href="/eleve/classe"
-            className="text-xs hover:underline"
-            style={{ color: 'var(--couleur-primaire)' }}
+            className="text-xs font-medium hover:underline"
+            style={{ color: 'var(--primaire)' }}
           >
             Voir tous →
           </Link>
@@ -152,11 +168,11 @@ export function TableauDeBordEleve() {
 
         {reservations.length === 0 ? (
           <div
-            className="rounded-2xl border p-6 text-center"
-            style={{ borderColor: 'rgba(255,255,255,0.07)', background: '#131F18' }}
+            className="rounded-2xl border p-8 text-center"
+            style={{ borderColor: 'var(--bordure)', background: '#FFFFFF' }}
           >
             <p className="text-3xl mb-2">🗓️</p>
-            <p className="font-medium mb-1">Aucun cours à venir</p>
+            <p className="font-medium mb-1" style={{ color: 'var(--texte)' }}>Aucun cours à venir</p>
             <p className="text-sm mb-4" style={{ color: 'var(--texte-secondaire)' }}>
               Réservez votre premier cours avec un professeur certifié Ijaza.
             </p>
@@ -181,29 +197,25 @@ export function TableauDeBordEleve() {
 
       {/* Raccourcis */}
       <section>
-        <h2 className="text-base font-semibold mb-3" style={{ color: '#F0EDE6' }}>Accès rapide</h2>
+        <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--texte)' }}>Accès rapide</h2>
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/eleve/reserver"
             className="carte cliquable flex flex-col gap-2"
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(11,94,69,0.4)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
           >
             <span className="text-2xl">🗓️</span>
             <p className="font-semibold text-sm">Réserver un cours</p>
-            <p className="text-xs" style={{ color: 'rgba(240,237,230,0.55)' }}>
+            <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
               Trouver un professeur et un créneau.
             </p>
           </Link>
           <Link
             href="/eleve/messages"
             className="carte cliquable flex flex-col gap-2"
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(11,94,69,0.4)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
           >
             <span className="text-2xl">💬</span>
             <p className="font-semibold text-sm">Mes messages</p>
-            <p className="text-xs" style={{ color: 'rgba(240,237,230,0.55)' }}>
+            <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
               Échangez avec vos professeurs.
             </p>
           </Link>

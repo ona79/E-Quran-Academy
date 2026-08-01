@@ -67,8 +67,8 @@ export default function PageFacturationEleve() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [succes, setSucces] = useState<string | null>(null);
 
-  const charger = useCallback(async () => {
-    setChargement(true);
+  const charger = useCallback(async (silencieux = false) => {
+    if (!silencieux) setChargement(true);
     try {
       const [soldData, txData] = await Promise.all([
         apiGet<{ solde: number }>('/paiement/solde'),
@@ -79,7 +79,7 @@ export default function PageFacturationEleve() {
     } catch {
       setErreur('Impossible de charger vos données de facturation.');
     } finally {
-      setChargement(false);
+      if (!silencieux) setChargement(false);
     }
   }, []);
 
@@ -100,7 +100,7 @@ export default function PageFacturationEleve() {
       setSolde(res.solde);
       setMontant('');
       setSucces(`Solde rechargé avec succès ! Nouveau solde : ${res.solde.toLocaleString('fr-FR')} FCFA`);
-      await charger();
+      await charger(true);
     } catch (err) {
       setErreur(err instanceof ErreurApi ? err.message : 'Erreur lors de la recharge.');
     } finally {

@@ -5,15 +5,15 @@ import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { ProfilProfesseur, Qiraat } from '@/lib/types';
 
 const SI = {
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  color: '#F0EDE6',
+  background: '#FFFFFF',
+  border: '1px solid var(--bordure)',
+  color: 'var(--texte)',
 };
 
 function Champ({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-[11px] font-medium mb-1.5" style={{ color: 'rgba(240,237,230,0.65)' }}>
+      <label htmlFor={id} className="etiquette !text-[11px]">
         {label}
       </label>
       {children}
@@ -77,7 +77,7 @@ export function ProfilProfesseurForm() {
   if (enChargement) {
     return (
       <div className="flex justify-center items-center h-full">
-        <div className="w-6 h-6 rounded-full border-2 animate-spin" style={{ borderColor: '#0B5E45', borderTopColor: 'transparent' }} />
+        <div className="w-6 h-6 rounded-full border-2 animate-spin" style={{ borderColor: 'var(--primaire)', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -87,8 +87,8 @@ export function ProfilProfesseurForm() {
       {/* En-tête */}
       <div className="mb-4 flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold" style={{ color: '#F0EDE6' }}>Mon profil professeur</h1>
-          <p className="text-xs mt-1" style={{ color: 'rgba(240,237,230,0.5)' }}>
+          <h1 className="text-xl font-bold" style={{ color: 'var(--texte)' }}>Mon profil professeur</h1>
+          <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>
             Ces informations sont visibles par les élèves sur votre fiche.
           </p>
         </div>
@@ -96,9 +96,9 @@ export function ProfilProfesseurForm() {
           <span
             className="text-[11px] font-semibold px-3 py-1 rounded-full shrink-0 ml-4"
             style={{
-              background: profil.valide ? 'rgba(34,197,94,0.15)' : 'rgba(184,146,58,0.15)',
-              color: profil.valide ? '#4ade80' : '#B8923A',
-              border: `1px solid ${profil.valide ? 'rgba(34,197,94,0.3)' : 'rgba(184,146,58,0.3)'}`,
+              background: profil.valide ? 'rgba(22,163,74,0.08)' : 'rgba(184,146,58,0.1)',
+              color: profil.valide ? '#16A34A' : '#92751F',
+              border: `1px solid ${profil.valide ? 'rgba(22,163,74,0.2)' : 'rgba(184,146,58,0.2)'}`,
             }}
           >
             {profil.valide ? '✅ Vérifié' : '⏳ En validation'}
@@ -109,7 +109,7 @@ export function ProfilProfesseurForm() {
       {/* Corps : 2 colonnes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
         {/* Colonne gauche */}
-        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
           <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#B8923A' }}>
             Identité &amp; Justificatifs
           </p>
@@ -118,8 +118,8 @@ export function ProfilProfesseurForm() {
               id="photoUrl" type="url"
               className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
               placeholder="https://exemples.com/photo.jpg"
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)}
             />
           </Champ>
@@ -129,8 +129,8 @@ export function ProfilProfesseurForm() {
               className="w-full rounded-xl px-3 py-2 text-sm outline-none resize-none" style={SI}
               rows={4} maxLength={2000}
               placeholder="Hafiz certifié Ijaza, spécialisé en Tajwid..."
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={bio} onChange={(e) => setBio(e.target.value)}
             />
           </Champ>
@@ -139,15 +139,15 @@ export function ProfilProfesseurForm() {
               id="ijazaUrl" type="url"
               className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
               placeholder="https://exemples.com/ijaza.pdf"
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={ijazaUrl} onChange={(e) => setIjazaUrl(e.target.value)}
             />
           </Champ>
         </div>
 
         {/* Colonne droite */}
-        <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-2xl p-4 space-y-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
           <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#B8923A' }}>
             Enseignement &amp; Tarification
           </p>
@@ -155,8 +155,8 @@ export function ProfilProfesseurForm() {
             <input
               id="tarif" type="number" min={0} step={500}
               className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={tarifHoraire} onChange={(e) => setTarifHoraire(Number(e.target.value))}
             />
           </Champ>
@@ -164,12 +164,12 @@ export function ProfilProfesseurForm() {
             <select
               id="qiraat"
               className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={qiraatParDefaut} onChange={(e) => setQiraatParDefaut(e.target.value as Qiraat)}
             >
-              <option value="HAFS" className="bg-[#131F18]">Hafs (Standard)</option>
-              <option value="WARSH" className="bg-[#131F18]">Warsh (Afrique du Nord/Ouest)</option>
+              <option value="HAFS">Hafs (Standard)</option>
+              <option value="WARSH">Warsh (Afrique du Nord/Ouest)</option>
             </select>
           </Champ>
           <Champ id="audioUrl" label="URL audio de récitation (MP3)">
@@ -177,8 +177,8 @@ export function ProfilProfesseurForm() {
               id="audioUrl" type="url"
               className="w-full rounded-xl px-3 py-2 text-sm outline-none" style={SI}
               placeholder="https://exemples.com/recitation.mp3"
-              onFocus={(e) => (e.currentTarget.style.border = '1px solid #0B5E45')}
-              onBlur={(e) => (e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)')}
+              onFocus={(e) => (e.currentTarget.style.border = '1px solid var(--primaire)')}
+              onBlur={(e) => (e.currentTarget.style.border = '1px solid var(--bordure)')}
               value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)}
             />
           </Champ>
@@ -189,19 +189,18 @@ export function ProfilProfesseurForm() {
       {/* Retours + bouton */}
       <div className="mt-4 space-y-2">
         {erreur && (
-          <p className="text-xs px-3 py-2 rounded-lg" style={{ color: '#fca5a5', background: 'rgba(185,28,28,0.15)', border: '1px solid rgba(185,28,28,0.25)' }}>
+          <p className="text-xs px-3 py-2 rounded-lg" style={{ color: '#DC2626', background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}>
             ⚠️ {erreur}
           </p>
         )}
         {succes && (
-          <p className="text-xs px-3 py-2 rounded-lg" style={{ color: '#4ade80', background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.25)' }}>
+          <p className="text-xs px-3 py-2 rounded-lg" style={{ color: '#16A34A', background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.15)' }}>
             ✅ {succes}
           </p>
         )}
         <button
           type="submit" disabled={enEnvoi}
-          className="w-full rounded-xl py-3 text-sm font-semibold text-white transition-opacity"
-          style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)', opacity: enEnvoi ? 0.6 : 1 }}
+          className="btn-primaire w-full !py-3"
         >
           {enEnvoi ? 'Enregistrement…' : 'Enregistrer le profil'}
         </button>

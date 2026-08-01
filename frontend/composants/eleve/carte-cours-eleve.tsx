@@ -46,7 +46,7 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
   return (
     <article
       className="carte group transition-all"
-      style={{ borderLeft: '3px solid var(--couleur-primaire)' }}
+      style={{ borderLeft: '3px solid var(--primaire)' }}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -54,12 +54,12 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
           <div className="flex items-center gap-2 mb-2">
             <div
               className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ backgroundColor: 'var(--couleur-primaire)', color: 'var(--couleur-ivoire)' }}
+              style={{ backgroundColor: 'var(--primaire)', color: '#FFFFFF' }}
             >
               {(nomProf ?? 'P').split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
             </div>
             <div>
-              <p className="font-semibold text-sm leading-tight">
+              <p className="font-semibold text-sm leading-tight" style={{ color: 'var(--texte)' }}>
                 {nomProf ?? 'Professeur'}
               </p>
               <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
@@ -122,7 +122,7 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
               type="button"
               onClick={() => onAvis(reservation.id)}
               className="btn-secondaire text-xs !py-1.5 !px-3"
-              style={{ borderColor: 'var(--couleur-or)', color: 'var(--couleur-or)' }}
+              style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
             >
               ⭐ Laisser un avis
             </button>

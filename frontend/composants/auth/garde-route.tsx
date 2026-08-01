@@ -42,7 +42,7 @@ export function GardeRoute({
   // Pendant le chargement ou si redirige, on affiche un état d'attente.
   if (enChargement || !utilisateur) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-[var(--fond)]">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-[var(--fond-page)]">
         <div className="w-10 h-10 rounded-full border-4 border-[var(--bordure)] border-t-[var(--primaire)] animate-spin" />
         <p className="text-sm font-medium" style={{ color: 'var(--texte-secondaire)' }}>
           Validation de l&apos;accès en cours…

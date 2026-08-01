@@ -1,4 +1,4 @@
-// Carte statistique pour les tableaux de bord — Dark Dashboard Edition.
+// Carte statistique pour les tableaux de bord — Thème Clair.
 import { type ReactNode } from 'react';
 
 export function CarteStatistique({
@@ -12,20 +12,19 @@ export function CarteStatistique({
 }) {
   return (
     <div
-      className="rounded-2xl p-5 flex items-start gap-4"
+      className="rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 sm:gap-4"
       style={{
-        background: '#131F18',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#FFFFFF',
+        border: '1px solid var(--bordure)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
       }}
     >
       {icone && (
         <div
-          className="shrink-0 rounded-xl flex items-center justify-center text-lg"
+          className="shrink-0 rounded-xl flex items-center justify-center text-lg w-10 h-10"
           style={{
-            width: 40,
-            height: 40,
-            background: 'rgba(11,94,69,0.2)',
-            color: '#33997A',
+            background: 'rgba(27,94,59,0.1)',
+            color: '#1B5E3B',
           }}
           aria-hidden
         >
@@ -33,12 +32,12 @@ export function CarteStatistique({
         </div>
       )}
       <div>
-        <p className="text-sm font-medium" style={{ color: 'rgba(240,237,230,0.55)' }}>
+        <p className="text-[10px] sm:text-sm font-medium leading-tight" style={{ color: 'var(--texte-secondaire)' }}>
           {etiquette}
         </p>
         <p
-          className="font-extrabold leading-none mt-1"
-          style={{ fontSize: 28, color: '#F0EDE6' }}
+          className="font-extrabold leading-none mt-1 sm:mt-1 text-xl sm:text-3xl"
+          style={{ color: 'var(--texte)' }}
         >
           {valeur}
         </p>

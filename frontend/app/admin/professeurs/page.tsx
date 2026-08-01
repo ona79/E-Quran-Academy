@@ -32,8 +32,8 @@ export default function PageAdminProfesseurs() {
   const [messages, setMessages] = useState<Record<string, string>>({});
   const [filtreStatut, setFiltreStatut] = useState<StatutFiltre>('TOUS');
 
-  const charger = useCallback(async () => {
-    setChargement(true);
+  const charger = useCallback(async (silencieux = false) => {
+    if (!silencieux) setChargement(true);
     try {
       const tous = await apiClient.get<Utilisateur[]>('/utilisateurs?role=PROFESSEUR');
       // Récupérer les profils en parallèle
@@ -51,7 +51,7 @@ export default function PageAdminProfesseurs() {
     } catch {
       // ignore
     } finally {
-      setChargement(false);
+      if (!silencieux) setChargement(false);
     }
   }, []);
 
@@ -66,7 +66,7 @@ export default function PageAdminProfesseurs() {
         ...p,
         [id]: action === 'valider' ? '✅ Validé' : '🚫 Rejeté',
       }));
-      await charger();
+      await charger(true);
     } catch (err) {
       setMessages((p) => ({
         ...p,

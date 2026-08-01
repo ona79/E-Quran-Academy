@@ -1,7 +1,7 @@
 'use client';
 
-// Shell commun aux espaces connectés — Dark Dashboard Edition.
-// Fond #0D1A14 + motif islamique, header glassmorphism, sidebar verte profonde.
+// Shell commun aux espaces connectés — Thème Clair.
+// Fond clair #F8F9FA, sidebar verte, header blanc.
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -35,31 +35,6 @@ const LIENS_PAR_ROLE: Record<Role, LienSidebar[]> = {
     { href: '/admin/paiements', libelle: 'Paiements', icone: '💳' },
   ],
 };
-
-// Motif islamique en position fixed sur toute la page
-function MotifFond() {
-  return (
-    <div
-      className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 0, opacity: 0.03 }}
-      aria-hidden
-    >
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="motif-dashboard" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path
-              d="M30 4L33.5 14H44L35.5 20L39 30L30 24L21 30L24.5 20L16 14H26.5Z"
-              fill="none"
-              stroke="white"
-              strokeWidth="1"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#motif-dashboard)" />
-      </svg>
-    </div>
-  );
-}
 
 export function ShellConnecte({ children }: { children: ReactNode }) {
   const { utilisateur, deconnexion } = utiliserAuth();
@@ -125,11 +100,8 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
   return (
     <div
       className="h-screen overflow-hidden flex relative"
-      style={{ background: '#0D1A14', color: '#F0EDE6' }}
+      style={{ background: 'var(--fond-page)', color: 'var(--texte)' }}
     >
-      {/* Motif islamique de fond — z-index 0 */}
-      <MotifFond />
-
       {/* Sidebar — z-index 40 */}
       <SidebarBase
         liens={liens}
@@ -144,10 +116,10 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
         <header
           className="sticky top-0 z-20 md:hidden flex items-center justify-between px-4 h-14"
           style={{
-            background: 'rgba(13,26,20,0.92)',
+            background: 'rgba(255,255,255,0.95)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid var(--bordure)',
           }}
         >
           <button
@@ -155,22 +127,20 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
             onClick={() => setDrawerOuvert(true)}
             aria-label="Ouvrir le menu"
             className="p-2 rounded-lg transition-colors"
-            style={{ color: '#F0EDE6' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            style={{ color: 'var(--texte)' }}
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
-          <Link href="/" className="flex items-center gap-2 font-semibold text-sm" style={{ color: '#F0EDE6' }}>
+          <Link href="/" className="flex items-center gap-2 font-semibold text-sm" style={{ color: 'var(--texte)' }}>
             <span>📖</span> E-Quran
           </Link>
           <button
             type="button"
             onClick={deconnexion}
             className="text-xs px-3 py-1.5 rounded-lg transition-colors"
-            style={{ color: 'rgba(240,237,230,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
+            style={{ color: 'var(--texte-secondaire)', border: '1px solid var(--bordure)' }}
           >
             Sortir
           </button>
@@ -180,32 +150,30 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
         <header
           className="sticky top-0 z-20 hidden md:flex items-center justify-between px-6 h-14"
           style={{
-            background: 'rgba(13,26,20,0.92)',
+            background: 'rgba(255,255,255,0.95)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid var(--bordure)',
           }}
         >
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium" style={{ color: 'rgba(240,237,230,0.5)' }}>
+            <span className="text-sm font-medium" style={{ color: 'var(--texte-secondaire)' }}>
               {labelRole}
             </span>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-            <span className="text-sm font-medium" style={{ color: '#F0EDE6' }}>
+            <span style={{ color: 'var(--bordure)' }}>·</span>
+            <span className="text-sm font-medium" style={{ color: 'var(--texte)' }}>
               {utilisateur.nomComplet}
             </span>
           </div>
           <button
             type="button"
             onClick={deconnexion}
-            className="text-sm px-4 py-1.5 rounded-lg transition-all duration-150"
+            className="text-sm px-4 py-1.5 rounded-lg transition-all duration-150 flex items-center gap-2"
             style={{
-              color: 'rgba(240,237,230,0.7)',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              color: 'var(--primaire)',
+              background: 'transparent',
+              border: '1px solid var(--primaire)',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
           >
             Déconnexion
           </button>
@@ -215,24 +183,23 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
         <main className={`flex-1 overflow-y-auto custom-scrollbar w-full px-4 sm:px-6 py-6 ${utilisateur.role === 'ADMIN' ? 'pb-6' : 'pb-24 md:pb-6'}`}>
           {enChargementValide ? (
             <div className="flex items-center gap-3 py-10">
-              <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#0B5E45', borderTopColor: 'transparent' }} />
-              <p style={{ color: 'rgba(240,237,230,0.5)' }}>Chargement…</p>
+              <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--primaire)', borderTopColor: 'transparent' }} />
+              <p style={{ color: 'var(--texte-secondaire)' }}>Chargement…</p>
             </div>
           ) : estProfEtNonValide ? (
             <div
               className="max-w-md mx-auto mt-10 rounded-2xl p-8 text-center space-y-4"
-              style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}
+              style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
             >
               <p className="text-5xl">⏳</p>
-              <p className="text-lg font-semibold" style={{ color: '#F0EDE6' }}>Compte en cours de validation</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(240,237,230,0.55)' }}>
+              <p className="text-lg font-semibold" style={{ color: 'var(--texte)' }}>Compte en cours de validation</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--texte-secondaire)' }}>
                 Votre compte est en cours de validation par l&apos;administrateur.
                 Vous recevrez un email de confirmation dès qu&apos;il sera activé.
               </p>
               <Link
                 href="/professeur/profil"
-                className="inline-block px-5 py-2.5 rounded-xl font-semibold text-white text-sm transition-all"
-                style={{ background: 'linear-gradient(135deg, #0B5E45, #B8923A)' }}
+                className="btn-primaire text-sm"
               >
                 Compléter mon profil →
               </Link>
@@ -245,7 +212,7 @@ export function ShellConnecte({ children }: { children: ReactNode }) {
         {/* Footer */}
         <footer
           className="py-3 text-center text-xs pb-16 md:pb-3"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.05)', color: 'rgba(240,237,230,0.25)' }}
+          style={{ borderTop: '1px solid var(--bordure)', color: 'var(--texte-secondaire)' }}
         >
           E-Quran Academy — {utilisateur.nomComplet}
         </footer>

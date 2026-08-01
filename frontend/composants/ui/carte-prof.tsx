@@ -14,9 +14,11 @@ interface CarteProfProps {
   profil: ProfilProfesseur;
   nomComplet?: string;
   noteMoyenne?: number;
+  lienProfil?: string;
 }
 
-export function CarteProf({ profil, nomComplet, noteMoyenne }: CarteProfProps) {
+export function CarteProf({ profil, nomComplet, noteMoyenne, lienProfil }: CarteProfProps) {
+  const lienFinal = lienProfil || `/professeurs/${profil.userId}`;
   const initiales = (nomComplet ?? 'P')
     .split(' ')
     .map((m) => m[0])
@@ -26,32 +28,24 @@ export function CarteProf({ profil, nomComplet, noteMoyenne }: CarteProfProps) {
 
   return (
     <article
-      className="carte group cursor-default transition-all hover:shadow-elevee h-full flex flex-col"
-      style={{ borderLeft: '3px solid var(--couleur-primaire)' }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'var(--couleur-or)';
-        e.currentTarget.style.borderLeftColor = 'var(--couleur-primaire)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'var(--bordure)';
-        e.currentTarget.style.borderLeftColor = 'var(--couleur-primaire)';
-      }}
+      className="carte cliquable group transition-all h-full flex flex-col !p-3 sm:!p-5"
+      style={{ borderLeft: '3px solid var(--primaire)' }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3">
         {/* Avatar */}
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center font-medium shrink-0"
+          className="w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xs sm:text-base font-medium shrink-0"
           style={{ backgroundColor: 'var(--couleur-primaire)', color: 'var(--couleur-ivoire)' }}
         >
           {initiales}
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold truncate">{nomComplet ?? 'Professeur'}</h3>
+          <h3 className="font-semibold truncate text-xs sm:text-base">{nomComplet ?? 'Professeur'}</h3>
 
           {/* Note étoiles */}
           {noteMoyenne !== undefined && (
-            <p className="flex items-center gap-1 text-sm mt-0.5">
+            <p className="flex items-center gap-1 text-[10px] sm:text-sm mt-0.5">
               <span style={{ color: 'var(--couleur-or)' }}>★</span>
               <span className="font-medium">{noteMoyenne.toFixed(1)}</span>
             </p>
@@ -59,7 +53,7 @@ export function CarteProf({ profil, nomComplet, noteMoyenne }: CarteProfProps) {
 
           {/* Badge qiraat */}
           <span
-            className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full"
+            className="inline-block mt-1 sm:mt-2 text-[9px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full"
             style={{ backgroundColor: 'var(--couleur-or-clair)', color: 'var(--couleur-primaire-profond)' }}
           >
             {profil.qiraatParDefaut === 'WARSH' ? 'Warsh' : 'Hafs'}
@@ -68,17 +62,17 @@ export function CarteProf({ profil, nomComplet, noteMoyenne }: CarteProfProps) {
 
         {/* Tarif */}
         <div className="text-right shrink-0">
-          <p className="text-lg font-bold">
+          <p className="text-sm sm:text-lg font-bold leading-tight">
             {profil.tarifHoraire.toLocaleString('fr-FR')}
           </p>
-          <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>FCFA/h</p>
+          <p className="text-[9px] sm:text-xs" style={{ color: 'var(--texte-secondaire)' }}>FCFA/h</p>
         </div>
       </div>
 
       {/* Bio tronquée */}
       {profil.bio && (
         <p
-          className="text-sm mt-3 line-clamp-2"
+          className="text-[10px] sm:text-sm mt-2 sm:mt-3 line-clamp-2"
           style={{ color: 'var(--texte-secondaire)' }}
         >
           {profil.bio}
@@ -86,18 +80,18 @@ export function CarteProf({ profil, nomComplet, noteMoyenne }: CarteProfProps) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 mt-auto pt-4">
+      <div className="flex gap-1.5 sm:gap-2 mt-auto pt-3 sm:pt-4">
         <Link
-          href={`/professeurs/${profil.userId}`}
+          href={lienFinal}
           onClick={(e) => e.stopPropagation()}
-          className="btn-secondaire flex-1 text-sm !py-2 text-center"
+          className="btn-secondaire flex-1 text-[10px] sm:text-sm !py-1.5 sm:!py-2 !px-1 sm:!px-3 text-center truncate"
         >
           Voir profil
         </Link>
         <Link
           href={`/eleve/reserver?prof=${profil.userId}`}
           onClick={(e) => e.stopPropagation()}
-          className="btn-primaire flex-1 text-sm !py-2 text-center"
+          className="btn-primaire flex-1 text-[10px] sm:text-sm !py-1.5 sm:!py-2 !px-1 sm:!px-3 text-center truncate"
         >
           Réserver
         </Link>

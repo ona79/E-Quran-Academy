@@ -19,9 +19,9 @@ export function BottomNav({ onglets }: { onglets: Onglet[] }) {
     <nav
       className="fixed bottom-0 inset-x-0 z-30 md:hidden border-t flex"
       style={{
-        backgroundColor: 'var(--fond-surface)',
+        backgroundColor: '#FFFFFF',
         borderColor: 'var(--bordure)',
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
+        boxShadow: '0 -2px 12px rgba(0,0,0,0.06)',
       }}
     >
       {items.map((o) => {
@@ -31,7 +31,7 @@ export function BottomNav({ onglets }: { onglets: Onglet[] }) {
             key={o.href}
             href={o.href}
             className="flex-1 flex flex-col items-center gap-0.5 py-2 text-xs"
-            style={{ color: actif ? 'var(--couleur-primaire)' : 'var(--texte-secondaire)' }}
+            style={{ color: actif ? 'var(--primaire)' : 'var(--texte-secondaire)' }}
           >
             <span aria-hidden className="text-lg">{o.icone}</span>
             <span className={actif ? 'font-medium' : ''}>{o.libelle}</span>

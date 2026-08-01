@@ -45,11 +45,16 @@ export default function PageAdminFeatureFlags() {
   async function basculer(flag: FeatureFlag) {
     setEnCours((p) => ({ ...p, [flag.cle]: true }));
     setMessages((p) => ({ ...p, [flag.cle]: '' }));
+    
+    // Mise à jour optimiste pour éviter le rechargement global (qui déforme la page)
+    setFlags((prev) => prev.map((f) => f.cle === flag.cle ? { ...f, actif: !flag.actif } : f));
+
     try {
       await apiClient.patch(`/feature-flags/${flag.cle}`, { actif: !flag.actif });
       setMessages((p) => ({ ...p, [flag.cle]: !flag.actif ? '✅ Activé' : '⏸ Désactivé' }));
-      await charger();
     } catch (err) {
+      // Annuler en cas d'erreur
+      setFlags((prev) => prev.map((f) => f.cle === flag.cle ? { ...f, actif: flag.actif } : f));
       setMessages((p) => ({
         ...p,
         [flag.cle]: err instanceof ErreurApi ? err.message : 'Erreur',

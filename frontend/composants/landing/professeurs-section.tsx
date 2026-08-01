@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProfilProfesseur {
   id: string;
@@ -44,6 +44,19 @@ export function ProfesseursSection() {
   const [professeurs, setProfesseurs] = useState<ProfilProfesseur[]>([]);
   const [chargement, setChargement] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const CITATIONS = [
+    "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ",
+    "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ"
+  ];
+  const [indexCitation, setIndexCitation] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndexCitation((prev) => (prev + 1) % CITATIONS.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function charger() {
@@ -100,9 +113,35 @@ export function ProfesseursSection() {
             <span className="text-[11px] font-bold text-[#B8923A] uppercase tracking-widest">Nos enseignants</span>
           </div>
 
-          <h2 className="text-[28px] md:text-[40px] font-extrabold text-[#1A1A1A] mb-3 leading-tight">
-            Apprenez avec les <span className="text-[#1F6948]">meilleurs</span>
-          </h2>
+          <div className="h-[50px] md:h-[70px] relative w-full flex justify-center items-center mb-3">
+            <AnimatePresence mode="wait">
+              <motion.h2
+                key={indexCitation}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  backgroundPosition: ['0% center', '200% center']
+                }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{
+                  opacity: { duration: 0.5 },
+                  y: { duration: 0.5 },
+                  backgroundPosition: { duration: 3, repeat: Infinity, ease: 'linear' }
+                }}
+                className="text-[32px] md:text-[46px] font-extrabold leading-tight font-arabic absolute text-center w-full"
+                dir="rtl"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #1F6948, #B8923A, #22C55E, #1F6948)',
+                  backgroundSize: '200% auto',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {CITATIONS[indexCitation]}
+              </motion.h2>
+            </AnimatePresence>
+          </div>
           <p className="text-[13px] md:text-[15px] text-[#888888] max-w-lg mx-auto">
             Des professeurs certifiés Ijaza, passionnés et disponibles pour vous guider dans votre parcours coranique.
           </p>

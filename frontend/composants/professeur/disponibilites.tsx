@@ -137,16 +137,16 @@ export function DisponibilitesProfesseur() {
   return (
     <div className="h-full flex flex-col space-y-4">
       {erreur && (
-        <div className="carte text-sm font-semibold shrink-0" style={{ color: '#fca5a5', background: 'rgba(185,28,28,0.15)', border: '1px solid rgba(185,28,28,0.25)' }}>
+        <div className="carte text-sm font-semibold shrink-0" style={{ color: '#DC2626', background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}>
           ⚠️ {erreur}
         </div>
       )}
 
       {/* Réservation instantanée */}
-      <section className="rounded-2xl p-4 shrink-0 flex items-center justify-between" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <section className="rounded-2xl p-4 shrink-0 flex items-center justify-between" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
         <div className="pr-4">
-          <h2 className="font-bold text-sm text-[#F0EDE6]">Réservation instantanée</h2>
-          <p className="text-[11px] mt-1 text-[#F0EDE6] opacity-50">
+          <h2 className="font-bold text-sm text-[var(--texte)]">Réservation instantanée</h2>
+          <p className="text-[11px] mt-1 text-[var(--texte)] opacity-60">
             Confirmations automatiques sans validation manuelle.
           </p>
         </div>
@@ -157,7 +157,7 @@ export function DisponibilitesProfesseur() {
           onClick={() => basculerInstantanee(!(profil?.reservationInstantanee ?? false))}
           className="relative w-11 h-6 rounded-full transition-all shrink-0"
           style={{
-            backgroundColor: profil?.reservationInstantanee ? '#0B5E45' : 'rgba(255,255,255,0.1)',
+            backgroundColor: profil?.reservationInstantanee ? 'var(--primaire)' : '#E5E0D5',
           }}
         >
           <span
@@ -171,8 +171,8 @@ export function DisponibilitesProfesseur() {
       <section className="flex-1 flex flex-col min-h-0">
         <div className="flex items-center justify-between mb-3 shrink-0">
           <div>
-            <h2 className="text-lg font-bold text-[#F0EDE6]">Calendrier hebdomadaire</h2>
-            <p className="text-[11px] text-[#F0EDE6] opacity-50">
+            <h2 className="text-lg font-bold text-[var(--texte)]">Calendrier hebdomadaire</h2>
+            <p className="text-[11px] text-[var(--texte)] opacity-60">
               Configurez vos créneaux. Cliquez pour supprimer.
             </p>
           </div>
@@ -189,13 +189,13 @@ export function DisponibilitesProfesseur() {
               <div 
                 key={j} 
                 className="flex flex-col rounded-2xl p-2 h-fit"
-                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+                style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}
               >
-                <div className="border-b pb-2 mb-2 text-center shrink-0" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+                <div className="border-b pb-2 mb-2 text-center shrink-0" style={{ borderColor: 'var(--bordure)' }}>
                   <p className="font-bold text-[11px] uppercase text-[#B8923A]">
                     {libelleJour(j).slice(0, 3)}
                   </p>
-                  <p className="text-[9px] text-[#F0EDE6] opacity-40">
+                  <p className="text-[9px] text-[var(--texte)] opacity-60">
                     {creneauxJour.length} créneau{creneauxJour.length > 1 ? 's' : ''}
                   </p>
                 </div>
@@ -209,9 +209,9 @@ export function DisponibilitesProfesseur() {
                       onClick={() => confirmerSuppression(c.id)}
                       className="w-full text-center py-1.5 rounded-lg text-[10px] font-semibold border transition-all hover:bg-red-900/30 hover:border-red-500 hover:text-red-300"
                       style={{
-                        background: 'rgba(11,94,69,0.2)',
+                        background: 'rgba(27,94,59,0.1)',
                         borderColor: 'rgba(11,94,69,0.5)',
-                        color: '#F0EDE6'
+                        color: 'var(--texte)'
                       }}
                       title="Cliquez pour supprimer"
                     >
@@ -226,9 +226,7 @@ export function DisponibilitesProfesseur() {
                   type="button"
                   onClick={() => ouvrirModalAjout(j)}
                   className="w-full mt-2 py-1.5 rounded-lg border border-dashed text-[10px] font-medium transition-colors shrink-0"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)', color: '#F0EDE6' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#B8923A'; e.currentTarget.style.color = '#B8923A'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#F0EDE6'; }}
+                  style={{ borderColor: 'var(--bordure)', color: 'var(--texte-secondaire)' }}
                 >
                   + Ajouter
                 </button>
@@ -251,9 +249,9 @@ export function DisponibilitesProfesseur() {
                   onClick={() => setJourActifMobile(j)}
                   className="px-3 py-1.5 rounded-full text-xs font-semibold border shrink-0 transition-all"
                   style={{
-                    background: actif ? '#0B5E45' : 'rgba(255,255,255,0.03)',
-                    color: actif ? '#FFF' : 'rgba(240,237,230,0.6)',
-                    borderColor: actif ? '#0B5E45' : 'rgba(255,255,255,0.1)',
+                    background: actif ? 'var(--primaire)' : '#FFFFFF',
+                    color: actif ? '#FFF' : 'var(--texte-secondaire)',
+                    borderColor: actif ? 'var(--primaire)' : 'var(--bordure)',
                   }}
                 >
                   {libelleJour(j).slice(0, 3)} ({count})
@@ -263,20 +261,20 @@ export function DisponibilitesProfesseur() {
           </div>
 
           {/* Liste des créneaux pour le jour sélectionné */}
-          <div className="flex-1 overflow-y-auto rounded-2xl p-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <div className="flex justify-between items-center pb-2 border-b mb-3" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+          <div className="flex-1 overflow-y-auto rounded-2xl p-3" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+            <div className="flex justify-between items-center pb-2 border-b mb-3" style={{ borderColor: 'var(--bordure)' }}>
               <span className="font-bold text-xs text-[#B8923A]">{libelleJour(jourActifMobile)}</span>
               <button 
                 type="button" 
                 onClick={() => ouvrirModalAjout(jourActifMobile)} 
-                className="px-2 py-1 text-[10px] rounded bg-[#0B5E45] text-white"
+                className="px-2 py-1 text-[10px] rounded bg-[var(--primaire)] text-white"
               >
                 + Ajouter
               </button>
             </div>
 
             {dispos.filter((d) => d.jour === jourActifMobile).length === 0 ? (
-              <p className="text-xs italic text-center py-6 text-[#F0EDE6] opacity-40">
+              <p className="text-xs italic text-center py-6 text-[var(--texte)] opacity-60">
                 Aucune disponibilité définie.
               </p>
             ) : (
@@ -291,9 +289,9 @@ export function DisponibilitesProfesseur() {
                       onClick={() => confirmerSuppression(c.id)}
                       className="text-center p-2 rounded-xl text-[10px] font-bold border flex flex-col items-center justify-center transition-all hover:bg-red-900/30 hover:border-red-500 hover:text-red-300"
                       style={{
-                        background: 'rgba(11,94,69,0.2)',
+                        background: 'rgba(27,94,59,0.1)',
                         borderColor: 'rgba(11,94,69,0.5)',
-                        color: '#F0EDE6'
+                        color: 'var(--texte)'
                       }}
                     >
                       <span>{c.heureDebut} - {c.heureFin}</span>
@@ -327,10 +325,10 @@ export function DisponibilitesProfesseur() {
                   className="champ text-xs" 
                   value={modalJour} 
                   onChange={(e) => setModalJour(e.target.value as JourSemaine)}
-                  style={{ colorScheme: 'dark' }}
+                  style={{ colorScheme: 'light' }}
                 >
                   {JOURS.map((j) => (
-                    <option key={j} value={j} className="bg-[#131F18] text-[#F0EDE6]">
+                    <option key={j} value={j} className="bg-white text-[var(--texte)]">
                       {libelleJour(j)}
                     </option>
                   ))}
@@ -347,7 +345,7 @@ export function DisponibilitesProfesseur() {
                     value={heureDebut} 
                     onChange={(e) => setHeureDebut(e.target.value)} 
                     required
-                    style={{ colorScheme: 'dark' }}
+                    style={{ colorScheme: 'light' }}
                   />
                 </div>
                 <div>
@@ -359,7 +357,7 @@ export function DisponibilitesProfesseur() {
                     value={heureFin} 
                     onChange={(e) => setHeureFin(e.target.value)} 
                     required
-                    style={{ colorScheme: 'dark' }}
+                    style={{ colorScheme: 'light' }}
                   />
                 </div>
               </div>
@@ -424,21 +422,20 @@ export function DisponibilitesProfesseur() {
       {/* Modal de suppression de créneau */}
       {creneauASupprimer && (
         <>
-          <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setCreneauASupprimer(null)} aria-hidden />
+          <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => setCreneauASupprimer(null)} aria-hidden />
           <div 
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm p-6 rounded-3xl text-center"
             style={{ 
-              background: 'rgba(13,26,20,0.95)', 
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(16px)'
+              background: '#FFFFFF', 
+              border: '1px solid var(--bordure)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
             }}
           >
-            <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl" style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444' }}>
+            <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl" style={{ background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.15)', color: '#DC2626' }}>
               🗑️
             </div>
-            <h3 className="text-lg font-bold mb-2" style={{ color: '#F0EDE6' }}>Supprimer ce créneau ?</h3>
-            <p className="text-xs mb-6" style={{ color: 'rgba(240,237,230,0.6)' }}>
+            <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--texte)' }}>Supprimer ce créneau ?</h3>
+            <p className="text-xs mb-6" style={{ color: 'var(--texte-secondaire)' }}>
               Cette action retirera ce créneau de vos disponibilités. Les réservations existantes ne seront pas annulées.
             </p>
             
@@ -446,10 +443,7 @@ export function DisponibilitesProfesseur() {
               <button
                 type="button"
                 onClick={() => setCreneauASupprimer(null)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(240,237,230,0.8)', border: '1px solid rgba(255,255,255,0.05)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                className="btn-secondaire flex-1"
               >
                 Annuler
               </button>

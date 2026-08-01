@@ -88,10 +88,10 @@ export function TableauDeBordProfesseur() {
   if (profil !== null && !profil.valide) {
     return (
       <div className="max-w-md mx-auto mt-10 rounded-2xl p-8 text-center space-y-4"
-        style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.07)' }}>
+        style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
         <p className="text-5xl">⏳</p>
-        <p className="text-lg font-semibold" style={{ color: '#F0EDE6' }}>Compte en cours de validation</p>
-        <p className="text-sm leading-relaxed" style={{ color: 'rgba(240,237,230,0.55)' }}>
+        <p className="text-lg font-semibold" style={{ color: 'var(--texte)' }}>Compte en cours de validation</p>
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--texte-secondaire)' }}>
           Un administrateur doit valider votre profil avant que les élèves puissent vous trouver.
         </p>
         <Link href="/professeur/profil" className="btn-primaire inline-block">
@@ -165,10 +165,10 @@ export function TableauDeBordProfesseur() {
               const peutDem = peutDemarrer(r.creneauDebut);
               return (
                 <div key={r.id} className="carte flex items-center justify-between gap-4"
-                  style={{ borderLeft: '3px solid #0B5E45' }}>
+                  style={{ borderLeft: '3px solid var(--primaire)' }}>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                      style={{ background: 'rgba(11,94,69,0.25)', color: '#33997A' }}>
+                      style={{ background: 'rgba(27,94,59,0.1)', color: 'var(--primaire)' }}>
                       {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                     </div>
                     <div>
@@ -210,10 +210,10 @@ export function TableauDeBordProfesseur() {
           <div className="space-y-3">
             {[...confirmesPasses, ...realises.slice(0, 3)].slice(0, 5).map((r) => (
               <div key={r.id} className="carte flex items-center justify-between gap-4"
-                style={{ borderLeft: '3px solid rgba(255,255,255,0.15)', opacity: 0.8 }}>
+                style={{ borderLeft: '3px solid var(--bordure)', opacity: 0.8 }}>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                    style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(240,237,230,0.5)' }}>
+                    style={{ background: 'var(--fond-surface-2)', color: 'var(--texte-secondaire)' }}>
                     {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                   </div>
                   <div>
@@ -225,7 +225,7 @@ export function TableauDeBordProfesseur() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.07)', color: 'rgba(240,237,230,0.5)' }}>
+                    style={{ backgroundColor: 'var(--fond-surface-2)', color: 'var(--texte-secondaire)' }}>
                     Terminé
                   </span>
                   {r.statut === 'REALISE' && (
@@ -254,7 +254,7 @@ export function TableauDeBordProfesseur() {
           )}
         </h2>
         {enAttente.length === 0 ? (
-          <p className="carte text-sm" style={{ color: 'rgba(240,237,230,0.55)' }}>
+          <p className="carte text-sm" style={{ color: 'var(--texte-secondaire)' }}>
             Aucune demande en attente. ✅
           </p>
         ) : (
@@ -332,10 +332,7 @@ export function TableauDeBordProfesseur() {
           { href: '/professeur/messages', icon: '💬', label: 'Messages', desc: 'Vos élèves vous écrivent' },
         ].map((lien) => (
           <Link key={lien.href} href={lien.href}
-            className="carte flex flex-col gap-2 hover:shadow-elevee transition-all"
-            style={{ borderColor: 'var(--bordure)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--couleur-primaire)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--bordure)'; }}>
+            className="carte cliquable flex flex-col gap-2 transition-all">
             <span className="text-2xl">{lien.icon}</span>
             <p className="font-semibold text-sm">{lien.label}</p>
             <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>{lien.desc}</p>

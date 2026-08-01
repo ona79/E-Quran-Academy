@@ -87,8 +87,8 @@ export function CoursProfesseur() {
             onClick={() => setOnglet(o.key as Onglet)}
             className="flex-1 py-3 text-sm font-semibold border-b-2 transition-all"
             style={{
-              borderColor: onglet === o.key ? 'var(--couleur-primaire)' : 'transparent',
-              color: onglet === o.key ? 'var(--couleur-primaire)' : 'var(--texte-secondaire)',
+              borderColor: onglet === o.key ? 'var(--primaire)' : 'transparent',
+              color: onglet === o.key ? 'var(--primaire)' : 'var(--texte-secondaire)',
             }}
           >
             {o.libelle} ({o.count})
@@ -107,10 +107,10 @@ export function CoursProfesseur() {
             const demarrable = r.statut === 'CONFIRME' && peutDemarrer(r.creneauDebut);
             return (
               <div key={r.id} className="carte flex items-center justify-between gap-4"
-                style={{ borderLeft: '3px solid var(--couleur-primaire)' }}>
+                style={{ borderLeft: '3px solid var(--primaire)' }}>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                    style={{ backgroundColor: 'var(--couleur-or-clair)', color: 'var(--couleur-primaire-profond)' }}>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white"
+                    style={{ backgroundColor: 'var(--accent)' }}>
                     {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -138,7 +138,7 @@ export function CoursProfesseur() {
                     <Link
                       href={`/professeur/suivi/${r.id}`}
                       className="btn-secondaire text-xs !py-1.5 !px-3"
-                      style={{ borderColor: 'var(--couleur-or)', color: 'var(--couleur-or)' }}
+                      style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
                     >
                       📝 Suivi pédagogique
                     </Link>

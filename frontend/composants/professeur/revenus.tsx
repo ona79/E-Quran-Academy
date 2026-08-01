@@ -71,8 +71,7 @@ export function RevenusProfesseur() {
     <div className="space-y-6 max-w-3xl">
       {erreur && <p className="carte text-sm" style={{ color: 'var(--erreur)' }}>{erreur}</p>}
 
-      {/* Solde disponible en grand */}
-      <div className="carte" style={{ borderLeft: '4px solid var(--couleur-or)' }}>
+      <div className="carte" style={{ borderLeft: '4px solid var(--accent)' }}>
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-medium" style={{ color: 'var(--texte-secondaire)' }}>
@@ -88,7 +87,7 @@ export function RevenusProfesseur() {
           </div>
           {!paiementActif && (
             <span className="text-xs px-3 py-1.5 rounded-full whitespace-nowrap"
-              style={{ backgroundColor: 'color-mix(in srgb, var(--couleur-or) 15%, transparent)', color: 'var(--couleur-or)' }}>
+              style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)' }}>
               Paiement désactivé (MVP)
             </span>
           )}
@@ -119,8 +118,8 @@ export function RevenusProfesseur() {
                     <td className="py-3 pr-4">{formaterDateHeure(r.creneauDebut)}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold"
-                          style={{ backgroundColor: 'var(--couleur-or-clair)', color: 'var(--couleur-primaire-profond)' }}>
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                          style={{ backgroundColor: 'var(--accent)' }}>
                           {(r.nomEleve ?? 'E').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}
                         </div>
                         <span>{r.nomEleve ?? `Élève ${r.eleveId.slice(0, 8)}`}</span>

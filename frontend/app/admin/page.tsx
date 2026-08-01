@@ -39,8 +39,8 @@ function StatCard({
     <div
       className="rounded-2xl p-5 flex items-start gap-4 transition-all duration-200 relative overflow-hidden"
       style={{
-        background: '#131F18',
-        border: badge ? '1px solid rgba(184,146,58,0.4)' : '1px solid rgba(255,255,255,0.07)',
+        background: '#FFFFFF',
+        border: badge ? '1px solid var(--accent)' : '1px solid var(--bordure)',
       }}
     >
       {badge && (
@@ -59,7 +59,7 @@ function StatCard({
         <p className="font-extrabold leading-none" style={{ fontSize: 28, color: couleur }}>
           {valeur}
         </p>
-        <p className="text-xs mt-1 font-medium" style={{ color: 'rgba(240,237,230,0.55)' }}>
+        <p className="text-xs mt-1 font-medium" style={{ color: 'var(--texte-secondaire)' }}>
           {libelle}
         </p>
       </div>
@@ -69,9 +69,7 @@ function StatCard({
 }
 
 function Squelette() {
-  return (
-    <div className="rounded-2xl h-24 animate-pulse" style={{ background: '#131F18', border: '1px solid rgba(255,255,255,0.05)' }} />
-  );
+    <div className="rounded-2xl h-24 animate-pulse" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }} />
 }
 
 export default function PageAdmin() {
@@ -162,16 +160,16 @@ export default function PageAdmin() {
               <div
                 className="rounded-2xl p-4 flex items-center gap-3 transition-all duration-200 cursor-pointer"
                 style={{
-                  background: 'rgba(184,146,58,0.1)',
-                  border: '1px solid rgba(184,146,58,0.35)',
+                  background: '#FFFFFF',
+                  border: '1px solid var(--accent)',
                 }}
               >
                 <span className="text-2xl">⚠️</span>
                 <div className="flex-1">
-                  <p className="font-semibold" style={{ color: '#E0B954' }}>
+                  <p className="font-semibold" style={{ color: 'var(--texte)' }}>
                     {enAttente} professeur{enAttente > 1 ? 's' : ''} en attente de validation
                   </p>
-                  <p className="text-sm mt-0.5" style={{ color: 'rgba(224,185,84,0.7)' }}>
+                  <p className="text-sm mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
                     Cliquez pour examiner et approuver les demandes →
                   </p>
                 </div>
@@ -191,11 +189,11 @@ export default function PageAdmin() {
               [...Array(5)].map((_, i) => <Squelette key={i} />)
             ) : (
               <>
-                  <StatCard icone="🎓" valeur={stats?.totalEleves ?? '—'} libelle="Élèves inscrits" href="/admin/utilisateurs?role=ELEVE" couleur="#33997A" />
-                  <StatCard icone="📖" valeur={stats?.totalProfesseurs ?? '—'} libelle="Professeurs actifs" href="/admin/professeurs" couleur="#E0B954" />
-                  <StatCard icone="⏳" valeur={stats?.professeursEnAttente ?? '—'} libelle="En attente validation" href="/admin/professeurs" couleur="#E0B954" badge={(stats?.professeursEnAttente ?? 0) > 0} />
-                  <StatCard icone="📅" valeur={stats?.coursAujourdhui ?? '—'} libelle="Cours aujourd'hui" couleur="#F0EDE6" />
-                  <StatCard icone="💰" valeur={stats ? `${stats.revenusTotal.toLocaleString('fr-FR')} F` : '—'} libelle="Revenus totaux" href="/admin/paiements" couleur="#4ADE80" />
+                  <StatCard icone="🎓" valeur={stats?.totalEleves ?? '—'} libelle="Élèves inscrits" href="/admin/utilisateurs?role=ELEVE" couleur="var(--primaire)" />
+                  <StatCard icone="📖" valeur={stats?.totalProfesseurs ?? '—'} libelle="Professeurs actifs" href="/admin/professeurs" couleur="var(--accent)" />
+                  <StatCard icone="⏳" valeur={stats?.professeursEnAttente ?? '—'} libelle="En attente validation" href="/admin/professeurs" couleur="var(--accent)" badge={(stats?.professeursEnAttente ?? 0) > 0} />
+                  <StatCard icone="📅" valeur={stats?.coursAujourdhui ?? '—'} libelle="Cours aujourd'hui" couleur="var(--texte)" />
+                  <StatCard icone="💰" valeur={stats ? `${stats.revenusTotal.toLocaleString('fr-FR')} F` : '—'} libelle="Revenus totaux" href="/admin/paiements" couleur="var(--primaire)" />
               </>
             )}
           </div>
@@ -241,24 +239,24 @@ export default function PageAdmin() {
                   href={lien.href}
                   className="rounded-2xl p-5 flex items-start gap-3 transition-all duration-200"
                   style={{
-                    background: '#131F18',
-                    border: lien.urgence ? '1px solid rgba(184,146,58,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                    background: '#FFFFFF',
+                    border: lien.urgence ? '1px solid var(--accent)' : '1px solid var(--bordure)',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#172418';
-                    e.currentTarget.style.borderColor = lien.urgence ? 'rgba(184,146,58,0.6)' : 'rgba(11,94,69,0.4)';
+                    e.currentTarget.style.background = 'var(--fond-page)';
+                    e.currentTarget.style.borderColor = lien.urgence ? 'var(--accent)' : 'var(--primaire)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#131F18';
-                    e.currentTarget.style.borderColor = lien.urgence ? 'rgba(184,146,58,0.4)' : 'rgba(255,255,255,0.07)';
+                    e.currentTarget.style.background = '#FFFFFF';
+                    e.currentTarget.style.borderColor = lien.urgence ? 'var(--accent)' : 'var(--bordure)';
                   }}
                 >
                   <span className="text-2xl">{lien.icone}</span>
                   <div>
-                    <p className="font-medium" style={{ color: '#F0EDE6' }}>
+                    <p className="font-medium" style={{ color: 'var(--texte)' }}>
                       {lien.titre}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: 'rgba(240,237,230,0.55)' }}>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
                       {lien.desc}
                     </p>
                   </div>
