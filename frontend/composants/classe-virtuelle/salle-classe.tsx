@@ -154,8 +154,8 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
           const sea = await apiClient.get<SeanceCours>(`/classe-virtuelle/seances/${reservationId}`);
           setSeance(sea);
           setEnChargement(false);
-        } catch (err) {
-          if (err instanceof ErreurApi && err.statut === 404) {
+        } catch (err: any) {
+          if (err?.statut === 404) {
             if (role === 'PROFESSEUR') {
               const nouvelleSeance = await apiClient.post<SeanceCours>('/classe-virtuelle/seances', {
                 reservationId,
@@ -164,12 +164,15 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
               setSeance(nouvelleSeance);
               setEnChargement(false);
             } else {
+              // Si la séance n'existe pas encore, l'élève attend (polling)
               timerId = setTimeout(charger, 4000);
             }
-          } else throw err;
+          } else {
+            throw err;
+          }
         }
       } catch (err: any) {
-        setErreur(err instanceof ErreurApi ? err.message : 'Erreur de chargement');
+        setErreur(err?.message || 'Erreur de chargement');
         setEnChargement(false);
       }
     };
@@ -205,9 +208,26 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
       const callFrame = (window as any).DailyIframe.createFrame(container, {
         iframeStyle: { width: '100%', height: '100%', border: 'none', borderRadius: '12px', backgroundColor: '#101a22' },
         showLeaveButton: false,
+        theme: {
+          colors: {
+            accent: '#0B5E45',
+            background: '#101a22',
+            backgroundAccent: '#1b2b35',
+            baseText: '#ffffff',
+            border: '#1b2b35',
+            mainAreaBg: '#101a22',
+            mainAreaBgAccent: '#1b2b35',
+            mainAreaText: '#ffffff',
+            supportiveText: '#9ca3af',
+          },
+        },
       });
       dailyInstanceRef.current = callFrame;
-      callFrame.join({ url: seance.lienVisio, token: seance.tokenVisio });
+      const optionsJoin: any = { url: seance.lienVisio };
+      if (seance.tokenVisio) {
+        optionsJoin.token = seance.tokenVisio;
+      }
+      callFrame.join(optionsJoin);
       callFrame.on('network-quality-change', (evt: any) => {
         signalerBandePassante(evt.threshold === 'low' ? 'FAIBLE' : 'BONNE');
       });
@@ -221,6 +241,22 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
     const id = setInterval(() => setIndicateurParole(Math.random() > 0.6), 1200);
     return () => clearInterval(id);
   }, [microActif, modeRepliActif, modeAudioSeul]);
+
+  // ── 6. Sondage de fin de cours (pour déconnecter l'élève) ───────────────
+  useEffect(() => {
+    if (role === 'PROFESSEUR' || !seance) return;
+    const interval = setInterval(async () => {
+      try {
+        const sea = await apiClient.get<SeanceCours>(`/classe-virtuelle/seances/${reservationId}`);
+        if (sea.statut === 'TERMINEE') {
+          router.push('/eleve/tableau-de-bord');
+        }
+      } catch (e) {
+        // Ignorer les erreurs réseau temporaires
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [seance, role, reservationId, router]);
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const terminerLeCours = useCallback(async () => {
@@ -261,6 +297,18 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
       alert(err instanceof ErreurApi ? err.message : 'Erreur enregistrement');
     }
   }, [seance, role]);
+
+  const activerPleinEcran = useCallback(() => {
+    if (dailyContainerRef.current) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        dailyContainerRef.current.requestFullscreen().catch((err) => {
+          console.error("Erreur plein écran:", err);
+        });
+      }
+    }
+  }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Rendus états de chargement / erreur
@@ -306,19 +354,35 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
 
   const panneauVideo = (
     <div className="flex flex-col gap-3 h-full">
-      {/* Cadre vidéo */}
+      {/* Cadre vidéo agrandi */}
       <div
-        className="flex-1 relative rounded-2xl overflow-hidden border min-h-[220px]"
+        className="flex-1 relative rounded-2xl overflow-hidden border min-h-[350px] lg:min-h-[400px]"
         style={{ backgroundColor: '#0a1217', borderColor: 'var(--bordure)' }}
       >
-        {/* Daily.co réel */}
+        {/* Daily.co réel (le conteneur doit toujours rester dans le DOM pour le son) */}
+        {!estModeSimule && (
+          <div 
+            ref={dailyContainerRef} 
+            className="absolute inset-0 w-full h-full bg-[#101a22]"
+            style={{ display: videoMasquee ? 'none' : 'block' }}
+          />
+        )}
+        
+        {/* Bouton Plein écran superposé */}
         {!estModeSimule && !videoMasquee && (
-          <div ref={dailyContainerRef} className="w-full h-full" />
+          <button
+            onClick={activerPleinEcran}
+            className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-lg backdrop-blur-sm transition-colors text-xs font-semibold flex items-center gap-2"
+            title="Plein écran"
+          >
+            <span>⛶</span>
+            <span className="hidden sm:inline">Plein écran</span>
+          </button>
         )}
 
-        {/* Placeholder connexion en cours */}
+        {/* Placeholder connexion en cours / Audio seul */}
         {!estModeSimule && videoMasquee && (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-white">
+          <div className="w-full h-full absolute inset-0 flex flex-col items-center justify-center gap-3 text-white" style={{ backgroundColor: '#0a1217' }}>
             <span className="text-4xl">📻</span>
             <p className="text-sm font-medium text-amber-400">Mode audio seul</p>
           </div>
@@ -466,14 +530,16 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
           </div>
         )}
 
-        {/* Terminer le cours */}
-        <button
-          onClick={() => setModalTerminer(true)}
-          disabled={terminaison}
-          className="w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-red-700 hover:bg-red-800 disabled:opacity-50 transition-colors"
-        >
-          {terminaison ? 'Clôture en cours…' : '🚪 Terminer le cours'}
-        </button>
+        {/* Terminer le cours (seulement pour le professeur) */}
+        {role === 'PROFESSEUR' && (
+          <button
+            onClick={() => setModalTerminer(true)}
+            disabled={terminaison}
+            className="w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-red-700 hover:bg-red-800 disabled:opacity-50 transition-colors"
+          >
+            {terminaison ? 'Clôture en cours…' : '🚪 Terminer le cours'}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -552,23 +618,18 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         ))}
       </div>
 
-      {/* ── Layout MOBILE : un seul panneau à la fois ──────────────────── */}
-      <div className="lg:hidden" style={{ minHeight: '60vh' }}>
-        {ongletMobile === 'VIDEO' ? panneauVideo : panneauMushaf}
-      </div>
-
-      {/* ── Layout DESKTOP : Vidéo gauche 60% + Mushaf droite 40% ──────── */}
+      {/* ── Layout UNIQUE Responsive ───────────────────────────────────── */}
       <div
-        className="hidden lg:flex gap-4"
-        style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}
+        className="flex flex-col lg:flex-row gap-4 w-full"
+        style={{ height: 'calc(100dvh - 100px)', minHeight: '500px' }}
       >
-        {/* Vidéo — 60% */}
-        <div className="w-[60%] flex flex-col gap-3">
+        {/* Vidéo — 100% sur mobile (si onglet actif), 60% sur desktop */}
+        <div className={`w-full lg:w-[60%] flex-col gap-3 ${ongletMobile === 'VIDEO' ? 'flex flex-1' : 'hidden lg:flex'}`}>
           {panneauVideo}
         </div>
 
-        {/* Mushaf — 40% */}
-        <div className="w-[40%]">
+        {/* Mushaf — 100% sur mobile (si onglet actif), 40% sur desktop */}
+        <div className={`w-full lg:w-[40%] flex-col ${ongletMobile === 'MUSHAF' ? 'flex flex-1 h-full overflow-hidden' : 'hidden lg:flex overflow-hidden'}`}>
           {panneauMushaf}
         </div>
       </div>

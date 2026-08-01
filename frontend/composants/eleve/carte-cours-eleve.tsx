@@ -4,9 +4,11 @@
 // Affiche : nom du prof, date/heure dans le fuseau étudiant, statut,
 // bouton "Rejoindre" (actif 15 min avant), "Annuler", "Laisser un avis".
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import type { Reservation, StatutReservation } from '@/lib/types';
 import { BadgeStatut } from '@/composants/ui/badge-statut';
 import { formaterDateHeure } from '@/lib/fuseau-horaire';
+import { apiClient } from '@/lib/api-client';
 
 interface CarteCours {
   reservation: Reservation;
@@ -42,6 +44,28 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
   const peutCancel = peutAnnuler(reservation.creneauDebut);
   const estPasse = reservation.statut === 'REALISE' || reservation.statut === 'ABSENT';
   const estAnnule = reservation.statut === 'ANNULE';
+
+  const [seanceDemarree, setSeanceDemarree] = useState(false);
+
+  useEffect(() => {
+    if (!peutJoindre || estPasse || estAnnule) return;
+    
+    // Vérifier silencieusement si le prof a créé la séance
+    const verifierSeance = async () => {
+      try {
+        await apiClient.get(`/classe-virtuelle/seances/${reservation.id}`);
+        setSeanceDemarree(true);
+      } catch (err: any) {
+        if (err?.statut === 404) {
+          setSeanceDemarree(false);
+        }
+      }
+    };
+
+    verifierSeance();
+    const timer = setInterval(verifierSeance, 5000); // Polling toutes les 5s
+    return () => clearInterval(timer);
+  }, [peutJoindre, estPasse, estAnnule, reservation.id]);
 
   return (
     <article
@@ -86,7 +110,7 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
         <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t" style={{ borderColor: 'var(--bordure)' }}>
           {/* Rejoindre — uniquement si confirmé */}
           {reservation.statut === 'CONFIRME' && (
-            peutJoindre ? (
+            peutJoindre && seanceDemarree ? (
               <Link
                 href={`/eleve/classe/${reservation.id}`}
                 className="btn-primaire text-xs !py-1.5 !px-3"
@@ -98,9 +122,9 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
                 type="button"
                 disabled
                 className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
-                title="Disponible 15 min avant le cours"
+                title={peutJoindre ? "En attente du professeur..." : "Disponible 15 min avant le cours"}
               >
-                🎥 Rejoindre
+                🎥 {peutJoindre ? 'En attente...' : 'Rejoindre'}
               </button>
             )
           )}

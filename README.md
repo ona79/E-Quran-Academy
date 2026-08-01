@@ -1,6 +1,6 @@
 # E-Quran Academy
 
-> Plateforme SaaS de cours de Coran en ligne — met en relation des **professeurs certifiés** et des **élèves / parents**, avec salle de classe virtuelle interactive et suivi pédagogique complet.
+> Plateforme SaaS de cours de Coran en ligne — met en relation des **professeurs certifiés** et des **étudiants / parents**, avec salle de classe virtuelle interactive et suivi pédagogique complet.
 
 **Audience principale :** Sénégal, Guinée et diaspora francophone  
 **Objectif technique :** Fonctionner pleinement sur des connexions internet faibles ou instables
@@ -24,13 +24,13 @@
 
 ## 📖 À propos de la plateforme
 
-**E-Quran Academy** est une plateforme éducative islamique qui permet à des professeurs de Coran certifiés (Hafiz, Ijaza) de proposer des cours en ligne à des élèves du monde entier.
+**E-Quran Academy** est une plateforme éducative islamique qui permet à des professeurs de Coran certifiés (Hafiz, Ijaza) de proposer des cours en ligne à des étudiants du monde entier.
 
 La plateforme est conçue pour trois types d'utilisateurs :
 
 | Rôle | Description |
 |------|-------------|
-| 🎓 **Élève / Parent** | Recherche un professeur, réserve des cours, suit sa progression |
+| 🎓 **Étudiant / Parent** | Recherche un professeur, réserve des cours, suit sa progression |
 | 👨‍🏫 **Professeur** | Gère ses disponibilités, donne des cours, suit les revenus |
 | 🔧 **Administrateur** | Valide les professeurs, modère le contenu, gère les paiements |
 
@@ -38,7 +38,7 @@ La plateforme est conçue pour trois types d'utilisateurs :
 
 ## ✨ Fonctionnalités
 
-### Pour l'élève / parent
+### Pour l'étudiant / parent
 - Tableau de bord personnalisé
 - Recherche de professeurs avec filtres (langue, tarif, genre, qiraat)
 - Réservation de cours avec conversion automatique de fuseau horaire
@@ -53,7 +53,7 @@ La plateforme est conçue pour trois types d'utilisateurs :
 - Profil public complet (bio, Ijaza, extrait audio de récitation, qiraats maîtrisées)
 - Formulaire de fin de cours (sourate mémorisée, notes tajwid, progression)
 - Tableau de bord des revenus
-- Messagerie avec les élèves
+- Messagerie avec les étudiants
 - Accès à la salle de classe virtuelle (avec contrôle du Mushaf)
 
 ### Pour l'administrateur
@@ -73,7 +73,7 @@ Le système de paiement est **entièrement modélisé** (Stripe Connect + PayDun
 La salle de classe est la fonctionnalité centrale de la plateforme :
 
 - **Visioconférence** via Daily.co (SFU, bitrate adaptatif / simulcast)
-- **Mushaf interactif synchronisé** en temps réel via WebSocket (Socket.io + Redis Pub/Sub) — le professeur surligne la sourate, le verset et la plage ; l'élève suit en lecture seule
+- **Mushaf interactif synchronisé** en temps réel via WebSocket (Socket.io + Redis Pub/Sub) — le professeur surligne la sourate, le verset et la plage ; l'étudiant suit en lecture seule
 - **Mode de repli** « audio seul + Mushaf » si la bande passante vidéo est insuffisante
 - **Reconnexion automatique** sans perte de l'état de synchronisation
 - **Enregistrement optionnel** (micro-service asynchrone, consentement parental requis, rétention 30 jours)
@@ -107,12 +107,12 @@ equran-academy/
 │   ├── src/
 │   │   ├── main.ts               # Bootstrap, sécurité (Helmet, CORS, Swagger)
 │   │   ├── app.module.ts
-│   │   ├── utilisateurs/         # Inscription, auth JWT, profils élèves & professeurs
+│   │   ├── utilisateurs/         # Inscription, auth JWT, profils étudiants & professeurs
 │   │   ├── reservations/         # Créneaux & réservations de cours
 │   │   ├── classe-virtuelle/     # Salles Daily.co + Gateway WebSocket Mushaf
 │   │   ├── suivi-pedagogique/    # Rapports de fin de cours, historique
 │   │   ├── paiement/             # Escrow, Stripe, PayDunya
-│   │   ├── messagerie/           # Messages asynchrones professeur ↔ élève
+│   │   ├── messagerie/           # Messages asynchrones professeur ↔ étudiant
 │   │   ├── avis/                 # Notes et commentaires post-cours
 │   │   ├── feature-flags/        # Activation/désactivation sans redéploiement
 │   │   └── partages/             # Guards, DTOs communs, utilitaires
@@ -129,12 +129,12 @@ equran-academy/
 │   │   ├── connexion/            # Authentification
 │   │   ├── inscription/          # Création de compte
 │   │   ├── professeurs/          # Catalogue public des professeurs
-│   │   ├── eleve/                # Espace élève (cours, réservations, messages, classe)
+│   │   ├── eleve/                # Espace étudiant (cours, réservations, messages, classe)
 │   │   ├── professeur/           # Espace professeur (disponibilités, suivi, revenus)
 │   │   └── admin/                # Tableau de bord administrateur
 │   ├── composants/
 │   │   ├── classe-virtuelle/     # Salle de classe (vidéo + Mushaf + WebSocket)
-│   │   ├── eleve/                # Composants spécifiques à l'élève
+│   │   ├── eleve/                # Composants spécifiques à l'étudiant
 │   │   ├── professeur/           # Composants spécifiques au professeur
 │   │   ├── auth/                 # Formulaires connexion / inscription
 │   │   ├── admin/                # Outils d'administration
@@ -251,9 +251,9 @@ La documentation Swagger de l'API est sur **http://localhost:3001/api**
 | `/connexion` | Public | Authentification |
 | `/inscription` | Public | Création de compte |
 | `/professeurs` | Public | Catalogue des professeurs |
-| `/eleve` | Élève | Tableau de bord |
-| `/eleve/reserver` | Élève | Réservation d'un cours |
-| `/eleve/classe` | Élève | Salle de classe virtuelle |
+| `/eleve` | Étudiant | Tableau de bord |
+| `/eleve/reserver` | Étudiant | Réservation d'un cours |
+| `/eleve/classe` | Étudiant | Salle de classe virtuelle |
 | `/professeur` | Professeur | Tableau de bord |
 | `/professeur/disponibilites` | Professeur | Gestion des créneaux |
 | `/professeur/suivi/:id` | Professeur | Rapport de fin de cours |

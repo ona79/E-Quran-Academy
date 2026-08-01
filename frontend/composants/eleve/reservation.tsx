@@ -158,7 +158,7 @@ export function ReservationCours() {
       return;
     }
 
-    const dateLocale = prochaineDatePourJour(jour);
+    const dateLocale = prochaineDatePourJour(jour, dispoSelectionnee.heureDebut);
 
     setEnEnvoi(true);
     try {
@@ -341,13 +341,25 @@ export function ReservationCours() {
   );
 }
 
-/** Calcule la date ISO du prochain jour de la semaine donné. */
-function prochaineDatePourJour(jour: JourSemaine): string {
+/** Calcule la date ISO du prochain jour de la semaine donné. Si c'est aujourd'hui mais que l'heure est passée, passe à la semaine suivante. */
+function prochaineDatePourJour(jour: JourSemaine, heureDebutStr?: string): string {
   const cible = JOURS.indexOf(jour) + 1; // LUNDI=1 … DIMANCHE=7 (ISO)
   const aujourdhui = new Date();
   const courant = aujourdhui.getDay() === 0 ? 7 : aujourdhui.getDay();
   let delta = cible - courant;
-  if (delta < 0) delta += 7;
+  
+  if (delta < 0) {
+    delta += 7;
+  } else if (delta === 0 && heureDebutStr) {
+    const [heures, minutes] = heureDebutStr.split(':').map(Number);
+    const heureDebut = new Date(aujourdhui);
+    heureDebut.setHours(heures, minutes, 0, 0);
+    // Si l'heure du créneau est déjà passée, on réserve pour la semaine prochaine
+    if (heureDebut <= aujourdhui) {
+      delta += 7;
+    }
+  }
+
   const cibleDate = new Date(aujourdhui);
   cibleDate.setDate(aujourdhui.getDate() + delta);
   return cibleDate.toISOString().slice(0, 10); // YYYY-MM-DD

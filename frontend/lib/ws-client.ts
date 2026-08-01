@@ -3,26 +3,20 @@
 // Authentification : jeton JWT passé en query au handshake.
 import { io, type Socket } from 'socket.io-client';
 
-const URL_WS = process.env.NEXT_PUBLIC_WS_URL ?? 'http://localhost:3002';
+const URL_WS = '/classe-virtuelle';
 
 let socket: Socket | null = null;
 
 /**
  * Retourne le singleton socket connecté à la gateway classe-virtuelle.
- * Le jeton est lu en localStorage à l'appel.
+ * Le jeton est lu automatiquement via le cookie `jwt_access` grâce au proxy.
  */
 export function obtenirSocket(): Socket {
   if (socket && socket.connected) return socket;
 
-  // On récupère le cookie manuellement si on est sur le même domaine,
-  // ou on l'extrait. Cependant, pour utiliser auth: { token }, il faut un token.
-  const jeton = typeof window !== 'undefined' ? localStorage.getItem('jeton_ws') : null;
-
-  socket = io(`${URL_WS}/classe-virtuelle`, {
+  socket = io(URL_WS, {
+    path: '/ws-backend/socket.io', // Le proxy Next.js redirige vers le port 3002
     withCredentials: true,
-    auth: { token: jeton },
-    // Reconnexion automatique sans perte : le serveur renvoie l'état Mushaf
-    // à chaque "rejoindreSeance", donc un client qui se reconnecte récupère
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,

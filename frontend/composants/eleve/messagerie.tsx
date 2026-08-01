@@ -19,6 +19,7 @@ export function MessagerieEleve() {
   const monId = utilisateur?.id ?? '';
 
   const [boiteReception, setBoiteReception] = useState<Message[]>([]);
+  const [contacts, setContacts] = useState<string[]>([]);
   const [conversation, setConversation] = useState<Message[]>([]);
   const [interlocuteurId, setInterlocuteurId] = useState<string | null>(null);
   const [cacheNoms, setCacheNoms] = useState<Record<string, string>>({});
@@ -42,15 +43,24 @@ export function MessagerieEleve() {
     }
   }, [cacheNoms]);
 
-  // Charger la boîte de réception
+  // Charger la boîte de réception et les contacts
   const chargerBoite = useCallback(async (silencieux = false) => {
     if (!silencieux) setEnChargement(true);
     try {
-      const page = await apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50');
-      setBoiteReception(page.donnees);
+      const [pageMsgs, pageRes] = await Promise.all([
+        apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50'),
+        apiClient.get<Page<any>>('/reservations/moi?page=1&taille=50')
+      ]);
+
+      setBoiteReception(pageMsgs.donnees);
       
+      const mesExpediteurs = pageMsgs.donnees.map((m) => m.expediteurId);
+      const mesProfs = pageRes.donnees.map((r) => r.professeurId);
+      const idsUniques = Array.from(new Set([...mesExpediteurs, ...mesProfs]));
+      
+      setContacts(idsUniques);
+
       // Charger les noms des profs en arrière plan
-      const idsUniques = Array.from(new Set(page.donnees.map((m) => m.expediteurId)));
       idsUniques.forEach((id) => chargerNomProf(id));
     } catch (e) {
       if (!silencieux) {
@@ -131,10 +141,8 @@ export function MessagerieEleve() {
     }
   };
 
-  // Interlocuteurs uniques déduits de la boîte de réception
-  const interlocuteurs = Array.from(
-    new Set(boiteReception.map((m) => m.expediteurId)),
-  );
+  // Interlocuteurs uniques déduits de la boîte de réception + des réservations
+  const interlocuteurs = contacts;
 
   if (enChargement) {
     return (

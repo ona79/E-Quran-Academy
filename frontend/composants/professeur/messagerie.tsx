@@ -19,6 +19,7 @@ export function MessagerieProfesseur() {
   const monId = utilisateur?.id ?? '';
 
   const [boiteReception, setBoiteReception] = useState<Message[]>([]);
+  const [contacts, setContacts] = useState<string[]>([]);
   const [conversation, setConversation] = useState<Message[]>([]);
   const [interlocuteurId, setInterlocuteurId] = useState<string | null>(null);
   const [cacheNoms, setCacheNoms] = useState<Record<string, string>>({});
@@ -46,11 +47,20 @@ export function MessagerieProfesseur() {
   const chargerBoite = useCallback(async (silencieux = false) => {
     if (!silencieux) setEnChargement(true);
     try {
-      const page = await apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50');
-      setBoiteReception(page.donnees);
+      const [pageMsgs, pageRes] = await Promise.all([
+        apiClient.get<Page<Message>>('/messagerie/messages/recus?page=1&taille=50'),
+        apiClient.get<Page<any>>('/reservations/moi-professeur?page=1&taille=50')
+      ]);
+
+      setBoiteReception(pageMsgs.donnees);
       
+      const mesExpediteurs = pageMsgs.donnees.map((m) => m.expediteurId);
+      const mesEleves = pageRes.donnees.map((r) => r.eleveId);
+      const idsUniques = Array.from(new Set([...mesExpediteurs, ...mesEleves]));
+      
+      setContacts(idsUniques);
+
       // Charger les noms des étudiants en arrière plan
-      const idsUniques = Array.from(new Set(page.donnees.map((m) => m.expediteurId)));
       idsUniques.forEach((id) => chargerNomEleve(id));
     } catch (e) {
       if (!silencieux) {
@@ -131,9 +141,7 @@ export function MessagerieProfesseur() {
     }
   };
 
-  const interlocuteurs = Array.from(
-    new Set(boiteReception.map((m) => m.expediteurId)),
-  );
+  const interlocuteurs = contacts;
 
   if (enChargement) {
     return (

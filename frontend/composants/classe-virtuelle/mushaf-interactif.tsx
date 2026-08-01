@@ -190,51 +190,7 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
         )}
       </div>
 
-      {/* Barre de surlignage (professeur uniquement) */}
-      {estProfesseur && (
-        <div className="mt-4 pt-3 border-t flex items-center gap-2" style={{ borderColor: 'var(--bordure)' }}>
-          <label htmlFor="verset" className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-            Verset :
-          </label>
-          <input
-            id="verset"
-            type="number"
-            min={1}
-            max={sourateCourante?.nombreVersets ?? versets.length}
-            className="champ !w-20 !py-1"
-            value={versetCourant}
-            onChange={(e) => setVersetCourant(Number(e.target.value))}
-          />
-          <button
-            type="button"
-            className="rounded-xl px-4 py-1.5 text-sm font-semibold text-white transition-colors"
-            style={{ backgroundColor: '#0B5E45' }}
-            onClick={() =>
-              surSurlignage({
-                numeroSourate: sourate,
-                numeroVerset: versetCourant,
-                plageSurlignage: String(versetCourant),
-              })
-            }
-          >
-            Surligner ce verset
-          </button>
-          <button
-            type="button"
-            className="rounded-xl px-4 py-1.5 text-sm font-medium border transition-colors hover:bg-black/5"
-            style={{ borderColor: 'var(--bordure)', color: 'var(--texte-secondaire)', backgroundColor: 'var(--fond)' }}
-            onClick={() =>
-              surSurlignage({
-                numeroSourate: sourate,
-                numeroVerset: versetCourant,
-                plageSurlignage: null,
-              })
-            }
-          >
-            Effacer le surlignage
-          </button>
-        </div>
-      )}
+
     </div>
   );
 }

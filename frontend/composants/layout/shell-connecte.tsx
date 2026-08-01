@@ -16,6 +16,7 @@ const LIENS_PAR_ROLE: Record<Role, LienSidebar[]> = {
     { href: '/eleve', libelle: 'Accueil', icone: '🏠' },
     { href: '/eleve/reserver', libelle: 'Réserver', icone: '🗓️' },
     { href: '/eleve/classe', libelle: 'Cours', icone: '🎓' },
+    { href: '/eleve/facturation', libelle: 'Portefeuille', icone: '💳' },
     { href: '/eleve/messages', libelle: 'Messages', icone: '💬' },
     { href: '/eleve/profil', libelle: 'Profil', icone: '👤' },
   ],

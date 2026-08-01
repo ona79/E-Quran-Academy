@@ -141,6 +141,31 @@ export default function PageFacturationEleve() {
             <div className="text-6xl select-none opacity-20">🏦</div>
           </div>
 
+          {/* Instructions de paiement manuel */}
+          <div
+            className="rounded-xl p-4 shadow-sm border"
+            style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
+          >
+            <h2 className="text-base font-semibold mb-2" style={{ color: 'var(--texte)' }}>
+              Comment recharger mon compte ?
+            </h2>
+            <div className="text-xs space-y-2" style={{ color: 'var(--texte-secondaire)' }}>
+              <p>
+                Le paiement automatique en ligne sera bientôt disponible. En attendant, les rechargements se font par transfert :
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-1 font-medium" style={{ color: 'var(--texte)' }}>
+                <li>Wave / Orange Money / Carte bancaire : <span className="tracking-wide">+221 7X XXX XX XX</span></li>
+              </ul>
+              <div className="mt-2 pt-2 border-t flex items-start gap-2" style={{ borderColor: 'var(--bordure)' }}>
+                <span className="text-base">📱</span>
+                <p>
+                  Une fois le transfert effectué, veuillez envoyer la capture d'écran de votre reçu à notre support sur <a href="https://wa.me/221700000000" target="_blank" rel="noreferrer" className="text-emerald-600 font-semibold hover:underline">WhatsApp</a> en précisant l'email de votre compte. 
+                  <span className="opacity-80 ml-1">Un administrateur créditera votre solde rapidement.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Recharge simulée */}
           <div
             className="rounded-2xl p-6 shadow-sm border"

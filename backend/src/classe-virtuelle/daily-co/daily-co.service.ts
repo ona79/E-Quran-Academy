@@ -47,6 +47,7 @@ export class DailyCoService {
         properties: {
           // Bande passante adaptative, mode audio seul disponible.
           enable_video_processing_ui: false,
+          enable_prejoin_ui: true, // Écran de choix de caméra activé pour éviter de rentrer sans caméra
           // Délai de 30 jours de rétention.
           exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
         },
