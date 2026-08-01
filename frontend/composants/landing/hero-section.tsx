@@ -113,75 +113,122 @@ export function HeroSection() {
 
       {/* ── Aperçu de la classe virtuelle Overlay ── */}
       <motion.div 
-        className="w-full max-w-[700px] mt-6 md:mt-10 relative z-20"
+        className="w-full max-w-[750px] mt-4 md:mt-10 relative z-20"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.7 }}
       >
-        <div className="w-full rounded-[16px] md:rounded-[24px] p-3 md:p-5 bg-white/95 backdrop-blur-md border border-[#F0EBE1] shadow-[0_20px_40px_rgba(0,0,0,0.06)]">
+        <div className="w-full rounded-[16px] md:rounded-[28px] p-3 md:p-6 bg-white/98 backdrop-blur-xl shadow-2xl border border-white/50">
           
           {/* Header Card */}
-          <div className="flex justify-between items-center gap-2 mb-3 md:mb-5">
-            <div className="flex items-center gap-1 md:gap-2">
-              <span className="text-[#1F6948] text-[10px] md:text-sm">👥</span>
-              <span className="text-[9px] md:text-[12px] font-extrabold text-[#222222] uppercase tracking-wide">Aperçu de la classe virtuelle</span>
-            </div>
-            <span className="flex items-center gap-1 text-[8px] md:text-[11px] font-bold text-[#1F6948] bg-[#E8F1EC] px-2 md:px-3 py-0.5 md:py-1 rounded-full">
-              <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+          <div className="flex justify-between items-center mb-3 md:mb-5">
+            <span className="text-[9px] md:text-[12px] font-extrabold text-[#1A1A1A] uppercase tracking-wide">APERÇU DE LA CLASSE VIRTUELLE</span>
+            <span className="flex items-center gap-1.5 text-[8px] md:text-[11px] font-bold text-[#1F6948] bg-[#E8F1EC] px-2 py-0.5 md:px-2.5 md:py-1 rounded-full border border-[#1F6948]/10">
+              <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-[#22C55E] animate-pulse shadow-[0_0_8px_#22C55E]"></span>
               Séance en direct
             </span>
           </div>
           
-          <div className="flex flex-col md:flex-row items-stretch gap-3 md:gap-4 mb-3 md:mb-5">
-            {/* Profil Prof */}
-            <div className="flex items-center gap-2 md:gap-3 flex-[0.9]">
-              <div className="relative">
-                <div className="w-8 h-8 md:w-14 md:h-14 rounded-full bg-[#EAE5D9] overflow-hidden border-2 border-white shadow-sm flex items-end justify-center">
-                  <svg className="w-6 h-6 md:w-10 md:h-10 text-[#998344]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm-7 9a7 7 0 0114 0H5z" /></svg>
+          <div className="flex flex-col md:flex-row items-stretch gap-3 md:gap-6 mb-4 md:mb-6">
+            {/* Professeur & Suivi */}
+            <div className="flex-[0.8]">
+              <h4 className="text-[8px] md:text-[10px] font-bold text-[#666666] uppercase tracking-wider mb-2 md:mb-3">PROFESSEUR & SUIVI</h4>
+              <div className="flex items-center gap-2.5 md:gap-3">
+                <div className="relative">
+                  <div className="w-10 h-10 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-[#E8F1EC]">
+                    {/* Placeholder Oustadh photo */}
+                    <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Professeur" className="w-full h-full object-cover" />
+                  </div>
                 </div>
-                <div className="absolute bottom-0 md:bottom-0.5 right-0 w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#22C55E] border border-white"></div>
-              </div>
-              
-              <div>
-                <h3 className="font-extrabold text-[#222222] text-[11px] md:text-[15px] mb-0.5 md:mb-1">Oustadh Ahmad</h3>
-                <div className="flex flex-wrap gap-1 md:gap-1.5 mb-1 md:mb-1.5">
-                  <span className="text-[7px] md:text-[9px] font-bold text-[#1F6948] bg-[#E8F1EC] px-1 md:px-1.5 py-0.5 rounded-full">Hafs</span>
-                </div>
-                <div className="space-y-0.5">
-                  <p className="text-[8px] md:text-[11px] font-medium text-[#666666] flex items-center gap-1"><span className="text-[#B8923A] text-[8px] md:text-xs">🏅</span> Professeur certifié Ijaza</p>
-                  <p className="text-[8px] md:text-[11px] font-medium text-[#666666] flex items-center gap-1"><span className="text-[#B8923A] text-[8px] md:text-xs">🎓</span> 8 ans d&apos;expérience</p>
-                </div>
-                <div className="flex items-center gap-1 mt-0.5 md:mt-1">
-                  <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#D1B875]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                  <span className="text-[10px] md:text-[12px] font-bold text-[#222222]">4.9</span>
-                  <span className="text-[9px] md:text-[11px] text-[#999999]">(128 avis)</span>
+                
+                <div>
+                  <h3 className="font-bold text-[#1A1A1A] text-[12px] md:text-[16px] mb-0.5 md:mb-1">Oustadh Ahmad</h3>
+                  <div className="flex flex-wrap gap-1 md:gap-1.5 mb-1 md:mb-1.5">
+                    <span className="text-[8px] md:text-[10px] font-bold text-[#1F6948] bg-[#E8F1EC] px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full border border-[#1F6948]/10">Hafs</span>
+                  </div>
+                  <div className="space-y-0 md:space-y-0.5">
+                    <p className="text-[9px] md:text-[11px] font-medium text-[#666666] flex items-center gap-1 md:gap-1.5">
+                      <span className="text-[10px] md:text-[12px]">🏅</span>
+                      8 ans d&apos;expérience
+                    </p>
+                    <div className="flex items-center gap-1 md:gap-1.5 mt-0.5">
+                      <span className="text-[10px] md:text-[12px]">⭐</span>
+                      <span className="text-[9px] md:text-[11px] font-extrabold text-[#1A1A1A]">4.9</span>
+                      <span className="text-[9px] md:text-[11px] text-[#999999]">(128 avis)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Zone Coran */}
-            <div className="bg-[#F6F4EE] rounded-[10px] md:rounded-[16px] p-2 md:p-4 flex-[1.1] flex flex-col justify-center">
-              <p className="text-[8px] md:text-[11px] font-extrabold text-[#222222] mb-1.5 md:mb-2">Sourate Al-Baqarah</p>
-              <p className="text-[13px] md:text-[18px] text-[#1F6948] font-bold text-center leading-relaxed mb-1 md:mb-2" style={{ fontFamily: "'Amiri', serif", direction: 'rtl' }}>
-                ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ
-              </p>
-              <p className="text-[8px] md:text-[11px] text-[#666666]">Verset 2</p>
+            {/* Classe & Matière */}
+            <div className="flex-[1.2]">
+              <h4 className="text-[8px] md:text-[10px] font-bold text-[#666666] uppercase tracking-wider mb-2 md:mb-3">CLASSE & MATIÈRE</h4>
+              <div className="bg-[#F7F5F0] rounded-[10px] md:rounded-[14px] p-2.5 md:p-5 flex flex-col justify-center h-[calc(100%-20px)] md:h-[calc(100%-24px)] border border-[#EAE5D9]">
+                <p className="text-[9px] md:text-[11px] font-extrabold text-[#1A1A1A] mb-1.5 md:mb-2">Sourate Al-Baqarah</p>
+                <p className="text-[14px] md:text-[20px] text-[#1F6948] leading-relaxed mb-1.5 md:mb-2 font-normal" style={{ fontFamily: "'Amiri', 'Traditional Arabic', serif", direction: 'rtl' }}>
+                  ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ
+                </p>
+                <p className="text-[8px] md:text-[11px] text-[#888888] font-medium">Verset 2</p>
+              </div>
             </div>
           </div>
 
           {/* Mini Features Footer */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 pt-3 md:pt-4 border-t border-[#F0EBE1]">
             {[
-              { icon: '🖥️', title: 'Classe interactive', sub: 'Audio, vidéo et partage' },
-              { icon: '📖', title: 'Mushaf interactif', sub: 'Suivez efficacement' },
-              { icon: '📋', title: 'Suivi personnalisé', sub: 'Rapports réguliers' },
-              { icon: '🎧', title: 'Support dédié', sub: 'Assistance réactive' },
+              { 
+                icon: (
+                  <div className="flex gap-1 justify-center items-center h-5 md:h-6">
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </div>
+                ), 
+                title: 'Classe interactive', 
+                sub: 'Interactive' 
+              },
+              { 
+                icon: (
+                  <div className="flex justify-center items-center h-5 md:h-6 relative">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full">
+                      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#0EA5E9]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
+                    </div>
+                  </div>
+                ), 
+                title: 'Mushaf interactif', 
+                sub: 'Mushaf' 
+              },
+              { 
+                icon: (
+                  <div className="flex gap-0.5 justify-center items-center h-5 md:h-6">
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 mt-1 md:mt-1.5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                ), 
+                title: 'Suivi personnalisé', 
+                sub: 'Suivi' 
+              },
+              { 
+                icon: (
+                  <div className="flex justify-center items-center h-5 md:h-6 relative">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"/></svg>
+                    <div className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-white rounded-full">
+                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#22C55E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  </div>
+                ), 
+                title: 'Support dédié', 
+                sub: 'Support' 
+              },
             ].map((f, i) => (
-              <div key={i} className="flex items-start gap-1 md:gap-2">
-                <span className="text-[10px] md:text-sm mt-0.5">{f.icon}</span>
-                <div>
-                  <p className="text-[8px] md:text-[11px] font-bold text-[#222222] mb-0.5">{f.title}</p>
-                  <p className="text-[7px] md:text-[9.5px] text-[#777777] leading-snug">{f.sub}</p>
+              <div key={i} className={`flex flex-col items-center justify-center gap-0.5 md:gap-1 px-1 md:px-2 ${i !== 3 ? 'md:border-r md:border-[#F0EBE1]' : ''}`}>
+                <div className="relative mb-0.5">
+                  {f.icon}
+                </div>
+                <div className="text-center">
+                  <p className="text-[9px] md:text-[11px] font-extrabold text-[#1A1A1A]">{f.title}</p>
+                  <p className="text-[8px] md:text-[10px] font-medium text-[#888888]">{f.sub}</p>
                 </div>
               </div>
             ))}
@@ -189,6 +236,9 @@ export function HeroSection() {
 
         </div>
       </motion.div>
+
+      {/* ── Gradient Fade at bottom to blend into next section ── */}
+      <div className="absolute bottom-0 left-0 w-full h-32 md:h-48 bg-gradient-to-t from-[#FDFBF6] to-transparent z-10 pointer-events-none" />
     </section>
   );
 }

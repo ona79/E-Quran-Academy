@@ -75,7 +75,7 @@ function BlobsAnimes() {
 // ─── Bordure animée en gradient conique ───
 function BordureAnimee({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative p-[1px] rounded-2xl h-full flex flex-col">
+    <div className="relative p-[1px] rounded-2xl flex flex-col">
       <motion.div
         className="absolute inset-0 rounded-2xl"
         style={{
@@ -85,7 +85,7 @@ function BordureAnimee({ children }: { children: React.ReactNode }) {
         animate={{ rotate: 360 }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />
-      <div className="relative rounded-2xl flex-1 flex flex-col h-full bg-black/10">{children}</div>
+      <div className="relative rounded-2xl flex-1 flex flex-col bg-black/10">{children}</div>
     </div>
   );
 }
@@ -234,7 +234,13 @@ export default function PageInscription() {
   };
 
   return (
-    <div className="relative h-screen flex items-center justify-center overflow-hidden px-4" style={{ backgroundColor: '#0D1A14' }}>
+    <div className="relative h-screen flex items-center justify-center overflow-hidden px-4" style={{ 
+      backgroundColor: '#0D1A14',
+      backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
       <BlobsAnimes />
       <MotifIslamiqueFond />
 
@@ -247,7 +253,7 @@ export default function PageInscription() {
       >
         <BordureAnimee>
           <div
-            className="rounded-2xl p-6 sm:p-8 flex flex-col h-full overflow-hidden"
+            className="rounded-2xl p-5 sm:p-6 flex flex-col overflow-hidden"
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(24px)',
@@ -302,11 +308,13 @@ export default function PageInscription() {
                 </motion.div>
 
                 <div className="flex flex-col items-center flex-1">
-                  {/* Badge & Mascotte */}
-                  <motion.div variants={enfantStagger}>
-                    <div className="inline-flex items-center gap-2 rounded-full font-medium mb-[4px]" style={{ padding: '3px 10px', fontSize: '12px', background: 'rgba(13, 26, 20, 0.8)', border: '1px solid rgba(184, 146, 58, 0.4)', color: '#FFFFFF' }}>
-                      <span>📖</span><span>E-Quran Academy</span>
-                    </div>
+                  {/* Logo de l'application */}
+                  <motion.div variants={enfantStagger} className="flex justify-center mb-2 mt-[-8px]">
+                    <img 
+                      src="/mascotte/logo_equran_accademy.png" 
+                      alt="Logo E-Quran Academy" 
+                      className="w-20 h-auto drop-shadow-xl" 
+                    />
                   </motion.div>
                   <motion.div variants={enfantStagger} className="mb-2">
                     <MascotteCoran etat={etatMascotte} />
@@ -326,10 +334,7 @@ export default function PageInscription() {
                           exit="sortie"
                           className="w-full"
                         >
-                          <div className="text-center mb-4">
-                            <h1 className="font-bold mb-[1px] text-white" style={{ fontSize: '16px' }}>Créer un compte</h1>
-                            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px', marginBottom: '8px' }}>Rejoignez la communauté E-Quran Academy</p>
-                          </div>
+
 
                           <div className="flex flex-col gap-[7px]">
                             {/* Nom */}
@@ -455,10 +460,9 @@ export default function PageInscription() {
                         >
                           <div className="text-center mb-4">
                             <h1 className="font-bold mb-[1px] text-white" style={{ fontSize: '16px' }}>Vous êtes...</h1>
-                            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px' }}>Choisissez votre profil</p>
                           </div>
 
-                          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                          <div className="flex flex-row gap-3 mb-4">
                             {/* Carte Élève */}
                             <motion.button
                               type="button"
@@ -474,7 +478,7 @@ export default function PageInscription() {
                                 boxShadow: role === 'ELEVE' ? '0 0 20px rgba(11,94,69,0.2)' : 'none',
                               }}
                             >
-                              <GraduationCap size={24} color="#0B5E45" className="mb-1" />
+                              <GraduationCap size={24} color="#34D399" className="mb-1" />
                               <h3 className="font-semibold text-white text-[13px]">Élève</h3>
                             </motion.button>
 
@@ -493,7 +497,7 @@ export default function PageInscription() {
                                 boxShadow: role === 'PROFESSEUR' ? '0 0 20px rgba(184,146,58,0.2)' : 'none',
                               }}
                             >
-                              <BookOpen size={24} color="#B8923A" className="mb-1" />
+                              <BookOpen size={24} color="#FCD34D" className="mb-1" />
                               <h3 className="font-semibold text-white text-[13px]">Professeur</h3>
                             </motion.button>
                           </div>
@@ -573,10 +577,11 @@ export default function PageInscription() {
                       <Link href="/" className="transition-all duration-200 hover:underline" style={{ color: 'rgba(255,255,255,0.4)' }}>
                         ← Retour à l&apos;accueil
                       </Link>
-                      <div className="flex items-center gap-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        <span>📖</span>
-                        <span className="font-medium">E-Quran Academy</span>
-                      </div>
+                      <img 
+                        src="/mascotte/logo_equran_accademy.png" 
+                        alt="Logo E-Quran Academy" 
+                        className="w-6 h-auto opacity-70" 
+                      />
                     </div>
                   </motion.div>
 

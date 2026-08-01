@@ -85,25 +85,43 @@ export function ProfilProfesseurForm() {
   return (
     <form onSubmit={soumettre} className="h-full flex flex-col max-w-3xl mx-auto w-full">
       {/* En-tête */}
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: 'var(--texte)' }}>Mon profil professeur</h1>
-          <p className="text-xs mt-1" style={{ color: 'var(--texte-secondaire)' }}>
-            Ces informations sont visibles par les élèves sur votre fiche.
-          </p>
+      <div 
+        className="relative mb-6 rounded-2xl overflow-hidden p-6 border border-[#E5E0D5]"
+        style={{
+          backgroundImage: 'url("/mascotte/image_fond_avant_footer.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundColor: '#FDFBF6'
+        }}
+      >
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-0"></div>
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[#1A1A1A]">Mon profil professeur</h1>
+            <p className="text-sm mt-1 text-[#6B7280]">
+              Ces informations sont visibles par les élèves sur votre fiche.
+            </p>
+          </div>
+          {profil && (
+            <span
+              className="text-[13px] font-semibold px-4 py-1.5 rounded-full shrink-0 flex items-center gap-1.5 bg-white shadow-sm"
+              style={{
+                color: profil.valide ? '#0B5E45' : '#92751F',
+                border: `1px solid ${profil.valide ? 'rgba(11,94,69,0.3)' : 'rgba(184,146,58,0.3)'}`,
+              }}
+            >
+              {profil.valide ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#0B5E45" stroke="#0B5E45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                    <path stroke="#FFF" d="m9 12 2 2 4-4"/>
+                  </svg>
+                  Vérifié
+                </>
+              ) : '⏳ En validation'}
+            </span>
+          )}
         </div>
-        {profil && (
-          <span
-            className="text-[11px] font-semibold px-3 py-1 rounded-full shrink-0 ml-4"
-            style={{
-              background: profil.valide ? 'rgba(22,163,74,0.08)' : 'rgba(184,146,58,0.1)',
-              color: profil.valide ? '#16A34A' : '#92751F',
-              border: `1px solid ${profil.valide ? 'rgba(22,163,74,0.2)' : 'rgba(184,146,58,0.2)'}`,
-            }}
-          >
-            {profil.valide ? '✅ Vérifié' : '⏳ En validation'}
-          </span>
-        )}
       </div>
 
       {/* Corps : 2 colonnes */}

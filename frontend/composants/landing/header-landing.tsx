@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { CurseurPersonnalise } from '@/composants/ui/curseur-personnalise';
 
@@ -9,6 +10,7 @@ import { CurseurPersonnalise } from '@/composants/ui/curseur-personnalise';
 export function HeaderLanding() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const { scrollY, scrollYProgress } = useScroll();
+  const pathname = usePathname();
 
   // Scroll progress bar — animated spring for smooth fill
   const scaleX = useSpring(scrollYProgress, {
@@ -74,6 +76,17 @@ export function HeaderLanding() {
         {/* Navigation Desktop */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           <Link
+            href="/"
+            className="transition-colors duration-200 cliquable text-[#4B5563] hover:text-[#0B5E45]"
+            onClick={() => {
+              if (window.location.pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            Accueil
+          </Link>
+          <Link
             href="/professeurs"
             className="transition-colors duration-200 cliquable text-[#4B5563] hover:text-[#0B5E45]"
           >
@@ -138,67 +151,78 @@ export function HeaderLanding() {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="absolute top-[70px] left-0 w-full flex flex-col px-4 py-3 border-b md:hidden bg-white/95 backdrop-blur-xl shadow-2xl border-[#F0EBE1] overflow-hidden rounded-b-[20px]"
             >
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <Link
+                  href="/"
+                  className="text-[14px] font-semibold text-[#1A1A1A] px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setMenuOuvert(false);
+                    if (window.location.pathname === '/') {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Accueil
+                </Link>
                 <Link
                   href="/professeurs"
-                  className="flex items-center gap-3 text-[15px] font-bold text-[#222222] p-3 rounded-xl hover:bg-[#F5F1E8] transition-colors"
+                  className="text-[14px] font-semibold text-[#1A1A1A] px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
                   onClick={() => setMenuOuvert(false)}
                 >
-                  <span className="text-xl bg-[#E8F1EC] text-[#1F6948] p-1.5 rounded-lg">👨‍🏫</span>
                   Professeurs
                 </Link>
                 <a
                   href="/#comment"
-                  className="flex items-center gap-3 text-[15px] font-bold text-[#222222] p-3 rounded-xl hover:bg-[#F5F1E8] transition-colors"
+                  className="text-[14px] font-semibold text-[#1A1A1A] px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
                   onClick={() => setMenuOuvert(false)}
                 >
-                  <span className="text-xl bg-[#E8F1EC] text-[#1F6948] p-1.5 rounded-lg">⚙️</span>
                   Comment ça marche
                 </a>
                 <a
                   href="/#tarifs"
-                  className="flex items-center gap-3 text-[15px] font-bold text-[#222222] p-3 rounded-xl hover:bg-[#F5F1E8] transition-colors"
+                  className="text-[14px] font-semibold text-[#1A1A1A] px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
                   onClick={() => setMenuOuvert(false)}
                 >
-                  <span className="text-xl bg-[#E8F1EC] text-[#1F6948] p-1.5 rounded-lg">💳</span>
                   Tarifs
                 </a>
               </div>
 
-              <div className="flex flex-col gap-2.5 mt-5 pt-5 border-t border-[#F0EBE1]">
+              <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-[#F0EBE1] px-2 mb-2">
                 <Link
                   href="/connexion"
-                  className="text-center font-bold text-[14px] py-3 rounded-xl transition-colors text-[#1F6948] bg-[#E8F1EC] hover:bg-[#D4E8DC]"
+                  className="flex items-center justify-center font-bold text-[13px] py-2.5 rounded-lg transition-colors text-[#0B5E45] bg-[#E8F5EF] hover:bg-[#d1ede1]"
                 >
                   Connexion
                 </Link>
                 <Link
                   href="/inscription"
-                  className="text-center font-bold text-[14px] py-3 rounded-xl text-white shadow-md"
+                  className="flex items-center justify-center font-bold text-[13px] py-2.5 rounded-lg text-white shadow-sm"
                   style={{
-                    background: 'linear-gradient(135deg, #1F6948 0%, #B8923A 100%)',
+                    background: 'linear-gradient(135deg, #0B5E45 0%, #B8923A 100%)',
                   }}
                 >
-                  S&apos;inscrire
+                  S'inscrire
                 </Link>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
         {/* ── Barre de progression du scroll ── */}
-        <motion.div
-          style={{
-            scaleX,
-            transformOrigin: 'left',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: 'linear-gradient(90deg, #1F6948 0%, #B8923A 100%)',
-            borderRadius: '0 2px 2px 0',
-          }}
-        />
+        {pathname === '/' && (
+          <motion.div
+            style={{
+              scaleX,
+              transformOrigin: 'left',
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #1F6948 0%, #B8923A 100%)',
+              borderRadius: '0 2px 2px 0',
+            }}
+          />
+        )}
       </motion.header>
     </>
   );

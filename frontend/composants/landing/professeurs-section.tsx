@@ -92,7 +92,7 @@ export function ProfesseursSection() {
   }, []);
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[#FDFBF6] relative overflow-hidden">
+    <section className="pt-8 md:pt-12 pb-16 md:pb-24 px-4 md:px-6 bg-[#FDFBF6] relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#1F6948]/3 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#B8923A]/5 rounded-full blur-[80px] pointer-events-none" />

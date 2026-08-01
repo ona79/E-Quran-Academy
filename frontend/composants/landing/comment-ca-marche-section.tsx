@@ -88,7 +88,7 @@ export function CommentCaMarcheSection() {
   const inView = useInView(ref, { once: true, amount: 0.1 });
 
   return (
-    <section id="comment" className="py-16 md:py-24 px-4 md:px-6 bg-[#FDFBF6]">
+    <section id="comment" className="pt-8 md:pt-12 pb-16 md:pb-24 px-4 md:px-6 bg-[#FDFBF6]">
       <div className="max-w-[1200px] mx-auto" ref={ref}>
 
         <motion.div

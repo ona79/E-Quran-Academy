@@ -194,7 +194,13 @@ export default function PageConnexion() {
   return (
     <div
       className="relative h-screen flex items-center justify-center overflow-hidden px-4"
-      style={{ backgroundColor: '#0D1A14' }}
+      style={{ 
+        backgroundColor: '#0D1A14',
+        backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
     >
       {/* Blobs animés */}
       <BlobsAnimes />
@@ -220,7 +226,7 @@ export default function PageConnexion() {
       >
         <BordureAnimee>
           <div
-            className="rounded-2xl p-6 sm:p-8 flex flex-col items-center h-full overflow-hidden"
+            className="rounded-2xl p-5 sm:p-6 flex flex-col items-center overflow-hidden"
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(24px)',
@@ -235,21 +241,13 @@ export default function PageConnexion() {
               animate="visible"
               className="flex flex-col items-center w-full"
             >
-              {/* Badge E-Quran Academy */}
-              <motion.div variants={enfantStagger}>
-                <div
-                  className="inline-flex items-center gap-2 rounded-full font-medium mb-3"
-                  style={{
-                    padding: '3px 10px',
-                    fontSize: '12px',
-                    background: 'rgba(13, 26, 20, 0.8)',
-                    border: '1px solid rgba(184, 146, 58, 0.4)',
-                    color: '#FFFFFF',
-                  }}
-                >
-                  <span>📖</span>
-                  <span>E-Quran Academy</span>
-                </div>
+              {/* Logo de l'application */}
+              <motion.div variants={enfantStagger} className="mb-2 mt-[-8px]">
+                <img 
+                  src="/mascotte/logo_equran_accademy.png" 
+                  alt="Logo E-Quran Academy" 
+                  className="w-20 h-auto drop-shadow-xl" 
+                />
               </motion.div>
 
               {/* Mascotte animée */}
@@ -257,20 +255,7 @@ export default function PageConnexion() {
                 <MascotteCoran etat={etatMascotte} />
               </motion.div>
 
-              {/* Titre */}
-              <motion.div variants={enfantStagger} className="text-center mb-4">
-                <h1
-                  className="font-bold mb-1"
-                  style={{ color: '#FFFFFF', fontSize: '17px' }}
-                >
-                  Connexion
-                </h1>
-                <p
-                  style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px', marginBottom: '10px' }}
-                >
-                  Accédez à votre espace d&apos;apprentissage
-                </p>
-              </motion.div>
+
 
               {/* Formulaire */}
               <form onSubmit={soumettre} className="w-full space-y-4">
@@ -547,10 +532,11 @@ export default function PageConnexion() {
                   >
                     ← Retour à l&apos;accueil
                   </Link>
-                  <div className="flex items-center gap-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                    <span>📖</span>
-                    <span className="font-medium">E-Quran Academy</span>
-                  </div>
+                  <img 
+                    src="/mascotte/logo_equran_accademy.png" 
+                    alt="Logo E-Quran Academy" 
+                    className="w-6 h-auto opacity-70" 
+                  />
                 </div>
               </motion.div>
             </motion.div>

@@ -83,7 +83,7 @@ function LecteurAudio({ src }: { src: string }) {
   };
 
   return (
-    <div className="bg-white rounded-[16px] border border-[#E5E0D5] p-5 shadow-sm">
+    <div className="bg-white rounded-[16px] border border-[#E5E0D5] p-4 sm:p-5 shadow-sm">
       <audio
         ref={audioRef} src={src}
         onTimeUpdate={() => {
@@ -99,7 +99,7 @@ function LecteurAudio({ src }: { src: string }) {
         {/* Bouton play */}
         <button
           onClick={toggleLecture}
-          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white shadow-md transition-transform hover:scale-110"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 text-white shadow-md transition-transform hover:scale-110"
           style={{ background: 'linear-gradient(135deg, #0B5E45, #1A7A59)' }}
         >
           {enLecture ? (
@@ -134,9 +134,16 @@ function LecteurAudio({ src }: { src: string }) {
 
 /* ── Carrousel avis ── */
 function CarrouselAvis({ avis }: { avis: AvisAvecNom[] }) {
-  const [index, setIndex] = useState(0);
-  const visibles = 4;
-  const max = Math.max(0, avis.length - visibles);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const defiler = (direction: 'gauche' | 'droite') => {
+    if (!scrollRef.current) return;
+    const scrollAmount = scrollRef.current.clientWidth * 0.8;
+    scrollRef.current.scrollBy({
+      left: direction === 'droite' ? scrollAmount : -scrollAmount,
+      behavior: 'smooth'
+    });
+  };
 
   const prenoms = ['Aïssatou Fall', 'Moussa K.', 'Ibrahima Sow', 'Ndeye Maguette', 'Fatou Ba', 'Cheikh N.'];
   const commentaires = [
@@ -155,44 +162,40 @@ function CarrouselAvis({ avis }: { avis: AvisAvecNom[] }) {
   } as AvisAvecNom));
 
   return (
-    <div className="relative">
-      <div className="overflow-hidden">
-        <div
-          className="flex gap-4 transition-transform duration-300"
-          style={{ transform: `translateX(calc(-${index} * (25% + 16px)))` }}
-        >
-          {displayAvis.map((a, i) => (
-            <div key={a.id} className="min-w-[calc(25%-12px)] max-w-[calc(25%-12px)] bg-white rounded-[16px] border border-[#E5E0D5] p-4 shadow-sm shrink-0">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-[#E8F5EF] text-[#0B5E45] text-[12px] font-bold flex items-center justify-center shrink-0">
-                  {(a.nomEleve ?? prenoms[i % prenoms.length]).charAt(0)}
-                </div>
-                <div>
-                  <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight">{a.nomEleve ?? prenoms[i % prenoms.length]}</p>
-                  <Etoiles note={a.note} taille="sm" />
-                </div>
+    <div className="relative group">
+      <div 
+        ref={scrollRef}
+        className="overflow-x-auto pb-4 flex gap-4 snap-x snap-mandatory scroll-smooth"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
+        {displayAvis.map((a, i) => (
+          <div key={a.id} className="snap-start w-[75%] sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)] shrink-0 bg-white rounded-[16px] border border-[#E5E0D5] p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-full bg-[#E8F5EF] text-[#0B5E45] text-[12px] font-bold flex items-center justify-center shrink-0">
+                {(a.nomEleve ?? prenoms[i % prenoms.length]).charAt(0)}
               </div>
-              <p className="text-[12px] text-[#4B5563] leading-relaxed line-clamp-3">
-                {a.commentaire ?? commentaires[i % commentaires.length]}
-              </p>
-              <p className="text-[11px] text-[#9CA3AF] mt-2">{durees[i % durees.length]}</p>
+              <div>
+                <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight">{a.nomEleve ?? prenoms[i % prenoms.length]}</p>
+                <Etoiles note={a.note} taille="sm" />
+              </div>
             </div>
-          ))}
-        </div>
+            <p className="text-[12px] text-[#4B5563] leading-relaxed line-clamp-3">
+              {a.commentaire ?? commentaires[i % commentaires.length]}
+            </p>
+            <p className="text-[11px] text-[#9CA3AF] mt-2">{durees[i % durees.length]}</p>
+          </div>
+        ))}
       </div>
       {/* Flèches */}
-      {index > 0 && (
-        <button onClick={() => setIndex(i => Math.max(0, i - 1))}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-8 h-8 rounded-full bg-white border border-[#E5E0D5] shadow-md flex items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10">
-          ‹
-        </button>
-      )}
-      {index < max && (
-        <button onClick={() => setIndex(i => Math.min(max, i + 1))}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-8 h-8 rounded-full bg-white border border-[#E5E0D5] shadow-md flex items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10">
-          ›
-        </button>
-      )}
+      <button onClick={() => defiler('gauche')}
+        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-white border border-[#E5E0D5] shadow-md items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10 opacity-0 group-hover:opacity-100">
+        ‹
+      </button>
+      <button onClick={() => defiler('droite')}
+        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-white border border-[#E5E0D5] shadow-md items-center justify-center text-[#1A1A1A] hover:bg-gray-50 transition-colors z-10 opacity-0 group-hover:opacity-100">
+        ›
+      </button>
     </div>
   );
 }
@@ -271,21 +274,32 @@ export default function PageProfilProfesseur() {
       <HeaderLanding />
 
       {/* ══ En-tête du profil ══ */}
-      <section className="w-full pt-24 pb-8 px-8 bg-gradient-to-b from-[#F5F1E8] to-[#FDFBF6] border-b border-[#E5E0D5]">
-        <div className="max-w-[1100px] mx-auto">
+      <section 
+        className="relative w-full pt-24 pb-8 px-5 sm:px-8"
+        style={{
+          backgroundImage: 'url("/mascotte/image_fond_avant_footer.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+          backgroundColor: '#FDFBF6'
+        }}
+      >
+        <div className="absolute inset-0 bg-[#FDFBF6]/85 sm:bg-white/60 sm:backdrop-blur-[2px] z-0"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FDFBF6] to-transparent z-10 pointer-events-none"></div>
+        <div className="max-w-[1100px] mx-auto relative z-10">
           <div className="flex flex-col sm:flex-row items-start gap-6">
             {/* Avatar */}
-            <div className="w-28 h-28 rounded-full flex items-center justify-center text-3xl font-extrabold shrink-0 border-4 border-white shadow-lg bg-[#E8F5EF] text-[#08402F]">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-extrabold shrink-0 border-4 border-white shadow-lg bg-[#E8F5EF] text-[#08402F]">
               {initiales}
             </div>
 
             {/* Infos centrales */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-[28px] font-extrabold text-[#1A1A1A]">{profil.nomComplet}</h1>
+                <h1 className="text-[22px] sm:text-[28px] font-extrabold text-[#1A1A1A]">{profil.nomComplet}</h1>
                 {profil.valide && (
-                  <svg className="w-6 h-6 text-[#0B5E45]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#0B5E45" stroke="#0B5E45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                    <path stroke="#FFF" d="m9 12 2 2 4-4"/>
                   </svg>
                 )}
               </div>
@@ -334,7 +348,7 @@ export default function PageProfilProfesseur() {
       </section>
 
       {/* ══ Corps de la page ══ */}
-      <div className="max-w-[1100px] mx-auto px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="max-w-[1100px] mx-auto px-5 sm:px-8 pt-8 pb-28 sm:pb-8 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
         {/* ─ Colonne principale (2/3) ─ */}
         <div className="lg:col-span-2 space-y-6">
@@ -439,13 +453,13 @@ export default function PageProfilProfesseur() {
       </div>
 
       {/* Bouton fixe mobile */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 z-50 flex gap-3 p-4 bg-white/95 backdrop-blur-md border-t border-[#E5E0D5] shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-50 flex gap-2 p-3 bg-white/95 backdrop-blur-md border-t border-[#E5E0D5] shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
         <Link href={`/eleve/reserver?prof=${profil.userId}&essai=1`}
-          className="flex-1 text-center rounded-xl py-3 text-[13px] font-bold border border-[#E5E0D5] bg-white text-[#1A1A1A]">
+          className="flex-1 text-center rounded-xl py-2.5 text-[12px] font-bold border border-[#E5E0D5] bg-white text-[#1A1A1A]">
           ✨ Essai
         </Link>
         <Link href={`/eleve/reserver?prof=${profil.userId}`}
-          className="flex-[2] text-center rounded-xl py-3 text-[13px] font-bold text-white shadow-md"
+          className="flex-[2] text-center rounded-xl py-2.5 text-[12px] font-bold text-white shadow-md"
           style={{ background: 'linear-gradient(135deg, #0B5E45, #9A7727)' }}>
           Réserver un cours
         </Link>

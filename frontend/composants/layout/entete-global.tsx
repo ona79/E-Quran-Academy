@@ -71,6 +71,17 @@ export function EnteteGlobal() {
 
         {/* Navigation desktop */}
         <nav className="hidden sm:flex items-center gap-6">
+          <Link 
+            href="/" 
+            className="text-sm font-medium hover:opacity-70"
+            onClick={() => {
+              if (window.location.pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            Accueil
+          </Link>
           <Link href="/professeurs" className="text-sm font-medium hover:opacity-70">
             Professeurs
           </Link>
@@ -156,6 +167,18 @@ export function EnteteGlobal() {
           className="sm:hidden border-t px-4 py-3 space-y-2"
           style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
         >
+          <Link 
+            href="/" 
+            className="block py-2 text-sm font-medium" 
+            onClick={() => {
+              setMenuOuvert(false);
+              if (window.location.pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            Accueil
+          </Link>
           <Link href="/professeurs" className="block py-2 text-sm font-medium" onClick={() => setMenuOuvert(false)}>
             Professeurs
           </Link>
