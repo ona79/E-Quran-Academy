@@ -69,7 +69,9 @@ function StatCard({
 }
 
 function Squelette() {
+  return (
     <div className="rounded-2xl h-24 animate-pulse" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }} />
+  );
 }
 
 export default function PageAdmin() {

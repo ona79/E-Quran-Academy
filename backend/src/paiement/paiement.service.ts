@@ -92,11 +92,27 @@ export class PaiementService implements OnModuleInit, OnModuleDestroy {
     return { solde: maj.solde as number };
   }
 
+  /** Vérifie si les paiements réels sont activés via feature flag */
+  async isPaiementActif(): Promise<boolean> {
+    const flag = await this.prisma.featureFlag.findUnique({
+      where: { cle: 'paiement.actif' },
+    });
+    return flag?.actif ?? false;
+  }
+
   /**
    * Bloque le tarif horaire en le prélevant du solde de l'élève et en créant
    * un enregistrement séquestré.
    */
   async bloquerFonds(eleveId: string, reservationId: string, montant: number): Promise<void> {
+    const actif = await this.isPaiementActif();
+    if (actif) {
+      this.logger.log(`Paiement réel activé pour ${reservationId} (Intégration Stripe à venir)`);
+      // TODO: Implémentation Stripe
+    } else {
+      this.logger.log(`Simulation escrow pour ${reservationId} (montant: ${montant})`);
+    }
+
     const solde = await this.chargerSolde(eleveId);
     if (solde < montant) {
       throw new BadRequestException('Solde insuffisant pour réserver ce cours');

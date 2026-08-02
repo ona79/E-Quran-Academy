@@ -3,19 +3,21 @@
 // Authentification : jeton JWT passé en query au handshake.
 import { io, type Socket } from 'socket.io-client';
 
-const URL_WS = '/classe-virtuelle';
+const WS_BACKEND_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002';
+const URL_WS = `${WS_BACKEND_URL}/classe-virtuelle`;
 
 let socket: Socket | null = null;
 
 /**
  * Retourne le singleton socket connecté à la gateway classe-virtuelle.
- * Le jeton est lu automatiquement via le cookie `jwt_access` grâce au proxy.
+ * Le jeton est lu automatiquement via le cookie `jwt_access`.
  */
 export function obtenirSocket(): Socket {
   if (socket && socket.connected) return socket;
 
   socket = io(URL_WS, {
-    path: '/ws-backend/socket.io', // Le proxy Next.js redirige vers le port 3002
+    // Ne pas utiliser le proxy Next.js car il supprime les trailing slashes (308 Redirect)
+    // ce qui casse la connexion avec Socket.io.
     withCredentials: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,

@@ -43,19 +43,19 @@ export function SidebarBase({
   return (
     <>
       {/* Overlay mobile */}
-      {ouverte && (
-        <div
-          className="fixed inset-0 z-30 md:hidden"
-          style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
-          onClick={surFermeture}
-          aria-hidden
-        />
-      )}
+      <div
+        className={`fixed inset-0 z-30 md:hidden transition-opacity duration-500 ease-in-out ${
+          ouverte ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+        onClick={surFermeture}
+        aria-hidden
+      />
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen shrink-0 transform transition-all duration-300 flex flex-col ${
-          ouverte ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        className={`fixed md:sticky top-0 left-0 z-40 h-screen shrink-0 transform transition-all duration-500 ease-in-out flex flex-col ${
+          ouverte ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
         } ${reduite ? 'w-60 md:w-20' : 'w-60'}`}
         style={{
           background: 'linear-gradient(180deg, #1B5E3B 0%, #145A32 100%)',

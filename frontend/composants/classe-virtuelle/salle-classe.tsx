@@ -184,7 +184,6 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
   // ── 3. WebSocket Mushaf ───────────────────────────────────────────────────
   const {
     etatMushaf,
-    estProfesseur,
     modeRepliActif,
     connecte: wsConnecte,
     surligner,
@@ -224,6 +223,9 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
       });
       dailyInstanceRef.current = callFrame;
       const optionsJoin: any = { url: seance.lienVisio };
+      if (utilisateur?.nomComplet) {
+        optionsJoin.userName = utilisateur.nomComplet;
+      }
       if (seance.tokenVisio) {
         optionsJoin.token = seance.tokenVisio;
       }
@@ -249,14 +251,14 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
       try {
         const sea = await apiClient.get<SeanceCours>(`/classe-virtuelle/seances/${reservationId}`);
         if (sea.statut === 'TERMINEE') {
-          router.push('/eleve/tableau-de-bord');
+          router.push('/eleve');
         }
       } catch (e) {
-        // Ignorer les erreurs réseau temporaires
+        console.error('Erreur sondage statut:', e);
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [seance, role, reservationId, router]);
+  }, [role, seance, reservationId, router]);
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const terminerLeCours = useCallback(async () => {
@@ -484,7 +486,11 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         {/* Mode audio seul (étudiant) */}
         {role === 'ELEVE' && (
           <button
-            onClick={() => setModeAudioSeul(!modeAudioSeul)}
+            onClick={() => {
+              const nouveauMode = !modeAudioSeul;
+              setModeAudioSeul(nouveauMode);
+              signalerBandePassante(nouveauMode ? 'FAIBLE' : 'BONNE');
+            }}
             className={`w-full rounded-xl px-4 py-2.5 text-sm font-medium border transition-colors ${
               modeAudioSeul
                 ? 'bg-amber-100 text-amber-800 border-amber-300'
@@ -549,20 +555,20 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
   // ─────────────────────────────────────────────────────────────────────────
 
   const panneauMushaf = (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col min-h-0">
       {/* Badge lecture seule pour l'étudiant */}
       {role === 'ELEVE' && (
         <div
-          className="mb-2 px-3 py-2 rounded-xl text-xs font-medium border"
+          className="mb-2 px-3 py-2 rounded-xl text-xs font-medium border shrink-0"
           style={{ backgroundColor: '#f0fdf4', borderColor: '#86efac', color: '#166534' }}
         >
           👁 Lecture seule — le professeur contrôle le surlignage
         </div>
       )}
-      <div className="flex-1">
+      <div className="flex-1 min-h-0">
         <MushafInteractif
           etat={etatMushaf}
-          estProfesseur={estProfesseur}
+          estProfesseur={role === 'PROFESSEUR'}
           surSurlignage={surligner}
         />
       </div>
@@ -629,7 +635,7 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         </div>
 
         {/* Mushaf — 100% sur mobile (si onglet actif), 40% sur desktop */}
-        <div className={`w-full lg:w-[40%] flex-col ${ongletMobile === 'MUSHAF' ? 'flex flex-1 h-full overflow-hidden' : 'hidden lg:flex overflow-hidden'}`}>
+        <div className={`w-full lg:w-[40%] flex-col ${ongletMobile === 'MUSHAF' ? 'flex flex-1 h-full overflow-hidden min-h-0' : 'hidden lg:flex overflow-hidden min-h-0'}`}>
           {panneauMushaf}
         </div>
       </div>

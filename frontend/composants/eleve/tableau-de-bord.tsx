@@ -135,7 +135,7 @@ export function TableauDeBordEleve() {
       {/* Statistiques du mois */}
       <section>
         <h2 className="text-base font-semibold mb-3" style={{ color: 'var(--texte)' }}>Ce mois-ci</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <CarteStatistique
             etiquette="Cours réalisés"
             valeur={stats.coursRealises}

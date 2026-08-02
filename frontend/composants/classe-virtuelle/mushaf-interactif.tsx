@@ -75,39 +75,46 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
     chargerVersets(sourate);
   }, [sourate, chargerVersets]);
 
+  const [plageLocale, setPlageLocale] = useState<string | null>(etat?.plageSurlignage ?? null);
+
   // ── Synchronise l'affichage local avec l'état reçu du serveur ───────────
   useEffect(() => {
     if (etat) {
       setSourate(etat.numeroSourate);
       setVersetCourant(etat.numeroVerset);
+      setPlageLocale(etat.plageSurlignage ?? null);
     }
   }, [etat]);
 
-  // Calcule la plage surlignée à partir de l'état.
-  const plage = etat?.plageSurlignage;
+  // Calcule la plage surlignée à partir de l'état local (pour un affichage immédiat).
+  const plage = plageLocale;
   const surlignageDebut = plage ? Number(plage.split('-')[0]) : null;
   const surlignageFin = plage ? Number(plage.split('-')[1] ?? plage.split('-')[0]) : null;
 
   const estSurligne = (numeroVerset: number) =>
     surlignageDebut !== null &&
     surlignageFin !== null &&
-    numeroVerset >= surlignageDebut &&
-    numeroVerset <= surlignageFin;
+    Number(numeroVerset) >= surlignageDebut &&
+    Number(numeroVerset) <= surlignageFin;
 
   // Le professeur peut cliquer un verset pour le surligner.
   const cliquerVerset = (numeroVerset: number) => {
     if (!estProfesseur) return;
     setVersetCourant(numeroVerset);
+    const nouvellePlage = String(numeroVerset);
+    setPlageLocale(nouvellePlage); // Mise à jour optimiste immédiate
     surSurlignage({
       numeroSourate: sourate,
       numeroVerset,
-      plageSurlignage: String(numeroVerset),
+      plageSurlignage: nouvellePlage,
     });
   };
 
   const changerSourate = (s: number) => {
+    if (!estProfesseur) return;
     setSourate(s);
     setVersetCourant(1);
+    setPlageLocale(null); // Mise à jour optimiste
     surSurlignage({ numeroSourate: s, numeroVerset: 1, plageSurlignage: null });
   };
 
@@ -173,7 +180,7 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
                 style={{
                   cursor: estProfesseur ? 'pointer' : 'default',
                   backgroundColor: estSurligne(v.numero)
-                    ? 'color-mix(in srgb, var(--accent) 40%, transparent)'
+                    ? '#fef08a' // Jaune surligneur classique, très visible
                     : 'transparent',
                 }}
               >

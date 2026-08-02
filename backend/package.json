@@ -5,12 +5,31 @@
   "description": "Backend NestJS — monolithe modulaire de E-Quran Academy",
   "scripts": {
     "build": "nest build",
+    "verifier-types": "tsc --noEmit",
+    "test": "jest",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
     "prisma:studio": "prisma studio"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -46,12 +65,16 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.0",
+    "@nestjs/testing": "^10.4.22",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^30.0.0",
     "@types/multer": "^2.2.0",
     "@types/node": "^20.14.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/uuid": "^10.0.0",
+    "jest": "^30.4.2",
     "prisma": "^5.18.0",
+    "ts-jest": "^29.4.12",
     "tsx": "^4.19.0",
     "typescript": "^5.5.0"
   }

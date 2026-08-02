@@ -133,6 +133,34 @@ export class ReservationsService {
       throw new NotFoundException('Disponibilité introuvable');
     }
 
+    // Annuler les réservations EN_ATTENTE qui tombaient dans ce créneau
+    const professeur = await this.prisma.user.findUnique({
+      where: { id: professeurId },
+      select: { fuseauHoraire: true },
+    });
+
+    const reservationsAttente = await this.prisma.reservation.findMany({
+      where: {
+        professeurId,
+        statut: { in: [StatutReservation.EN_ATTENTE, StatutReservation.CONFIRME] },
+        creneauDebut: { gte: new Date() }, // Seulement dans le futur
+      },
+    });
+
+    for (const res of reservationsAttente) {
+      const debutLocal = this.projeterUtcVersLocale(res.creneauDebut, professeur!.fuseauHoraire);
+      if (
+        debutLocal.jour === dispo.jour &&
+        debutLocal.heure >= dispo.heureDebut &&
+        debutLocal.heure < dispo.heureFin
+      ) {
+        // On passe directement par Prisma pour éviter de bypasser d'autres logiques,
+        // mais this.changerStatut gère proprement les remboursements etc si nécessaire.
+        // Puisqu'elle est EN_ATTENTE, l'annulation est triviale.
+        await this.changerStatut(res.id, StatutReservation.ANNULE, professeurId);
+      }
+    }
+
     await this.prisma.disponibilite.delete({ where: { id: disponibiliteId } });
   }
 

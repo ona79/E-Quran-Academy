@@ -334,3 +334,22 @@ enum MethodePaiement {
   CINETPAY
   MANUEL
 }
+
+/// Cache local du texte coranique (Hafs et Warsh) provenant de l'API QuranHub.
+/// Utilisé pour éviter tout appel externe pendant les sessions en direct.
+model QuranTextCache {
+  id         String   @id @default(uuid())
+  /// Type de récitation (Hafs ou Warsh)
+  qiraat     Qiraat
+  /// Numéro de la sourate (1-114)
+  sourate    Int
+  /// Numéro du verset dans la sourate
+  verset     Int
+  /// Texte arabe (avec ou sans diacritiques selon le besoin de l'UI)
+  texte      String
+  creeLe     DateTime @default(now())
+
+  @@unique([qiraat, sourate, verset])
+  @@index([qiraat, sourate])
+  @@map("quran_text_cache")
+}

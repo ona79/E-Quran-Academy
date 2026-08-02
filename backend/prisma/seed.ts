@@ -95,6 +95,36 @@ async function main(): Promise<void> {
   } else {
     console.info('Seed : environnement production — professeur de test ignoré.');
   }
+
+  // Feature flags
+  await prisma.featureFlag.upsert({
+    where: { cle: 'paiement.actif' },
+    update: {},
+    create: {
+      cle: 'paiement.actif',
+      actif: false,
+      description: 'Active les paiements réels via Stripe (si faux, simulation escrow)',
+    },
+  });
+  console.info('Seed : feature flags insérés.');
+
+  // Quran cache (mock partiel pour la démo)
+  const quranCount = await prisma.quranTextCache.count();
+  if (quranCount === 0) {
+    await prisma.quranTextCache.createMany({
+      data: [
+        { qiraat: Qiraat.HAFS, sourate: 1, verset: 1, texte: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' },
+        { qiraat: Qiraat.HAFS, sourate: 1, verset: 2, texte: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ' },
+        { qiraat: Qiraat.HAFS, sourate: 1, verset: 3, texte: 'الرَّحْمَٰنِ الرَّحِيمِ' },
+        { qiraat: Qiraat.HAFS, sourate: 1, verset: 4, texte: 'مَالِكِ يَوْمِ الدِّينِ' },
+        { qiraat: Qiraat.WARSH, sourate: 1, verset: 1, texte: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' },
+        { qiraat: Qiraat.WARSH, sourate: 1, verset: 2, texte: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ' },
+        // On se limite à quelques versets pour le seed. Un vrai import lirait un JSON complet.
+      ],
+      skipDuplicates: true,
+    });
+    console.info('Seed : QuranTextCache initialisé avec Al-Fatiha.');
+  }
 }
 
 main()

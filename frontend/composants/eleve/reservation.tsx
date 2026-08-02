@@ -181,33 +181,33 @@ export function ReservationCours() {
   };
 
   return (
-    <div className="h-full flex flex-col space-y-4">
+    <div className="h-full flex flex-col space-y-3">
       {/* 1. Cas : Professeur sélectionné -> afficher son panneau de réservation */}
       {professeurSelectionne ? (
         <div className="flex-1 flex flex-col items-center justify-center min-h-0">
-          <div className="w-full max-w-xl rounded-2xl p-5" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
-            <div className="flex items-center justify-between mb-4 border-b pb-4" style={{ borderColor: 'var(--bordure)' }}>
+          <div className="w-full max-w-md rounded-2xl p-4 sm:p-5" style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 border-b pb-3" style={{ borderColor: 'var(--bordure)' }}>
               <div>
-                <h2 className="text-lg font-bold" style={{ color: 'var(--texte)' }}>Réserver avec {professeurSelectionne.nomComplet}</h2>
-                <p className="text-[11px] mt-0.5" style={{ color: 'var(--accent)' }}>
+                <h2 className="text-base sm:text-lg font-bold" style={{ color: 'var(--texte)' }}>Réserver avec {professeurSelectionne.nomComplet}</h2>
+                <p className="text-[10px] mt-0.5" style={{ color: 'var(--accent)' }}>
                   Qiraat : {professeurSelectionne.qiraatParDefaut} · Tarif : {professeurSelectionne.tarifHoraire} FCFA/h
                 </p>
               </div>
               <button
                 type="button" onClick={annulerSelection}
-                className="btn-secondaire !text-[10px] !px-3 !py-1.5"
+                className="btn-secondaire !text-[10px] !px-3 !py-1.5 w-full sm:w-auto"
               >
                 Changer de prof
               </button>
             </div>
 
-            <form onSubmit={soumettre} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={soumettre} className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <div>
-                  <label htmlFor="jour" className="etiquette !text-[11px]">Jour</label>
+                  <label htmlFor="jour" className="etiquette !text-[10px]">Jour</label>
                   <select
                     id="jour"
-                    className="champ !text-sm"
+                    className="champ !text-xs py-1.5"
                     value={jour}
                     onChange={(e) => { setJour(e.target.value as JourSemaine); setHeureChoisie(''); }}
                   >
@@ -216,17 +216,20 @@ export function ReservationCours() {
                 </div>
 
                 <div>
-                  <label htmlFor="heure" className="etiquette !text-[11px]">
-                    Heure ({fuseauNavigateur()})
+                  <label htmlFor="heure" className="etiquette !text-[10px]">
+                    Heure (Fuseau : <span className="font-bold text-[#0B5E45]">{fuseauNavigateur()}</span>)
                   </label>
+                  <p className="text-[9px] mb-1.5 leading-tight" style={{ color: 'var(--texte-secondaire)' }}>
+                    Converti automatiquement à votre heure.
+                  </p>
                   {enChargementDispo ? (
-                    <p className="text-[11px] py-2" style={{ color: 'var(--texte-secondaire)' }}>Chargement…</p>
+                    <p className="text-[10px] py-1.5" style={{ color: 'var(--texte-secondaire)' }}>Chargement…</p>
                   ) : disposJour.length === 0 ? (
-                    <p className="text-[11px] py-2" style={{ color: 'var(--erreur)' }}>Aucune dispo</p>
+                    <p className="text-[10px] py-1.5" style={{ color: 'var(--erreur)' }}>Aucune dispo</p>
                   ) : (
                     <select
                       id="heure"
-                      className="champ !text-sm"
+                      className="champ !text-xs py-1.5"
                       value={heureChoisie}
                       onChange={(e) => setHeureChoisie(e.target.value)}
                       required
@@ -241,10 +244,10 @@ export function ReservationCours() {
               </div>
 
               <div>
-                <label htmlFor="note" className="etiquette !text-[11px]">Objectif du cours (Optionnel)</label>
+                <label htmlFor="note" className="etiquette !text-[10px]">Objectif du cours (Optionnel)</label>
                 <textarea
                   id="note"
-                  className="champ !text-sm resize-none"
+                  className="champ !text-xs py-1.5 resize-none"
                   rows={2}
                   maxLength={500}
                   placeholder="Ex: Réviser Tajwid sourate Al-Mulk..."
@@ -348,21 +351,20 @@ function prochaineDatePourJour(jour: JourSemaine, heureDebutStr?: string): strin
   const courant = aujourdhui.getDay() === 0 ? 7 : aujourdhui.getDay();
   let delta = cible - courant;
   
-  if (delta < 0) {
-    delta += 7;
-  } else if (delta === 0 && heureDebutStr) {
-    const [heures, minutes] = heureDebutStr.split(':').map(Number);
-    const heureDebut = new Date(aujourdhui);
-    heureDebut.setHours(heures, minutes, 0, 0);
-    // Si l'heure du créneau est déjà passée, on réserve pour la semaine prochaine
-    if (heureDebut <= aujourdhui) {
+  if (delta <= 0) {
+    // Si la cible est un jour précédent dans la semaine, c'est pour la semaine prochaine.
+    // Si c'est aujourd'hui (delta === 0), on considère que c'est pour aujourd'hui (le backend rejettera si c'est dans le passé).
+    if (delta < 0) {
       delta += 7;
     }
   }
 
   const cibleDate = new Date(aujourdhui);
   cibleDate.setDate(aujourdhui.getDate() + delta);
-  return cibleDate.toISOString().slice(0, 10); // YYYY-MM-DD
+  const yyyy = cibleDate.getFullYear();
+  const mm = String(cibleDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(cibleDate.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 

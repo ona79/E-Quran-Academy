@@ -34,6 +34,8 @@ export function useSalleClasse(seanceId: string): UseSalleClasse {
     socketRef.current = socket;
 
     const rejoindre = () => {
+      if (!seanceId) return; // Évite d'envoyer un ID vide et de faire crasher le backend
+      
       // À la connexion (et à chaque reconnexion), on rejoint la room.
       // Le serveur renvoie l'état Mushaf courant → reconnexion sans perte.
       socket.emit('rejoindreSeance', { seanceId }, (reponse: { etatMushaf: EtatMushaf }) => {
@@ -44,7 +46,7 @@ export function useSalleClasse(seanceId: string): UseSalleClasse {
     socket.on('connect', () => {
       setConnecte(true);
       setErreur(null);
-      rejoindre();
+      if (seanceId) rejoindre();
     });
 
     socket.on('disconnect', () => setConnecte(false));
@@ -69,7 +71,7 @@ export function useSalleClasse(seanceId: string): UseSalleClasse {
     // Si déjà connecté (socket singleton persistant), on joint tout de suite.
     if (socket.connected) {
       setConnecte(true);
-      rejoindre();
+      if (seanceId) rejoindre();
     }
 
     return () => {

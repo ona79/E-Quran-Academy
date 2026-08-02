@@ -276,10 +276,10 @@ export class ClasseVirtuelleService {
     if (!lienVisio) return '';
     try {
       const url = new URL(lienVisio);
-      return url.pathname.slice(1) || url.hostname;
+      return url.pathname.replace(/^\/|\/$/g, '') || url.hostname;
     } catch {
       // Format placeholder:// — on récupère la partie après "://".
-      return lienVisio.split('://')[1] ?? lienVisio;
+      return lienVisio.split('://')[1]?.replace(/\/$/, '') ?? lienVisio;
     }
   }
 

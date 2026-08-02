@@ -5,6 +5,7 @@
 // bouton "Rejoindre" (actif 15 min avant), "Annuler", "Laisser un avis".
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import type { Reservation, StatutReservation } from '@/lib/types';
 import { BadgeStatut } from '@/composants/ui/badge-statut';
 import { formaterDateHeure } from '@/lib/fuseau-horaire';
@@ -13,6 +14,7 @@ import { apiClient } from '@/lib/api-client';
 interface CarteCours {
   reservation: Reservation;
   nomProf?: string;
+  photoProf?: string;
   onAnnuler?: (id: string) => void;
   onAvis?: (id: string) => void;
 }
@@ -39,7 +41,7 @@ const LIBELLES_STATUT: Record<StatutReservation, string> = {
   ABSENT: 'Absent',
 };
 
-export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: CarteCours) {
+export function CarteCoursEleve({ reservation, nomProf, photoProf, onAnnuler, onAvis }: CarteCours) {
   const peutJoindre = peutRejoindre(reservation.creneauDebut);
   const peutCancel = peutAnnuler(reservation.creneauDebut);
   const estPasse = reservation.statut === 'REALISE' || reservation.statut === 'ABSENT';
@@ -68,7 +70,9 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
   }, [peutJoindre, estPasse, estAnnule, reservation.id]);
 
   return (
-    <article
+    <motion.article
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       className="carte group transition-all"
       style={{ borderLeft: '3px solid var(--primaire)' }}
     >
@@ -157,6 +161,6 @@ export function CarteCoursEleve({ reservation, nomProf, onAnnuler, onAvis }: Car
           )}
         </div>
       )}
-    </article>
+    </motion.article>
   );
 }
