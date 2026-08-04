@@ -8,7 +8,7 @@ export function CarteStatistique({
 }: {
   etiquette: string;
   valeur: ReactNode;
-  icone?: string;
+  icone?: ReactNode;
 }) {
   return (
     <div

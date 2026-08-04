@@ -2,15 +2,16 @@
 
 // Sidebar de base (commune aux 3 rôles) — Thème Clair.
 // Fond vert profond, liens blancs, lien actif = fond crème arrondi.
+import { useState, useEffect, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, type ReactNode } from 'react';
+import { BookOpen } from 'lucide-react';
 
 export interface LienSidebar {
   href: string;
   libelle: string;
-  icone: string;
+  icone: ReactNode;
   badge?: number;
 }
 
@@ -145,8 +146,8 @@ export function SidebarBase({
           className={`relative px-4 py-4 mx-3 mb-3 rounded-2xl overflow-hidden transition-opacity duration-300 ${reduite ? 'md:hidden' : 'block'}`}
           style={{ background: 'rgba(255,255,255,0.08)' }}
         >
-          <div className="text-center">
-            <span className="text-3xl">🌙</span>
+          <div className="text-center flex flex-col items-center">
+            <BookOpen size={22} className="text-amber-300" />
             <p className="text-[10px] mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>
               Apprenez le Coran avec excellence
             </p>

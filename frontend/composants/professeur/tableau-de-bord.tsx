@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { apiClient, ErreurApi } from '@/lib/api-client';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 import type { Page, Reservation, ProfilProfesseur } from '@/lib/types';
+import { Calendar, Bell, CheckCircle2, Wallet, Video, FileEdit, Clock, User, MessageSquare } from 'lucide-react';
 import { BadgeStatut } from '@/composants/ui/badge-statut';
 import { CarteStatistique } from '@/composants/ui/carte-statistique';
 import { formaterDateHeure } from '@/lib/fuseau-horaire';
@@ -89,7 +90,7 @@ export function TableauDeBordProfesseur() {
     return (
       <div className="max-w-md mx-auto mt-10 rounded-2xl p-8 text-center space-y-4"
         style={{ background: '#FFFFFF', border: '1px solid var(--bordure)' }}>
-        <p className="text-5xl">⏳</p>
+        <Clock size={40} className="mx-auto text-amber-500" />
         <p className="text-lg font-semibold" style={{ color: 'var(--texte)' }}>Compte en cours de validation</p>
         <p className="text-sm leading-relaxed" style={{ color: 'var(--texte-secondaire)' }}>
           Un administrateur doit valider votre profil avant que les étudiants puissent vous trouver.
@@ -124,7 +125,7 @@ export function TableauDeBordProfesseur() {
     <div className="space-y-8 max-w-6xl w-full">
       {/* Salutation */}
       <div>
-        <h1 className="text-2xl font-bold">🕌 Wa alaykum assalam, {prenom}</h1>
+        <h1 className="text-2xl font-bold">Wa alaykum assalam, {prenom}</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--texte-secondaire)' }}>
           Tableau de bord de votre espace enseignant.
         </p>
@@ -134,13 +135,13 @@ export function TableauDeBordProfesseur() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <CarteStatistique etiquette="À venir" valeur={confirmes.length} icone="📅" />
-        <CarteStatistique etiquette="À confirmer" valeur={enAttente.length} icone="🔔" />
-        <CarteStatistique etiquette="Réalisés" valeur={realises.length} icone="✅" />
+        <CarteStatistique etiquette="À venir" valeur={confirmes.length} icone={<Calendar size={20} />} />
+        <CarteStatistique etiquette="À confirmer" valeur={enAttente.length} icone={<Bell size={20} />} />
+        <CarteStatistique etiquette="Réalisés" valeur={realises.length} icone={<CheckCircle2 size={20} />} />
         <CarteStatistique
           etiquette={paiementActif ? 'Revenus FCFA' : 'Revenus (MVP)'}
           valeur={paiementActif ? revenusMois.toLocaleString('fr-FR') : '—'}
-          icone="💰"
+          icone={<Wallet size={20} />}
         />
       </div>
 
@@ -157,7 +158,7 @@ export function TableauDeBordProfesseur() {
             </div>
             {confirmes.length === 0 ? (
               <div className="carte text-center py-8">
-                <p className="text-3xl mb-2">🗓️</p>
+                <Calendar size={28} className="mx-auto mb-2 text-gray-400" />
                 <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>
                   Aucun cours confirmé à venir. Attendez les confirmations d&apos;étudiants.
                 </p>
@@ -176,7 +177,8 @@ export function TableauDeBordProfesseur() {
                         </div>
                         <div>
                           <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
-                          <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
+                          <p className="text-xs flex items-center gap-1 mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
+                            <Clock size={12} />
                             {formaterDateHeure(r.creneauDebut)}
                           </p>
                         </div>
@@ -184,13 +186,13 @@ export function TableauDeBordProfesseur() {
                       <div className="flex items-center gap-2 shrink-0">
                         <BadgeStatut statut={r.statut} />
                         {peutDem ? (
-                          <Link href={`/professeur/classe/${r.id}`} className="btn-primaire text-xs !py-1.5 !px-3">
-                            🎥 Démarrer
+                          <Link href={`/professeur/classe/${r.id}`} className="btn-primaire text-xs !py-1.5 !px-3 flex items-center gap-1">
+                            <Video size={14} /> Démarrer
                           </Link>
                         ) : (
-                          <button disabled className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
+                          <button disabled className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed flex items-center gap-1"
                             title="Disponible 15 min avant">
-                            🎥 Démarrer
+                            <Video size={14} /> Démarrer
                           </button>
                         )}
                       </div>
@@ -221,7 +223,8 @@ export function TableauDeBordProfesseur() {
                       </div>
                       <div>
                         <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
-                        <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
+                        <p className="text-xs flex items-center gap-1 mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
+                          <Clock size={12} />
                           {formaterDateHeure(r.creneauDebut)}
                         </p>
                       </div>
@@ -233,9 +236,9 @@ export function TableauDeBordProfesseur() {
                       </span>
                       {r.statut === 'REALISE' && (
                         <Link href={`/professeur/suivi/${r.id}`}
-                          className="btn-secondaire text-xs !py-1 !px-2.5"
+                          className="btn-secondaire text-xs !py-1 !px-2.5 flex items-center gap-1"
                           style={{ borderColor: 'var(--couleur-or)', color: 'var(--couleur-or)' }}>
-                          📝 Suivi
+                          <FileEdit size={12} /> Suivi
                         </Link>
                       )}
                     </div>
@@ -260,8 +263,8 @@ export function TableauDeBordProfesseur() {
               )}
             </h2>
             {enAttente.length === 0 ? (
-              <p className="carte text-sm" style={{ color: 'var(--texte-secondaire)' }}>
-                Aucune demande en attente. ✅
+              <p className="carte text-sm flex items-center gap-1.5" style={{ color: 'var(--texte-secondaire)' }}>
+                <CheckCircle2 size={16} className="text-emerald-600 shrink-0" /> Aucune demande en attente.
               </p>
             ) : (
               <div className="space-y-3">
@@ -270,12 +273,12 @@ export function TableauDeBordProfesseur() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <p className="font-semibold text-sm">{r.nomEleve ?? `Étudiant ${r.eleveId.slice(0, 8)}`}</p>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
-                          📅 {formaterDateHeure(r.creneauDebut)}
+                        <p className="text-xs flex items-center gap-1 mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
+                          <Calendar size={12} /> {formaterDateHeure(r.creneauDebut)}
                         </p>
                         {r.noteEleve && (
                           <p className="text-xs italic mt-1 line-clamp-2" style={{ color: 'var(--texte-secondaire)' }}>
-                            🎯 &quot;{r.noteEleve}&quot;
+                            &quot;{r.noteEleve}&quot;
                           </p>
                         )}
                       </div>
@@ -335,13 +338,13 @@ export function TableauDeBordProfesseur() {
             <h2 className="text-base font-semibold mb-3">Raccourcis</h2>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { href: '/professeur/disponibilites', icon: '🗓️', label: 'Horaires' },
-                { href: '/professeur/profil', icon: '👤', label: 'Profil' },
-                { href: '/professeur/messages', icon: '💬', label: 'Messages' },
+                { href: '/professeur/disponibilites', icon: <Calendar size={20} className="text-emerald-700" />, label: 'Horaires' },
+                { href: '/professeur/profil', icon: <User size={20} className="text-emerald-700" />, label: 'Profil' },
+                { href: '/professeur/messages', icon: <MessageSquare size={20} className="text-emerald-700" />, label: 'Messages' },
               ].map((lien) => (
                 <Link key={lien.href} href={lien.href}
                   className="carte cliquable flex flex-col items-center text-center gap-2 transition-all p-3">
-                  <span className="text-2xl">{lien.icon}</span>
+                  <span className="p-2 rounded-xl bg-emerald-50">{lien.icon}</span>
                   <p className="font-semibold text-xs">{lien.label}</p>
                 </Link>
               ))}

@@ -31,6 +31,8 @@ import { PayloadJwt } from '../partages/auth/payload-jwt.interface';
 import { UtilisateursService } from './utilisateurs.service';
 import { InscriptionDto } from './dto/inscription.dto';
 import { ConnexionDto } from './dto/connexion.dto';
+import { DemandeReinitialisationDto } from './dto/demande-reinitialisation.dto';
+import { ReinitialiserMotDePasseDto } from './dto/reinitialiser-mot-de-passe.dto';
 import { ChangerRoleDto } from './dto/changer-role.dto';
 import { UtilisateurReponseDto } from './dto/utilisateur.reponse.dto';
 import { MettreAJourUtilisateurDto } from './dto/mettre-a-jour-utilisateur.dto';
@@ -49,8 +51,8 @@ export class UtilisateursControleur {
     return this.service.inscrire(dto);
   }
 
-  // 3 tentatives / 3 600 secondes — limite la création de comptes en masse.
-  @Throttle({ default: { limit: 3, ttl: 3_600_000 } })
+  // 10 tentatives / 60 secondes — connexion utilisateur.
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post('connexion')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "S'authentifier et obtenir un jeton JWT" })
@@ -60,15 +62,38 @@ export class UtilisateursControleur {
   ): Promise<{ utilisateur: UtilisateurReponseDto, jeton: string }> {
     const { jeton, utilisateur } = await this.service.connecter(dto);
 
+    // 30 jours si "Se souvenir de moi" est coché, 1 jour sinon
+    const maxAge = dto.seSouvenirDeMoi ? 30 * 24 * 3600 * 1000 : 24 * 3600 * 1000;
+
     res.cookie('jwt_access', jeton, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 3600 * 1000, // 7 jours
+      maxAge,
       path: '/',
     });
 
     return { utilisateur, jeton };
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 3600_000 } })
+  @Post('mot-de-passe-oublie')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Demander un lien de réinitialisation de mot de passe' })
+  demanderReinitialisation(
+    @Body() dto: DemandeReinitialisationDto,
+  ): Promise<{ message: string; tokenTest?: string }> {
+    return this.service.demanderReinitialisation(dto.email);
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 3600_000 } })
+  @Post('reinitialiser-mot-de-passe')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Appliquer le nouveau mot de passe avec le jeton éphémère' })
+  reinitialiserMotDePasse(
+    @Body() dto: ReinitialiserMotDePasseDto,
+  ): Promise<{ message: string }> {
+    return this.service.reinitialiserMotDePasse(dto.token, dto.nouveauMotDePasse);
   }
 
   @Post('deconnexion')

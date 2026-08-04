@@ -277,18 +277,31 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
     }
   }, [seance, role, router]);
 
+  const [modalConsentement, setModalConsentement] = useState(false);
+
+  const demarrerEnregistrementApresConsentement = useCallback(async () => {
+    if (!seance) return;
+    try {
+      await apiClient.post<SeanceCours>(
+        `/classe-virtuelle/seances/${seance.id}/consentement-enregistrement`,
+        { consentementParental: true }
+      );
+      const maj = await apiClient.patch<SeanceCours>(`/classe-virtuelle/seances/${seance.id}/enregistrement`, {
+        actif: true,
+      });
+      setSeance(maj);
+    } catch (err: any) {
+      alert(err instanceof ErreurApi ? err.message : 'Erreur lors du démarrage');
+    } finally {
+      setModalConsentement(false);
+    }
+  }, [seance]);
+
   const basculerEnregistrement = useCallback(async () => {
     if (!seance || role !== 'PROFESSEUR') return;
     if (!seance.enregistrementConsente) {
-      const ok = confirm("Confirmez-vous avoir obtenu le consentement parental pour enregistrer cet étudiant ?");
-      if (!ok) return;
-      try {
-        const maj = await apiClient.post<SeanceCours>(
-          `/classe-virtuelle/seances/${seance.id}/consentement-enregistrement`,
-          { consentementParental: true }
-        );
-        setSeance(maj);
-      } catch { return; }
+      setModalConsentement(true);
+      return;
     }
     try {
       const maj = await apiClient.patch<SeanceCours>(`/classe-virtuelle/seances/${seance.id}/enregistrement`, {
@@ -639,6 +652,18 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
           {panneauMushaf}
         </div>
       </div>
+
+      {/* Modal confirmation consentement enregistrement */}
+      {modalConsentement && (
+        <ModalConfirmation
+          titre="Consentement d'enregistrement"
+          message="Confirmez-vous avoir obtenu le consentement parental préalable pour enregistrer cet élève ?"
+          boutonConfirmer="Confirmer & Démarrer"
+          couleurConfirmer="#0B5E45"
+          onConfirmer={demarrerEnregistrementApresConsentement}
+          onAnnuler={() => setModalConsentement(false)}
+        />
+      )}
 
       {/* Modal confirmation terminer */}
       {modalTerminer && (

@@ -17,7 +17,7 @@ import type { ReponseConnexion, Utilisateur } from '@/lib/types';
 interface ContexteAuth {
   utilisateur: Utilisateur | null;
   enChargement: boolean;
-  connexion: (email: string, motDePasse: string) => Promise<Utilisateur>;
+  connexion: (email: string, motDePasse: string, seSouvenirDeMoi?: boolean) => Promise<Utilisateur>;
   inscription: (
     email: string,
     motDePasse: string,
@@ -45,10 +45,10 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
       .finally(() => setEnChargement(false));
   }, []);
 
-  const connexion = async (email: string, motDePasse: string) => {
+  const connexion = async (email: string, motDePasse: string, seSouvenirDeMoi?: boolean) => {
     const { utilisateur, jeton } = await apiClient.post<{ utilisateur: Utilisateur; jeton: string }>(
       '/utilisateurs/connexion',
-      { email, motDePasse },
+      { email, motDePasse, seSouvenirDeMoi },
     );
     if (jeton) {
       localStorage.setItem('jeton_ws', jeton);

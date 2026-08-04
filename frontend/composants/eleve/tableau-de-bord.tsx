@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 import type { Page, Reservation, NoteSession } from '@/lib/types';
+import { BookOpen, CheckCircle2, Clock, Calendar, CalendarPlus, MessageSquare } from 'lucide-react';
 import { CarteCoursEleve } from './carte-cours-eleve';
 import { CarteStatistique } from '@/composants/ui/carte-statistique';
 
@@ -116,10 +117,10 @@ export function TableauDeBordEleve() {
       >
         <div className="flex items-center gap-4">
           <div
-            className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+            className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
             style={{ background: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
           >
-            <span className="text-2xl">🌙</span>
+            <BookOpen size={24} className="text-emerald-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: '#1A1A1A' }}>
@@ -139,17 +140,17 @@ export function TableauDeBordEleve() {
           <CarteStatistique
             etiquette="Cours réalisés"
             valeur={stats.coursRealises}
-            icone="✅"
+            icone={<CheckCircle2 size={20} />}
           />
           <CarteStatistique
             etiquette="Heures de cours"
             valeur={stats.heuresCours}
-            icone="⏱️"
+            icone={<Clock size={20} />}
           />
           <CarteStatistique
             etiquette="Soûrates mémorisées"
             valeur={stats.souratesMemorisees}
-            icone="📖"
+            icone={<BookOpen size={20} />}
           />
         </div>
       </section>
@@ -169,10 +170,10 @@ export function TableauDeBordEleve() {
 
         {reservations.length === 0 ? (
           <div
-            className="rounded-2xl border p-8 text-center"
+            className="rounded-2xl border p-8 text-center flex flex-col items-center justify-center"
             style={{ borderColor: 'var(--bordure)', background: '#FFFFFF' }}
           >
-            <p className="text-3xl mb-2">🗓️</p>
+            <Calendar size={32} className="mb-2 text-gray-400" />
             <p className="font-medium mb-1" style={{ color: 'var(--texte)' }}>Aucun cours à venir</p>
             <p className="text-sm mb-4" style={{ color: 'var(--texte-secondaire)' }}>
               Réservez votre premier cours avec un professeur certifié Ijaza.
@@ -203,9 +204,11 @@ export function TableauDeBordEleve() {
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/eleve/reserver"
-            className="carte cliquable flex flex-col gap-2"
+            className="carte cliquable flex flex-col gap-2 p-4"
           >
-            <span className="text-2xl">🗓️</span>
+            <span className="p-2 rounded-xl bg-emerald-50 w-fit">
+              <CalendarPlus size={20} className="text-emerald-700" />
+            </span>
             <p className="font-semibold text-sm">Réserver un cours</p>
             <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
               Trouver un professeur et un créneau.
@@ -213,9 +216,11 @@ export function TableauDeBordEleve() {
           </Link>
           <Link
             href="/eleve/messages"
-            className="carte cliquable flex flex-col gap-2"
+            className="carte cliquable flex flex-col gap-2 p-4"
           >
-            <span className="text-2xl">💬</span>
+            <span className="p-2 rounded-xl bg-emerald-50 w-fit">
+              <MessageSquare size={20} className="text-emerald-700" />
+            </span>
             <p className="font-semibold text-sm">Mes messages</p>
             <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
               Échangez avec vos professeurs.

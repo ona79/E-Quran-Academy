@@ -8,32 +8,47 @@ import { usePathname } from 'next/navigation';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 import { apiClient } from '@/lib/api-client';
 import type { Role, ProfilProfesseur, Page, Message } from '@/lib/types';
+import {
+  Home,
+  Calendar,
+  GraduationCap,
+  MessageSquare,
+  User,
+  Wallet,
+  CalendarPlus,
+  LayoutDashboard,
+  UserCheck,
+  Users,
+  Sliders,
+  CreditCard,
+  BookOpen,
+} from 'lucide-react';
 import { SidebarBase, type LienSidebar } from './sidebar-base';
 import { BottomNav } from './bottom-nav';
 
 const LIENS_PAR_ROLE: Record<Role, LienSidebar[]> = {
   ELEVE: [
-    { href: '/eleve', libelle: 'Accueil', icone: '🏠' },
-    { href: '/eleve/reserver', libelle: 'Réserver', icone: '🗓️' },
-    { href: '/eleve/classe', libelle: 'Cours', icone: '🎓' },
-    { href: '/eleve/facturation', libelle: 'Portefeuille', icone: '💳' },
-    { href: '/eleve/messages', libelle: 'Messages', icone: '💬' },
-    { href: '/eleve/profil', libelle: 'Profil', icone: '👤' },
+    { href: '/eleve', libelle: 'Accueil', icone: <Home size={18} /> },
+    { href: '/eleve/reserver', libelle: 'Réserver', icone: <CalendarPlus size={18} /> },
+    { href: '/eleve/classe', libelle: 'Cours', icone: <GraduationCap size={18} /> },
+    { href: '/eleve/facturation', libelle: 'Portefeuille', icone: <Wallet size={18} /> },
+    { href: '/eleve/messages', libelle: 'Messages', icone: <MessageSquare size={18} /> },
+    { href: '/eleve/profil', libelle: 'Profil', icone: <User size={18} /> },
   ],
   PROFESSEUR: [
-    { href: '/professeur', libelle: 'Accueil', icone: '🏠' },
-    { href: '/professeur/disponibilites', libelle: 'Disponibilités', icone: '🗓️' },
-    { href: '/professeur/suivi', libelle: 'Cours', icone: '🎓' },
-    { href: '/professeur/messages', libelle: 'Messages', icone: '💬' },
-    { href: '/professeur/profil', libelle: 'Profil', icone: '👤' },
-    { href: '/professeur/revenus', libelle: 'Revenus', icone: '💰' },
+    { href: '/professeur', libelle: 'Accueil', icone: <Home size={18} /> },
+    { href: '/professeur/disponibilites', libelle: 'Disponibilités', icone: <Calendar size={18} /> },
+    { href: '/professeur/suivi', libelle: 'Cours', icone: <GraduationCap size={18} /> },
+    { href: '/professeur/messages', libelle: 'Messages', icone: <MessageSquare size={18} /> },
+    { href: '/professeur/profil', libelle: 'Profil', icone: <User size={18} /> },
+    { href: '/professeur/revenus', libelle: 'Revenus', icone: <Wallet size={18} /> },
   ],
   ADMIN: [
-    { href: '/admin', libelle: 'Tableau de bord', icone: '📊' },
-    { href: '/admin/professeurs', libelle: 'Professeurs', icone: '👨‍🏫' },
-    { href: '/admin/utilisateurs', libelle: 'Utilisateurs', icone: '👥' },
-    { href: '/admin/feature-flags', libelle: 'Feature flags', icone: '🚩' },
-    { href: '/admin/paiements', libelle: 'Paiements', icone: '💳' },
+    { href: '/admin', libelle: 'Tableau de bord', icone: <LayoutDashboard size={18} /> },
+    { href: '/admin/professeurs', libelle: 'Professeurs', icone: <UserCheck size={18} /> },
+    { href: '/admin/utilisateurs', libelle: 'Utilisateurs', icone: <Users size={18} /> },
+    { href: '/admin/feature-flags', libelle: 'Feature flags', icone: <Sliders size={18} /> },
+    { href: '/admin/paiements', libelle: 'Paiements', icone: <CreditCard size={18} /> },
   ],
 };
 

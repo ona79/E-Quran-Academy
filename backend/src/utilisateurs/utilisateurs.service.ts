@@ -3,13 +3,16 @@
 // Règle d'architecture : ce service n'accède qu'à la table `users`. Il ne lit
 // jamais les données internes d'un autre module.
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { PrismaService } from '../partages/prisma/prisma.service';
 import { JwtService } from '../partages/auth/jwt.service';
 import { PayloadJwt } from '../partages/auth/payload-jwt.interface';
@@ -19,15 +22,19 @@ import { UtilisateurReponseDto } from './dto/utilisateur.reponse.dto';
 import { MettreAJourUtilisateurDto } from './dto/mettre-a-jour-utilisateur.dto';
 
 import { AuditService } from '../partages/audit/audit.service';
+import { EmailService } from '../partages/email/email.service';
 
 const COUT_HACHAGE = 12;
 
 @Injectable()
 export class UtilisateursService {
+  private readonly logger = new Logger(UtilisateursService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly audit: AuditService,
+    private readonly emailService: EmailService,
   ) {}
 
   /**
@@ -118,9 +125,79 @@ export class UtilisateursService {
     await this.audit.enregistrer(utilisateur.id, null, 'CONNEXION', { email: utilisateur.email });
 
     return {
-      jeton: this.jwt.genererJetons(payload),
+      jeton: this.jwt.genererJetons(payload, donnees.seSouvenirDeMoi),
       utilisateur: this.sanitiser(utilisateur),
     };
+  }
+
+  /**
+   * Demande de réinitialisation de mot de passe.
+   * Génère un jeton sécurisé expirable sous 1h et envoie l'e-mail via Brevo.
+   */
+  async demanderReinitialisation(email: string): Promise<{ message: string; tokenTest?: string }> {
+    const utilisateur = await this.prisma.user.findUnique({ where: { email } });
+
+    let tokenTest: string | undefined;
+
+    if (utilisateur) {
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiration = new Date(Date.now() + 3600 * 1000); // 1h
+
+      await this.prisma.user.update({
+        where: { id: utilisateur.id },
+        data: {
+          tokenReinitialisation: token,
+          tokenReinitialisationExpireLe: expiration,
+        },
+      });
+
+      const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+      const lien = `${frontendUrl}/reinitialiser-mot-de-passe?token=${token}`;
+
+      this.logger.log(`[MOT DE PASSE OUBLIÉ] Lien généré pour ${email} : ${lien}`);
+      
+      // Envoi réel via Brevo API
+      await this.emailService.envoyerEmailReinitialisation(utilisateur.email, utilisateur.nomComplet, lien);
+
+      await this.audit.enregistrer(utilisateur.id, null, 'DEMANDE_REINITIALISATION_MOT_DE_PASSE');
+
+      if (process.env.NODE_ENV !== 'production') {
+        tokenTest = token;
+      }
+    }
+
+    return {
+      message: 'Si un compte correspond à cet e-mail, les instructions de réinitialisation vous ont été envoyées.',
+      ...(tokenTest ? { tokenTest } : {}),
+    };
+  }
+
+  /**
+   * Applique la réinitialisation du mot de passe en utilisant le jeton unique.
+   */
+  async reinitialiserMotDePasse(token: string, nouveauMotDePasse: string): Promise<{ message: string }> {
+    const utilisateur = await this.prisma.user.findUnique({
+      where: { tokenReinitialisation: token },
+    });
+
+    if (!utilisateur || !utilisateur.tokenReinitialisationExpireLe || utilisateur.tokenReinitialisationExpireLe < new Date()) {
+      throw new BadRequestException('Le jeton de réinitialisation est invalide ou expiré');
+    }
+
+    const motDePasseHache = await bcrypt.hash(nouveauMotDePasse, COUT_HACHAGE);
+
+    await this.prisma.user.update({
+      where: { id: utilisateur.id },
+      data: {
+        motDePasse: motDePasseHache,
+        tokenReinitialisation: null,
+        tokenReinitialisationExpireLe: null,
+      },
+    });
+
+    await this.audit.enregistrer(utilisateur.id, null, 'REINITIALISATION_MOT_DE_PASSE');
+
+    return { message: 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.' };
   }
 
   /**

@@ -10,11 +10,12 @@ export class JwtService {
 
   /**
    * Émet un jeton signé pour la charge utile donnée.
-   * Durée : 7 jours (configurable via JWT_EXPIRES_IN).
+   * Si seSouvenirDeMoi est vrai : 30 jours, sinon 1 jour (ou JWT_EXPIRES_IN par défaut).
    */
-  genererJetons(payload: PayloadJwt): string {
+  genererJetons(payload: PayloadJwt, seSouvenirDeMoi?: boolean): string {
+    const dromadaireDuree = seSouvenirDeMoi ? '30d' : (process.env.JWT_EXPIRES_IN ?? '1d');
     return this.jwt.sign(payload, {
-      expiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
+      expiresIn: dromadaireDuree,
     });
   }
 }

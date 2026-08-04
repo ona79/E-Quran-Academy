@@ -22,6 +22,8 @@ model User {
   langue                          String          @default("fr")
   fuseauHoraire                   String          @default("Africa/Dakar")
   solde                           Int             @default(0)
+  tokenReinitialisation           String?         @unique
+  tokenReinitialisationExpireLe   DateTime?
   creeLe                          DateTime        @default(now())
   misAJourLe                      DateTime        @updatedAt
   avisLaisses                     Avis[]          @relation("AvisEleve")

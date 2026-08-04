@@ -163,7 +163,7 @@ export default function PageConnexion() {
     setEnChargement(true);
 
     try {
-      const user = await connexion(email, motDePasse);
+      const user = await connexion(email, motDePasse, souvenir);
       setConnexionReussie(true);
 
       // Petite pause pour voir l'animation "heureux"
