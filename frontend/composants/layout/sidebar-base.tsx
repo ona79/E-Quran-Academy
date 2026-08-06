@@ -45,9 +45,8 @@ export function SidebarBase({
     <>
       {/* Overlay mobile */}
       <div
-        className={`fixed inset-0 z-30 md:hidden transition-opacity duration-500 ease-in-out ${
-          ouverte ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 z-30 md:hidden transition-opacity duration-500 ease-in-out ${ouverte ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
         style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
         onClick={surFermeture}
         aria-hidden
@@ -55,9 +54,8 @@ export function SidebarBase({
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen shrink-0 transform transition-all duration-500 ease-in-out flex flex-col ${
-          ouverte ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
-        } ${reduite ? 'w-60 md:w-20' : 'w-60'}`}
+        className={`fixed md:sticky top-0 left-0 z-40 h-screen shrink-0 transform transition-all duration-500 ease-in-out flex flex-col ${ouverte ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
+          } ${reduite ? 'w-60 md:w-20' : 'w-60'}`}
         style={{
           background: 'linear-gradient(180deg, #1B5E3B 0%, #145A32 100%)',
         }}
@@ -77,7 +75,7 @@ export function SidebarBase({
               <span className="text-sm font-bold">E-Quran</span>
               <span className="block text-[10px] font-normal" style={{ color: 'rgba(255,255,255,0.65)' }}>Academy</span>
             </div>
-            
+
             {/* Overlay icône sur logo quand réduit et survolé */}
             {reduite && (
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full z-10">
@@ -88,7 +86,7 @@ export function SidebarBase({
               </div>
             )}
           </div>
-          
+
           {/* Icône de toggle (façon iTalki) quand étendu */}
           {!reduite && (
             <button
@@ -114,9 +112,8 @@ export function SidebarBase({
                 key={lien.href}
                 href={lien.href}
                 onClick={surFermeture}
-                className={`flex items-center rounded-xl transition-all duration-150 mb-0.5 relative whitespace-nowrap overflow-hidden ${
-                  reduite ? 'md:justify-center md:px-0 py-2.5 px-3' : 'gap-3 px-3 py-2.5'
-                }`}
+                className={`flex items-center rounded-xl transition-all duration-150 mb-0.5 relative whitespace-nowrap overflow-hidden ${reduite ? 'md:justify-center md:px-0 py-2.5 px-3' : 'gap-3 px-3 py-2.5'
+                  }`}
                 style={{
                   background: actif ? '#F6F3EB' : 'transparent',
                   color: actif ? '#1B5E3B' : 'rgba(255,255,255,0.8)',
