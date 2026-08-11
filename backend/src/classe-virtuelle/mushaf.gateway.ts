@@ -32,9 +32,9 @@ import { BandePassanteDto, NiveauBandePassante } from './dto/bande-passante.dto'
 
 // Port distinct de l'API REST pour faciliter le scaling (≥ 2 instances) : le
 // répartiteur de charge peut router le trafic WebSocket sticky si besoin.
-const PORT_WS = Number(process.env.PORT_WS ?? 3002);
+const portWsOption = process.env.PORT_WS ? Number(process.env.PORT_WS) : undefined;
 
-@WebSocketGateway(PORT_WS, {
+@WebSocketGateway(portWsOption, {
   namespace: 'classe-virtuelle',
   cors: { origin: process.env.CORS_ORIGINE?.split(',') ?? true, credentials: true },
 })
@@ -59,11 +59,16 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
    * Si REDIS_URL est absente (développement mono-instance), on continue sans
    * adaptateur : tout fonctionne sur une seule instance.
    */
-  async afterInit(): Promise<void> {
+  async afterInit(server: Server): Promise<void> {
     const paire = await obtenirPaireRedis();
     if (paire) {
-      this.server.adapter(createAdapter(paire.publier, paire.ecouter));
-      this.logger.log('Adaptateur Redis branché (multi-instances OK)');
+      const serverIo = (server as any)?.server ?? (this.server as any)?.server ?? server ?? this.server;
+      if (typeof serverIo?.adapter === 'function') {
+        serverIo.adapter(createAdapter(paire.publier, paire.ecouter));
+        this.logger.log('Adaptateur Redis branché (multi-instances OK)');
+      } else {
+        this.logger.warn('Impossible de fixer l\'adaptateur Redis sur le serveur Socket.IO');
+      }
     } else {
       this.logger.warn('REDIS_URL absente — gateway mono-instance (dev uniquement)');
     }

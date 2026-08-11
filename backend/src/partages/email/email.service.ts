@@ -15,7 +15,17 @@ export class EmailService {
   ): Promise<boolean> {
     const apiKey = process.env.EMAIL_API_KEY || process.env.BREVO_API_KEY;
     const expediteurEmail = process.env.EMAIL_EXPEDITEUR_EMAIL || 'no-reply@equran-academy.com';
-    const expediteurNom = process.env.EMAIL_EXPEDITEUR_NOM || 'E-Quran Academy';
+    const expediteurNom = process.env.EMAIL_EXPEDITEUR_NOM || 'Quran-Academy';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const logoUrl = `${frontendUrl}/mascotte/logo_equran_accademy.png`;
+    const estLocalhost = frontendUrl.includes('localhost') || frontendUrl.includes('127.0.0.1');
+    
+    // En dev local (localhost), Gmail ne peut pas télécharger l'image depuis l'ordi local.
+    // On utilise un badge icône propre en HTML qui s'affiche partout instantanément.
+    // En production, l'image PNG officielle s'affichera parfaitement depuis le domaine HTTPS.
+    const logoHeaderHtml = !estLocalhost
+      ? `<img src="${logoUrl}" alt="Logo" class="brand-logo" />`
+      : `<span style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background: linear-gradient(135deg, #0B5E45 0%, #064E3B 100%); border-radius: 10px; font-size: 20px; text-align: center; vertical-align: middle; margin-right: 10px;">📖</span>`;
 
     if (!apiKey) {
       this.logger.warn(`[BREVO] Aucune clé EMAIL_API_KEY trouvée dans l'environnement. Mode simulation.`);
@@ -28,34 +38,45 @@ export class EmailService {
       <html lang="fr">
       <head>
         <meta charset="UTF-8" />
-        <title>Réinitialisation de votre mot de passe - E-Quran Academy</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Réinitialisation de votre mot de passe - Quran-Academy</title>
         <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0D1A14; color: #FFFFFF; margin: 0; padding: 20px; }
-          .container { max-width: 580px; margin: 0 auto; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(184, 146, 58, 0.3); border-radius: 16px; padding: 32px; background-color: #12241C; }
-          .header { text-align: center; margin-bottom: 24px; }
-          .header h1 { color: #B8923A; font-size: 22px; margin-top: 10px; }
-          .content { font-size: 15px; line-height: 1.6; color: #E2E8F0; }
+          body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #1E293B; margin: 0; padding: 40px 15px; }
+          .container { max-width: 560px; margin: 0 auto; background-color: #FFFFFF; border-radius: 16px; padding: 40px 32px; border: 1px solid #E2E8F0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
+          .header { text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #F1F5F9; }
+          .brand-logo { max-width: 48px; height: auto; display: inline-block; vertical-align: middle; margin-right: 8px; }
+          .brand-title { color: #0B5E45; font-size: 24px; font-weight: 800; display: inline-block; vertical-align: middle; margin: 0; }
+          .brand-subtitle { color: #B8923A; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; }
+          .content { font-size: 15px; line-height: 1.6; color: #334155; }
+          .greeting { font-size: 16px; font-weight: 600; color: #0F172A; margin-bottom: 16px; }
           .btn-container { text-align: center; margin: 32px 0; }
-          .btn { background: linear-gradient(135deg, #0B5E45 0%, #B8923A 100%); color: #FFFFFF !important; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; display: inline-block; box-shadow: 0 4px 15px rgba(11, 94, 69, 0.4); }
-          .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #94A3B8; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px; }
+          .btn { background: linear-gradient(135deg, #0B5E45 0%, #08402F 100%); color: #FFFFFF !important; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 14px rgba(11, 94, 69, 0.3); }
+          .notice-box { background-color: #FEF3C7; border-left: 4px solid #B8923A; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #78350F; margin: 24px 0; }
+          .footer { text-align: center; margin-top: 36px; font-size: 12px; color: #94A3B8; border-top: 1px solid #F1F5F9; padding-top: 20px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>📖 E-Quran Academy</h1>
+            <div>
+              ${logoHeaderHtml}
+              <h1 class="brand-title">Quran-Academy</h1>
+            </div>
+            <div class="brand-subtitle">Plateforme d'Enseignement Coranique</div>
           </div>
           <div class="content">
-            <p>Assalamu alaykum ${nomComplet ? nomComplet : ''},</p>
-            <p>Vous avez demandé la réinitialisation de votre mot de passe pour votre compte <strong>E-Quran Academy</strong>.</p>
-            <p>Veuillez cliquer sur le bouton ci-dessous pour choisir un nouveau mot de passe. Ce lien est valide pendant <strong>1 heure</strong>.</p>
+            <p class="greeting">Assalamu alaykum ${nomComplet ? nomComplet : ''},</p>
+            <p>Vous avez demandé la réinitialisation du mot de passe de votre compte <strong>Quran-Academy</strong>.</p>
             <div class="btn-container">
               <a href="${lien}" class="btn" target="_blank">Réinitialiser mon mot de passe</a>
             </div>
-            <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité.</p>
+            <div class="notice-box">
+              ⏱️ Ce lien est valide pendant <strong>15 minutes</strong>.
+            </div>
+            <p style="font-size: 13px; color: #64748B;">Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité.</p>
           </div>
           <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} E-Quran Academy. Tous droits réservés.</p>
+            <p>&copy; ${new Date().getFullYear()} Quran-Academy. Tous droits réservés.</p>
           </div>
         </div>
       </body>
@@ -81,7 +102,7 @@ export class EmailService {
               name: nomComplet || destinataire,
             },
           ],
-          subject: 'Réinitialisation de votre mot de passe - E-Quran Academy',
+          subject: 'Réinitialisation de votre mot de passe - Quran-Academy',
           htmlContent,
         }),
       });

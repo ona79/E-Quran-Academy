@@ -134,14 +134,12 @@ export class UtilisateursService {
    * Demande de réinitialisation de mot de passe.
    * Génère un jeton sécurisé expirable sous 1h et envoie l'e-mail via Brevo.
    */
-  async demanderReinitialisation(email: string): Promise<{ message: string; tokenTest?: string }> {
+  async demanderReinitialisation(email: string): Promise<{ message: string }> {
     const utilisateur = await this.prisma.user.findUnique({ where: { email } });
-
-    let tokenTest: string | undefined;
 
     if (utilisateur) {
       const token = crypto.randomBytes(32).toString('hex');
-      const expiration = new Date(Date.now() + 3600 * 1000); // 1h
+      const expiration = new Date(Date.now() + 15 * 60 * 1000); // 15 min
 
       await this.prisma.user.update({
         where: { id: utilisateur.id },
@@ -160,15 +158,10 @@ export class UtilisateursService {
       await this.emailService.envoyerEmailReinitialisation(utilisateur.email, utilisateur.nomComplet, lien);
 
       await this.audit.enregistrer(utilisateur.id, null, 'DEMANDE_REINITIALISATION_MOT_DE_PASSE');
-
-      if (process.env.NODE_ENV !== 'production') {
-        tokenTest = token;
-      }
     }
 
     return {
       message: 'Si un compte correspond à cet e-mail, les instructions de réinitialisation vous ont été envoyées.',
-      ...(tokenTest ? { tokenTest } : {}),
     };
   }
 

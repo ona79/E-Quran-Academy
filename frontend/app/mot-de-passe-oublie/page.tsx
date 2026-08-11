@@ -103,7 +103,6 @@ export default function PageMotDePasseOublie() {
   const [enChargement, setEnChargement] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [succesMessage, setSuccesMessage] = useState<string | null>(null);
-  const [tokenTest, setTokenTest] = useState<string | null>(null);
 
   const gererFocus = useCallback(() => setEstFocus(true), []);
   const gererBlur = useCallback(() => setEstFocus(false), []);
@@ -122,17 +121,13 @@ export default function PageMotDePasseOublie() {
     setErreur(null);
     setEnChargement(true);
     setSuccesMessage(null);
-    setTokenTest(null);
 
     try {
-      const res = await apiClient.post<{ message: string; tokenTest?: string }>(
+      const res = await apiClient.post<{ message: string }>(
         '/utilisateurs/mot-de-passe-oublie',
         { email },
       );
       setSuccesMessage(res.message);
-      if (res.tokenTest) {
-        setTokenTest(res.tokenTest);
-      }
     } catch (err) {
       setErreur(
         err instanceof ErreurApi ? err.message : 'Une erreur est survenue lors de l’envoi.',
@@ -220,24 +215,9 @@ export default function PageMotDePasseOublie() {
                     <p className="text-sm font-medium text-emerald-200">{succesMessage}</p>
                   </div>
 
-                  {tokenTest && (
-                    <div
-                      className="p-3 rounded-lg text-left text-xs w-full break-all"
-                      style={{
-                        background: 'rgba(184, 146, 58, 0.15)',
-                        border: '1px solid rgba(184, 146, 58, 0.3)',
-                        color: '#FDE68A',
-                      }}
-                    >
-                      <p className="font-semibold mb-1">Lien direct de test (Dev) :</p>
-                      <Link
-                        href={`/reinitialiser-mot-de-passe?token=${tokenTest}`}
-                        className="underline hover:text-white"
-                      >
-                        /reinitialiser-mot-de-passe?token={tokenTest.slice(0, 16)}...
-                      </Link>
-                    </div>
-                  )}
+                  <p className="text-xs text-slate-300">
+                    Veuillez consulter votre boîte de réception (et vos spams) pour cliquer sur le lien de réinitialisation. Le lien expire dans 15 minutes.
+                  </p>
 
                   <Link
                     href="/connexion"
