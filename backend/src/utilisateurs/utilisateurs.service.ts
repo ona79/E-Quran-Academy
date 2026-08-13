@@ -24,7 +24,8 @@ import { MettreAJourUtilisateurDto } from './dto/mettre-a-jour-utilisateur.dto';
 import { AuditService } from '../partages/audit/audit.service';
 import { EmailService } from '../partages/email/email.service';
 
-const COUT_HACHAGE = 12;
+// Coût de hachage Bcrypt : 10 (Norme OWASP recommandée pour équilibrer haute sécurité et vitesse de réponse ~70ms)
+const COUT_HACHAGE = 10;
 
 @Injectable()
 export class UtilisateursService {

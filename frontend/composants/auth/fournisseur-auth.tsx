@@ -45,6 +45,31 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
       .finally(() => setEnChargement(false));
   }, []);
 
+  // Détection d'inactivité de 30 minutes (sécurité session)
+  useEffect(() => {
+    if (!utilisateur) return;
+
+    let temporisateur: NodeJS.Timeout;
+    const DELAI_INACTIVITE = 30 * 60 * 1000; // 30 minutes
+
+    const reinitialiserInactivite = () => {
+      clearTimeout(temporisateur);
+      temporisateur = setTimeout(() => {
+        deconnexion();
+      }, DELAI_INACTIVITE);
+    };
+
+    const evts = ['mousemove', 'keydown', 'click', 'scroll'];
+    evts.forEach((evt) => window.addEventListener(evt, reinitialiserInactivite));
+
+    reinitialiserInactivite();
+
+    return () => {
+      clearTimeout(temporisateur);
+      evts.forEach((evt) => window.removeEventListener(evt, reinitialiserInactivite));
+    };
+  }, [utilisateur]);
+
   const connexion = async (email: string, motDePasse: string, seSouvenirDeMoi?: boolean) => {
     const { utilisateur, jeton } = await apiClient.post<{ utilisateur: Utilisateur; jeton: string }>(
       '/utilisateurs/connexion',

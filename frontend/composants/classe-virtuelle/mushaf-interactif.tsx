@@ -120,10 +120,12 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
 
   const sourateCourante = sourates.find((s) => s.numero === sourate);
 
+  const [qiraat, setQiraat] = useState<'HAFS' | 'WARSH'>('HAFS');
+
   return (
     <div className="carte flex flex-col h-full">
-      {/* En-tête : sourate + rôle */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b" style={{ borderColor: 'var(--bordure)' }}>
+      {/* En-tête : sourate + récitation + rôle */}
+      <div className="flex items-center justify-between mb-4 pb-3 border-b flex-wrap gap-2" style={{ borderColor: 'var(--bordure)' }}>
         <div className="flex items-center gap-3">
           {estProfesseur && !chargementSourates ? (
             <select
@@ -148,16 +150,39 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
             </span>
           )}
         </div>
-        <span
-          className="text-xs px-2 py-0.5 rounded-full"
-          style={
-            estProfesseur
-              ? { backgroundColor: 'var(--primaire)', color: 'var(--ivoire-50)' }
-              : { backgroundColor: 'var(--accent)', color: 'var(--ivoire-50)' }
-          }
-        >
-          {estProfesseur ? 'Professeur' : 'Lecture seule'}
-        </span>
+
+        <div className="flex items-center gap-2">
+          {/* Sélecteur Qiraat (Hafs / Warsh) */}
+          <div className="flex items-center border rounded-lg overflow-hidden text-xs" style={{ borderColor: 'var(--bordure)' }}>
+            <button
+              onClick={() => setQiraat('HAFS')}
+              className={`px-2 py-1 font-semibold transition-colors ${
+                qiraat === 'HAFS' ? 'bg-[var(--primaire)] text-white' : 'bg-[var(--fond-surface)] text-[var(--texte-secondaire)]'
+              }`}
+            >
+              Hafs
+            </button>
+            <button
+              onClick={() => setQiraat('WARSH')}
+              className={`px-2 py-1 font-semibold transition-colors ${
+                qiraat === 'WARSH' ? 'bg-[var(--primaire)] text-white' : 'bg-[var(--fond-surface)] text-[var(--texte-secondaire)]'
+              }`}
+            >
+              Warsh
+            </button>
+          </div>
+
+          <span
+            className="text-xs px-2 py-0.5 rounded-full"
+            style={
+              estProfesseur
+                ? { backgroundColor: 'var(--primaire)', color: 'var(--ivoire-50)' }
+                : { backgroundColor: 'var(--accent)', color: 'var(--ivoire-50)' }
+            }
+          >
+            {estProfesseur ? 'Professeur' : 'Lecture seule'}
+          </span>
+        </div>
       </div>
 
       {/* Texte coranique — RTL, police Amiri */}

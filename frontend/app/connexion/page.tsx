@@ -133,6 +133,7 @@ export default function PageConnexion() {
 
   const getEtatMascotte = (): EtatMascotte => {
     if (connexionReussie) return 'heureux';
+    if (enChargement) return 'ecrire';
 
     // Si l'utilisateur est en train de corriger (focus actif), on affiche l'action en cours
     if (champActif === 'password') {

@@ -6,7 +6,8 @@ import { useEffect, useState, useCallback, type FormEvent } from 'react';
 import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { Page, Reservation } from '@/lib/types';
 import { CarteCoursEleve } from './carte-cours-eleve';
-import { BoutonPrimaire, BoutonSecondaire } from '@/composants/ui/boutons';
+import { ModalConfirmation } from '@/composants/ui/modal-confirmation';
+import { toast } from 'sonner';
 
 interface ProfInfo {
   nomComplet: string;
@@ -22,6 +23,10 @@ export function AccesClasseEleve() {
   const [enChargement, setEnChargement] = useState(true);
   const [erreur, setErreur] = useState<string | null>(null);
   const [ongletActif, setOngletActif] = useState<Onglet>('A_VENIR');
+
+  // Modal de suppression cours
+  const [coursASupprimer, setCoursASupprimer] = useState<string | null>(null);
+  const [enSuppression, setEnSuppression] = useState(false);
 
   // État pour la modal d'avis
   const [avisTarget, setAvisTarget] = useState<ReservationAvecProf | null>(null);
@@ -64,6 +69,21 @@ export function AccesClasseEleve() {
       setEnChargement(false);
     }
   }, []);
+
+  const meChangerSupprimer = async () => {
+    if (!coursASupprimer) return;
+    setEnSuppression(true);
+    try {
+      await apiClient.delete(`/reservations/${coursASupprimer}`);
+      setReservations((prev) => prev.filter((r) => r.id !== coursASupprimer));
+      toast.success('Cours supprimé définitivement');
+    } catch {
+      toast.error('Erreur lors de la suppression du cours');
+    } finally {
+      setEnSuppression(false);
+      setCoursASupprimer(null);
+    }
+  };
 
   useEffect(() => {
     charger();
@@ -132,6 +152,15 @@ export function AccesClasseEleve() {
 
   return (
     <div className="space-y-6">
+      <ModalConfirmation
+        ouvert={!!coursASupprimer}
+        titre="Supprimer définitivement le cours :"
+        libelleConfirmer="Supprimer"
+        enChargement={enSuppression}
+        surConfirmation={meChangerSupprimer}
+        surFermeture={() => setCoursASupprimer(null)}
+      />
+
       {erreur && (
         <p className="carte" style={{ color: 'var(--erreur)' }}>{erreur}</p>
       )}
@@ -172,6 +201,7 @@ export function AccesClasseEleve() {
               nomProf={r.nomProf}
               onAnnuler={gererAnnuler}
               onAvis={(res) => setAvisTarget(res as any)}
+              onSupprimer={(id) => setCoursASupprimer(id)}
             />
           ))}
         </div>

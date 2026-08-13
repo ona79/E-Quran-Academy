@@ -371,12 +371,14 @@ export class ReservationsService {
   ): Promise<PageReponseDto<ReservationReponseDto>> {
     const take = calculerTake(pagination);
     const skip = calculerSkip(pagination);
-    const cle = enTantQueProfesseur ? 'professeurId' : 'eleveId';
+    const where = enTantQueProfesseur
+      ? { professeurId: utilisateurId, masquePourProfesseur: false }
+      : { eleveId: utilisateurId, masquePourEleve: false };
 
     const [total, lignes] = await Promise.all([
-      this.prisma.reservation.count({ where: { [cle]: utilisateurId } }),
+      this.prisma.reservation.count({ where }),
       this.prisma.reservation.findMany({
-        where: { [cle]: utilisateurId },
+        where,
         orderBy: { creneauDebut: 'asc' },
         take,
         skip,
@@ -389,6 +391,31 @@ export class ReservationsService {
       taille: take,
       donnees: lignes.map(this.sanitiserReservation),
     };
+  }
+
+  /** Supprime définitivement une réservation passée ou annulée de la base de données (avec log d'audit). */
+  async supprimerReservationDefinitivement(reservationId: string, demandeurId: string): Promise<{ message: string }> {
+    const res = await this.prisma.reservation.findUnique({ where: { id: reservationId } });
+    if (!res) {
+      throw new NotFoundException('Réservation introuvable');
+    }
+    if (res.eleveId !== demandeurId && res.professeurId !== demandeurId) {
+      throw new NotFoundException('Réservation introuvable');
+    }
+
+    if (res.statut === StatutReservation.EN_ATTENTE || res.statut === StatutReservation.CONFIRME) {
+      throw new BadRequestException('Seuls les cours passés ou annulés peuvent être supprimés');
+    }
+
+    console.log(`[AUDIT LOG] Suppression définitive de la réservation ${reservationId} (Réf: ${res.reference}) effectuée par l'utilisateur ${demandeurId} à ${new Date().toISOString()}`);
+
+    // Supprimer les dépendances éventuelles comme SeanceCours ou Paiement si existantes
+    await this.prisma.seanceCours.deleteMany({ where: { reservationId } });
+    await this.prisma.paiement.deleteMany({ where: { reservationId } });
+
+    await this.prisma.reservation.delete({ where: { id: reservationId } });
+
+    return { message: 'Cours supprimé définitivement' };
   }
 
   // ─────────────────────────── Utilitaires ───────────────────────────

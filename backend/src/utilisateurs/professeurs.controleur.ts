@@ -84,6 +84,7 @@ export class ProfesseursControleur {
       id: p.id,
       userId: p.userId,
       bio: p.bio,
+      photoUrl: p.photoUrl,
       ijazaUrl: p.ijazaUrl,
       audioUrl: p.audioUrl,
       tarifHoraire: p.tarifHoraire,

@@ -15,6 +15,8 @@ import { FeatureFlagsModule } from './feature-flags/feature-flags.module';
 import { MessagerieModule } from './messagerie/messagerie.module';
 import { PaiementModule } from './paiement/paiement.module';
 
+import { HealthModule } from './partages/health/health.module';
+
 @Module({
   imports: [
     // ── Sécurité : rate-limiting global ────────────────────────────────────
@@ -33,6 +35,7 @@ import { PaiementModule } from './paiement/paiement.module';
 
     // Couche transverse (Prisma, JWT, gardes) — Global, disponible partout.
     PartagesModule,
+    HealthModule,
     // Domaines métier :
     UtilisateursModule,
     ReservationsModule,

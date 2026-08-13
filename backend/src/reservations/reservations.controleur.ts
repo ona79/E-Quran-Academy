@@ -158,4 +158,16 @@ export class ReservationsControleur {
   ): Promise<ReservationReponseDto> {
     return this.service.changerStatut(id, dto.nouveauStatut, utilisateur.sub);
   }
+
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGarde, RolesGarde)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Supprimer définitivement un cours passé ou annulé' })
+  supprimerReservation(
+    @UtilisateurCourant() utilisateur: PayloadJwt,
+    @Param('id') id: string,
+  ): Promise<{ message: string }> {
+    return this.service.supprimerReservationDefinitivement(id, utilisateur.sub);
+  }
 }

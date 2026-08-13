@@ -1,7 +1,7 @@
 'use client';
 
 // Sidebar de base (commune aux 3 rôles) — Thème Clair.
-// Fond vert profond, liens blancs, lien actif = fond crème arrondi.
+
 import { useState, useEffect, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -72,7 +72,7 @@ export function SidebarBase({
               <Image src="/mascotte/logo_equran_accademy.png" alt="E-Quran Academy Logo" width={40} height={40} className="object-contain" />
             </div>
             <div className={`transition-opacity duration-300 ${reduite ? 'hidden' : 'block'}`}>
-              <span className="text-sm font-bold">E-Quran</span>
+              <span className="text-sm font-bold">Quran-</span>
               <span className="block text-[10px] font-normal" style={{ color: 'rgba(255,255,255,0.65)' }}>Academy</span>
             </div>
 
@@ -156,7 +156,7 @@ export function SidebarBase({
           className={`px-4 py-3 text-[10px] transition-opacity duration-300 whitespace-nowrap overflow-hidden text-center ${reduite ? 'md:hidden' : 'block'}`}
           style={{ borderTop: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}
         >
-          E-Quran Academy © 2025
+          Quran-Academy © 2026
         </div>
       </aside>
     </>

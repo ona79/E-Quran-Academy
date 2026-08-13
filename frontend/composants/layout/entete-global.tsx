@@ -5,17 +5,18 @@
 // - Navigation desktop : Professeurs, Comment ça marche
 // - Droite : Connexion/Inscription (non connecté) ou avatar + menu (connecté)
 // - Hamburger sur mobile
-// - Fond blanc/sombre, ombre douce, position sticky
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 import { BasculeTheme } from '@/composants/theme/bascule-theme';
 import { LienBouton } from '@/composants/ui/boutons';
+import { ModalConfirmation } from '@/composants/ui/modal-confirmation';
 
 export function EnteteGlobal() {
   const { utilisateur, deconnexion } = utiliserAuth();
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [menuAvatar, setMenuAvatar] = useState(false);
+  const [modalDeconnexion, setModalDeconnexion] = useState(false);
   const refAvatar = useRef<HTMLDivElement>(null);
 
   const defilerVersSection = (e: React.MouseEvent) => {
@@ -39,11 +40,11 @@ export function EnteteGlobal() {
 
   const initiales = utilisateur
     ? utilisateur.nomComplet
-        .split(' ')
-        .map((m) => m[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
+      .split(' ')
+      .map((m) => m[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase()
     : '';
 
   const lienEspace =
@@ -62,17 +63,33 @@ export function EnteteGlobal() {
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
       }}
     >
+      <ModalConfirmation
+        ouvert={modalDeconnexion}
+        titre="Voulez-vous vraiment vous déconnecter ?"
+        libelleConfirmer="Déconnexion"
+        variante="warning"
+        surConfirmation={() => {
+          setModalDeconnexion(false);
+          deconnexion();
+        }}
+        surFermeture={() => setModalDeconnexion(false)}
+      />
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-semibold shrink-0">
-          <span className="text-2xl">📖</span>
-          <span className="hidden sm:inline">E-Quran Academy</span>
+        <Link href="/" className="flex items-center gap-2 font-bold shrink-0">
+          <img
+            src="/mascotte/logo_equran_accademy.png"
+            alt="Logo Quran-Academy"
+            className="w-7 h-7 object-contain"
+          />
+          <span className="text-sm sm:text-base font-extrabold">Quran-<span style={{ color: '#B8923A' }}>Academy</span></span>
         </Link>
 
         {/* Navigation desktop */}
         <nav className="hidden sm:flex items-center gap-6">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="text-sm font-medium hover:opacity-70"
             onClick={() => {
               if (window.location.pathname === '/') {
@@ -127,10 +144,10 @@ export function EnteteGlobal() {
                   <button
                     type="button"
                     onClick={() => {
-                      deconnexion();
                       setMenuAvatar(false);
+                      setModalDeconnexion(true);
                     }}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-[var(--fond)]"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-[var(--fond)]"
                   >
                     Déconnexion
                   </button>
@@ -167,9 +184,9 @@ export function EnteteGlobal() {
           className="sm:hidden border-t px-4 py-3 space-y-2"
           style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
         >
-          <Link 
-            href="/" 
-            className="block py-2 text-sm font-medium" 
+          <Link
+            href="/"
+            className="block py-2 text-sm font-medium"
             onClick={() => {
               setMenuOuvert(false);
               if (window.location.pathname === '/') {

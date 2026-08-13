@@ -10,33 +10,32 @@ export function HeroSection() {
       flex flex-col items-center justify-start
       pt-20 md:pt-24 pb-10 md:pb-16 px-4 md:px-8
       relative overflow-hidden
-      bg-fixed
     "
-    style={{
-      backgroundImage: "url('/mascotte/image_fond.png')",
-      backgroundSize: 'cover',
-      backgroundPosition: 'top center',
-      backgroundRepeat: 'no-repeat'
-    }}>
+      style={{
+        backgroundImage: "url('/mascotte/image_fond.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundRepeat: 'no-repeat'
+      }}>
 
       {/* ── Main Content ── */}
       <div className="max-w-[800px] mx-auto w-full flex flex-col items-center text-center relative z-10">
-        
+
         <motion.h1
           initial={{ opacity: 0, x: -30 }}
-          animate={{ 
-            opacity: 1, 
+          animate={{
+            opacity: 1,
             x: 0,
             backgroundPosition: ['0% center', '200% center']
           }}
-          transition={{ 
+          transition={{
             opacity: { duration: 0.8 },
             x: { duration: 0.8 },
             backgroundPosition: { duration: 4, repeat: Infinity, ease: 'linear' }
           }}
           className="text-3xl md:text-5xl lg:text-[64px] font-bold leading-normal py-4 mt-10 md:mt-16 mb-2 md:mb-3"
-          style={{ 
-            fontFamily: "'Amiri', 'Traditional Arabic', serif", 
+          style={{
+            fontFamily: "'Amiri', 'Traditional Arabic', serif",
             direction: 'rtl',
             wordSpacing: '0.15em',
             backgroundImage: 'linear-gradient(to right, #1F6948, #B8923A, #222222, #1F6948)',
@@ -69,7 +68,7 @@ export function HeroSection() {
         </motion.p>
 
         {/* Features Badges Row */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -92,7 +91,7 @@ export function HeroSection() {
         </motion.div>
 
         {/* Buttons */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -113,14 +112,14 @@ export function HeroSection() {
       </div>
 
       {/* ── Aperçu de la classe virtuelle Overlay ── */}
-      <motion.div 
+      <motion.div
         className="w-full max-w-[750px] mt-4 md:mt-10 relative z-20"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.7 }}
       >
         <div className="w-full rounded-[16px] md:rounded-[28px] p-3 md:p-6 bg-white/98 backdrop-blur-xl shadow-2xl border border-white/50">
-          
+
           {/* Header Card */}
           <div className="flex justify-between items-center mb-3 md:mb-5">
             <span className="text-[9px] md:text-[12px] font-extrabold text-[#1A1A1A] uppercase tracking-wide">APERÇU DE LA CLASSE VIRTUELLE</span>
@@ -129,7 +128,7 @@ export function HeroSection() {
               Séance en direct
             </span>
           </div>
-          
+
           <div className="flex flex-col md:flex-row items-stretch gap-3 md:gap-6 mb-4 md:mb-6">
             {/* Professeur & Suivi */}
             <div className="flex-[0.8]">
@@ -141,7 +140,7 @@ export function HeroSection() {
                     <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="Professeur" className="w-full h-full object-cover" />
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-bold text-[#1A1A1A] text-[12px] md:text-[16px] mb-0.5 md:mb-1">Oustadh Ahmad</h3>
                   <div className="flex flex-wrap gap-1 md:gap-1.5 mb-1 md:mb-1.5">
@@ -178,49 +177,49 @@ export function HeroSection() {
           {/* Mini Features Footer */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 pt-3 md:pt-4 border-t border-[#F0EBE1]">
             {[
-              { 
+              {
                 icon: (
                   <div className="flex gap-1 justify-center items-center h-5 md:h-6">
-                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
-                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                   </div>
-                ), 
-                title: 'Classe interactive', 
-                sub: 'Interactive' 
+                ),
+                title: 'Classe interactive',
+                sub: 'Interactive'
               },
-              { 
+              {
                 icon: (
                   <div className="flex justify-center items-center h-5 md:h-6 relative">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                     <div className="absolute -bottom-1 -right-1 bg-white rounded-full">
-                      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#0EA5E9]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
+                      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#0EA5E9]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" /></svg>
                     </div>
                   </div>
-                ), 
-                title: 'Mushaf interactif', 
-                sub: 'Mushaf' 
+                ),
+                title: 'Mushaf interactif',
+                sub: 'Mushaf'
               },
-              { 
+              {
                 icon: (
                   <div className="flex gap-0.5 justify-center items-center h-5 md:h-6">
-                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 mt-1 md:mt-1.5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 mt-1 md:mt-1.5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
-                ), 
-                title: 'Suivi personnalisé', 
-                sub: 'Suivi' 
+                ),
+                title: 'Suivi personnalisé',
+                sub: 'Suivi'
               },
-              { 
+              {
                 icon: (
                   <div className="flex justify-center items-center h-5 md:h-6 relative">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"/></svg>
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-[#334155]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" /></svg>
                     <div className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-white rounded-full">
-                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#22C55E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
+                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#22C55E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                     </div>
                   </div>
-                ), 
-                title: 'Support dédié', 
-                sub: 'Support' 
+                ),
+                title: 'Support dédié',
+                sub: 'Support'
               },
             ].map((f, i) => (
               <div key={i} className={`flex flex-col items-center justify-center gap-0.5 md:gap-1 px-1 md:px-2 ${i !== 3 ? 'md:border-r md:border-[#F0EBE1]' : ''}`}>

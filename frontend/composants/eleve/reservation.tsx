@@ -10,6 +10,7 @@ import { fuseauNavigateur } from '@/lib/fuseau-horaire';
 import { libelleJour } from '@/lib/jours';
 import { CarteProf } from '@/composants/ui/carte-prof';
 import { BoutonPrimaire, BoutonSecondaire } from '@/composants/ui/boutons';
+import { toast } from 'sonner';
 
 interface ProfilAvecNom extends ProfilProfesseur {
   nomComplet: string;
@@ -170,11 +171,15 @@ export function ReservationCours() {
         fuseauHoraireEleve: fuseauNavigateur(),
         noteEleve: note || undefined,
       });
-      setSucces('Félicitations ! Votre demande de réservation a été envoyée. Le professeur doit la confirmer.');
+      const messageSucces = 'Félicitations ! Votre demande de réservation a été envoyée au professeur.';
+      setSucces(messageSucces);
+      toast.success(messageSucces);
       setHeureChoisie('');
       setNote('');
     } catch (err) {
-      setErreur(err instanceof ErreurApi ? err.message : 'Échec de la réservation');
+      const msgErr = err instanceof ErreurApi ? err.message : 'Échec de la réservation';
+      setErreur(msgErr);
+      toast.error(msgErr);
     } finally {
       setEnEnvoi(false);
     }

@@ -125,9 +125,9 @@ export function TableauDeBordProfesseur() {
     <div className="space-y-8 max-w-6xl w-full">
       {/* Salutation */}
       <div>
-        <h1 className="text-2xl font-bold">Wa alaykum assalam, {prenom}</h1>
+        <h1 className="text-2xl font-bold">Salamou llahi alaykoum, {prenom}</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--texte-secondaire)' }}>
-          Tableau de bord de votre espace enseignant.
+          Tableau de bord - espace enseignant.
         </p>
       </div>
 

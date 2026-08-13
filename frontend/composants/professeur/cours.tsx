@@ -1,13 +1,16 @@
 'use client';
 
 // Gestion des cours professeur : onglets À venir / Passés.
-// Passés → bouton "Remplir le suivi pédagogique" → /professeur/suivi/[seanceId].
+// Le professeur peut supprimer définitivement un cours passé/annulé de la base de données.
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { Page, Reservation } from '@/lib/types';
 import { BadgeStatut } from '@/composants/ui/badge-statut';
 import { formaterDateHeure } from '@/lib/fuseau-horaire';
+import { ModalConfirmation } from '@/composants/ui/modal-confirmation';
+import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface EleveInfo { nomComplet: string; id: string; }
 type ReservationAvecEleve = Reservation & { nomEleve?: string };
@@ -25,6 +28,10 @@ export function CoursProfesseur() {
   const [enChargement, setEnChargement] = useState(true);
   const [erreur, setErreur] = useState<string | null>(null);
   const [onglet, setOnglet] = useState<Onglet>('A_VENIR');
+
+  // Modale de suppression
+  const [coursASupprimer, setCoursASupprimer] = useState<string | null>(null);
+  const [enSuppression, setEnSuppression] = useState(false);
 
   const charger = useCallback(async () => {
     setEnChargement(true);
@@ -50,6 +57,21 @@ export function CoursProfesseur() {
     }
   }, []);
 
+  const meChangerSupprimer = async () => {
+    if (!coursASupprimer) return;
+    setEnSuppression(true);
+    try {
+      await apiClient.delete(`/reservations/${coursASupprimer}`);
+      setReservations((prev) => prev.filter((r) => r.id !== coursASupprimer));
+      toast.success('Cours supprimé définitivement');
+    } catch {
+      toast.error('Erreur lors de la suppression du cours');
+    } finally {
+      setEnSuppression(false);
+      setCoursASupprimer(null);
+    }
+  };
+
   useEffect(() => { charger(); }, [charger]);
 
   const aVenir = reservations
@@ -74,6 +96,15 @@ export function CoursProfesseur() {
 
   return (
     <div className="space-y-6">
+      <ModalConfirmation
+        ouvert={!!coursASupprimer}
+        titre="Supprimer définitivement le cours :"
+        libelleConfirmer="Supprimer"
+        enChargement={enSuppression}
+        surConfirmation={meChangerSupprimer}
+        surFermeture={() => setCoursASupprimer(null)}
+      />
+
       {erreur && <p className="carte text-sm" style={{ color: 'var(--erreur)' }}>{erreur}</p>}
 
       {/* Onglets */}
@@ -105,8 +136,9 @@ export function CoursProfesseur() {
         <div className="space-y-3">
           {listeAffichee.map((r) => {
             const demarrable = r.statut === 'CONFIRME' && peutDemarrer(r.creneauDebut);
+            const estSupprimable = r.statut === 'REALISE' || r.statut === 'ABSENT' || r.statut === 'ANNULE';
             return (
-              <div key={r.id} className="carte flex items-center justify-between gap-4"
+              <div key={r.id} className="carte group relative flex items-center justify-between gap-4"
                 style={{ borderLeft: '3px solid var(--primaire)' }}>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white"
@@ -142,6 +174,17 @@ export function CoursProfesseur() {
                     >
                       📝 Suivi pédagogique
                     </Link>
+                  )}
+                  {/* Poubelle de suppression au survol */}
+                  {estSupprimable && (
+                    <button
+                      type="button"
+                      onClick={() => setCoursASupprimer(r.id)}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                      title="Supprimer définitivement ce cours"
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   )}
                 </div>
               </div>

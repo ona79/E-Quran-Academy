@@ -1,21 +1,8 @@
 import type { Metadata } from 'next';
-import { Inter, Amiri } from 'next/font/google';
 import './globals.css';
 import { FournisseurTheme } from '@/composants/theme/fournisseur-theme';
 import { FournisseurAuth } from '@/composants/auth/fournisseur-auth';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const amiri = Amiri({
-  subsets: ['arabic'],
-  weight: ['400', '700'],
-  variable: '--font-amiri',
-  display: 'swap',
-});
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'E-Quran Academy',
@@ -28,11 +15,33 @@ export default function LayoutRacine({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={`${inter.variable} ${amiri.variable}`}>
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="font-sans">
         <FournisseurTheme>
-          <FournisseurAuth>{children}</FournisseurAuth>
+          <FournisseurAuth>
+            {children}
+            <Toaster position="top-right" richColors closeButton />
+          </FournisseurAuth>
         </FournisseurTheme>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function() {});
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

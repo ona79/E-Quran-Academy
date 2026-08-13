@@ -104,6 +104,9 @@ export function ProfilProfesseurForm() {
       });
       setProfil(maj);
       setSucces('Profil mis à jour avec succès.');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('profil_mis_a_jour'));
+      }
       setTimeout(() => setSucces(null), 3000);
     } catch (err) {
       setErreur(err instanceof ErreurApi ? err.message : 'Échec de la mise à jour');
@@ -169,7 +172,7 @@ export function ProfilProfesseurForm() {
           <p className="text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2" style={{ color: '#B8923A' }}>
             Identité &amp; Justificatifs
           </p>
-          <Champ id="photoUpload" label="Photo de profil (max 3 Mo)">
+          <Champ id="photoUpload" label="Photo de profil">
             <div className="flex items-center gap-4">
               {photoUrl && (
                 <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border shadow-sm">

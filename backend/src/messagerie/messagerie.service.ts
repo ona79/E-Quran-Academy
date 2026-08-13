@@ -121,6 +121,34 @@ export class MessagerieService {
     return this.sanitiser(maj);
   }
 
+  /** Supprime un message spécifique s'il appartient à une conversation du demandeur. */
+  async supprimerMessage(messageId: string, demandeurId: string): Promise<{ message: string }> {
+    const msg = await this.prisma.message.findUnique({ where: { id: messageId } });
+    if (!msg) {
+      throw new NotFoundException('Message introuvable');
+    }
+    if (msg.expediteurId !== demandeurId && msg.destinataireId !== demandeurId) {
+      throw new BadRequestException('Vous n’avez pas la permission de supprimer ce message');
+    }
+
+    await this.prisma.message.delete({ where: { id: messageId } });
+    return { message: 'Message supprimé avec succès' };
+  }
+
+  /** Supprime l'intégralité de la conversation avec un interlocuteur. */
+  async supprimerHistorique(utilisateurId: string, interlocuteurId: string): Promise<{ message: string; compte: number }> {
+    const res = await this.prisma.message.deleteMany({
+      where: {
+        OR: [
+          { expediteurId: utilisateurId, destinataireId: interlocuteurId },
+          { expediteurId: interlocuteurId, destinataireId: utilisateurId },
+        ],
+      },
+    });
+
+    return { message: 'Historique de conversation supprimé', compte: res.count };
+  }
+
   private sanitiser(m: Message): MessageReponseDto {
     return {
       id: m.id,

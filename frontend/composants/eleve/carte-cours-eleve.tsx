@@ -6,6 +6,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 import type { Reservation, StatutReservation } from '@/lib/types';
 import { BadgeStatut } from '@/composants/ui/badge-statut';
 import { formaterDateHeure } from '@/lib/fuseau-horaire';
@@ -17,6 +18,7 @@ interface CarteCours {
   photoProf?: string;
   onAnnuler?: (id: string) => void;
   onAvis?: (id: string) => void;
+  onSupprimer?: (id: string) => void;
 }
 
 /** Retourne vrai si le cours commence dans moins de 15 minutes ou a déjà commencé. */
@@ -41,7 +43,7 @@ const LIBELLES_STATUT: Record<StatutReservation, string> = {
   ABSENT: 'Absent',
 };
 
-export function CarteCoursEleve({ reservation, nomProf, photoProf, onAnnuler, onAvis }: CarteCours) {
+export function CarteCoursEleve({ reservation, nomProf, photoProf, onAnnuler, onAvis, onSupprimer }: CarteCours) {
   const peutJoindre = peutRejoindre(reservation.creneauDebut);
   const peutCancel = peutAnnuler(reservation.creneauDebut);
   const estPasse = reservation.statut === 'REALISE' || reservation.statut === 'ABSENT';
@@ -73,7 +75,7 @@ export function CarteCoursEleve({ reservation, nomProf, photoProf, onAnnuler, on
     <motion.article
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="carte group transition-all"
+      className="carte group relative transition-all"
       style={{ borderLeft: '3px solid var(--primaire)' }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -108,59 +110,69 @@ export function CarteCoursEleve({ reservation, nomProf, photoProf, onAnnuler, on
           )}
         </div>
 
-        <div className="shrink-0">
+        <div className="shrink-0 flex items-center gap-2">
           <BadgeStatut statut={reservation.statut} />
+          
+          {/* Poubelle de suppression au survol pour les cours passés ou annulés */}
+          {(estPasse || estAnnule) && onSupprimer && (
+            <button
+              type="button"
+              onClick={() => onSupprimer(reservation.id)}
+              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+              title="Supprimer définitivement ce cours"
+            >
+              <Trash2 size={15} />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Actions */}
-      {!estAnnule && (
-        <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t" style={{ borderColor: 'var(--bordure)' }}>
-          {/* Rejoindre — uniquement si confirmé */}
-          {reservation.statut === 'CONFIRME' && (
-            peutJoindre && seanceDemarree ? (
-              <Link
-                href={`/eleve/classe/${reservation.id}`}
-                className="btn-primaire text-xs !py-1.5 !px-3"
-              >
-                🎥 Rejoindre
-              </Link>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
-                title={peutJoindre ? "En attente du professeur..." : "Disponible 15 min avant le cours"}
-              >
-                🎥 {peutJoindre ? 'En attente...' : 'Rejoindre'}
-              </button>
-            )
-          )}
-
-          {/* Annuler — si > 12h avant et pas déjà annulé/passé */}
-          {!estPasse && peutCancel && onAnnuler && (
+      <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t" style={{ borderColor: 'var(--bordure)' }}>
+        {/* Rejoindre — uniquement si confirmé */}
+        {!estAnnule && reservation.statut === 'CONFIRME' && (
+          peutJoindre && seanceDemarree ? (
+            <Link
+              href={`/eleve/classe/${reservation.id}`}
+              className="btn-primaire text-xs !py-1.5 !px-3"
+            >
+              🎥 Rejoindre
+            </Link>
+          ) : (
             <button
               type="button"
-              onClick={() => onAnnuler(reservation.id)}
-              className="btn-secondaire text-xs !py-1.5 !px-3"
+              disabled
+              className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
+              title={peutJoindre ? "En attente du professeur..." : "Disponible 15 min avant le cours"}
             >
-              Annuler
+              🎥 {peutJoindre ? 'En attente...' : 'Rejoindre'}
             </button>
-          )}
+          )
+        )}
 
-          {/* Avis — uniquement si cours réalisé */}
-          {estPasse && onAvis && (
-            <button
-              type="button"
-              onClick={() => onAvis(reservation.id)}
-              className="btn-secondaire text-xs !py-1.5 !px-3"
-              style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
-            >
-              ⭐ Laisser un avis
-            </button>
-          )}
-        </div>
-      )}
+        {/* Annuler — si > 12h avant et pas déjà annulé/passé */}
+        {!estAnnule && !estPasse && peutCancel && onAnnuler && (
+          <button
+            type="button"
+            onClick={() => onAnnuler(reservation.id)}
+            className="btn-secondaire text-xs !py-1.5 !px-3"
+          >
+            Annuler
+          </button>
+        )}
+
+        {/* Avis — uniquement si cours réalisé */}
+        {estPasse && onAvis && (
+          <button
+            type="button"
+            onClick={() => onAvis(reservation.id)}
+            className="btn-secondaire text-xs !py-1.5 !px-3"
+            style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
+          >
+            ⭐ Laisser un avis
+          </button>
+        )}
+      </div>
     </motion.article>
   );
 }

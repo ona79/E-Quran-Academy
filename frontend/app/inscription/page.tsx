@@ -157,6 +157,7 @@ export default function PageInscription() {
 
   const getEtatMascotte = (): EtatMascotte => {
     if (inscriptionReussie) return 'heureux';
+    if (enChargement) return 'ecrire';
 
     // Si l'utilisateur est en train de corriger (focus actif), on affiche l'action en cours
     if (champActif === 'password' || champActif === 'confirmer') {

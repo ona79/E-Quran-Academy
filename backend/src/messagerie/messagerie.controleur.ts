@@ -9,6 +9,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -75,5 +76,25 @@ export class MessagerieControleur {
     @Param('id') id: string,
   ): Promise<MessageReponseDto> {
     return this.service.marquerCommeLu(id, utilisateur.sub);
+  }
+
+  @Delete('messages/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Supprimer un message spécifique' })
+  supprimerMessage(
+    @UtilisateurCourant() utilisateur: PayloadJwt,
+    @Param('id') id: string,
+  ): Promise<{ message: string }> {
+    return this.service.supprimerMessage(id, utilisateur.sub);
+  }
+
+  @Delete('conversations/:interlocuteurId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Supprimer tout l’historique d’une conversation' })
+  supprimerHistorique(
+    @UtilisateurCourant() utilisateur: PayloadJwt,
+    @Param('interlocuteurId') interlocuteurId: string,
+  ): Promise<{ message: string; compte: number }> {
+    return this.service.supprimerHistorique(utilisateur.sub, interlocuteurId);
   }
 }

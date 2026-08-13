@@ -9,7 +9,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGarde } from '../auth/jwt-auth.garde';
-import { Request } from 'express';
 
 @ApiTags('fichiers')
 @Controller('fichiers')
@@ -17,7 +16,7 @@ import { Request } from 'express';
 @UseGuards(JwtAuthGarde)
 export class FichiersControleur {
   @Post('upload')
-  @ApiOperation({ summary: 'Envoyer une photo de profil' })
+  @ApiOperation({ summary: 'Envoyer une photo de profil, un document ou un fichier audio' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -32,9 +31,19 @@ export class FichiersControleur {
   })
   @UseInterceptors(
     FileInterceptor('file', {
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10 Mo max
+      },
       fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
-          return cb(new BadRequestException('Seules les images (JPG, PNG, WEBP) sont autorisées.'), false);
+        const typesAutorises = /jpeg|jpg|png|webp|pdf|mpeg|mp3|wav|mp4|m4a/;
+        const mimeValide = typesAutorises.test(file.mimetype);
+        if (!mimeValide) {
+          return cb(
+            new BadRequestException(
+              'Format de fichier non autorisé. Formats acceptés : Images (JPG, PNG, WEBP), Documents (PDF), Audios (MP3, WAV, M4A).',
+            ),
+            false,
+          );
         }
         cb(null, true);
       },
@@ -44,10 +53,7 @@ export class FichiersControleur {
     if (!file) {
       throw new BadRequestException('Aucun fichier fourni ou fichier invalide.');
     }
-    
-    // Retourne l'URL relative à utiliser côté frontend.
-    // L'application frontend ajoutera son URL de base si nécessaire.
-    // L'URL retournée correspond au routeur ServeStaticModule
+
     return {
       url: `/uploads/profils/${file.filename}`,
     };

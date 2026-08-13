@@ -8,6 +8,7 @@ interface PropsBouton extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variante?: Variante;
   pleineLargeur?: boolean;
+  chargement?: boolean;
 }
 
 const CLASSES_BASE =
@@ -23,18 +24,24 @@ export function BoutonBase({
   children,
   variante = 'primaire',
   pleineLargeur,
+  chargement = false,
+  disabled,
   className = '',
   style,
   ...reste
 }: PropsBouton) {
   return (
     <button
+      disabled={disabled || chargement}
       className={`${CLASSES_BASE} ${CLASSES_VARIANTE[variante]} ${
         pleineLargeur ? 'w-full' : 'w-full sm:w-auto'
       } ${className}`}
       style={style}
       {...reste}
     >
+      {chargement && (
+        <span className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin inline-block" />
+      )}
       {children}
     </button>
   );

@@ -98,14 +98,18 @@ model Reservation {
   /// Créneau de cours, stocké en UTC (converti depuis le fuseau de l'élève).
   creneauDebut DateTime
   creneauFin   DateTime
-  statut       StatutReservation @default(EN_ATTENTE)
+  statut               StatutReservation @default(EN_ATTENTE)
   /// Note libre laissée par l'élève au moment de la demande (optionnelle).
-  noteEleve    String?
-  creeLe       DateTime          @default(now())
-  misAJourLe   DateTime          @updatedAt
-  paiement     Paiement?         @relation("PaiementReservation")
-  eleve        User              @relation("ReservationEleve", fields: [eleveId], references: [id], onDelete: Cascade)
-  professeur   User              @relation("ReservationProfesseur", fields: [professeurId], references: [id])
+  noteEleve            String?
+  /// Permet à l'élève de masquer un cours passé de son affichage (la donnée reste enregistrée pour les logs/admin).
+  masquePourEleve      Boolean           @default(false)
+  /// Permet au professeur de masquer un cours passé de son affichage (la donnée reste enregistrée pour les logs/admin).
+  masquePourProfesseur Boolean           @default(false)
+  creeLe               DateTime          @default(now())
+  misAJourLe           DateTime          @updatedAt
+  paiement             Paiement?         @relation("PaiementReservation")
+  eleve                User              @relation("ReservationEleve", fields: [eleveId], references: [id], onDelete: Cascade)
+  professeur           User              @relation("ReservationProfesseur", fields: [professeurId], references: [id])
 
   @@index([professeurId, creneauDebut])
   @@index([eleveId, creneauDebut])
