@@ -6,7 +6,7 @@ import { useState, useEffect, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, LogOut } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 export interface LienSidebar {
   href: string;
@@ -19,13 +19,11 @@ export function SidebarBase({
   liens,
   ouverte,
   surFermeture,
-  surDeconnexion,
   children,
 }: {
   liens: LienSidebar[];
   ouverte: boolean;
   surFermeture: () => void;
-  surDeconnexion?: () => void;
   children?: ReactNode;
 }) {
   const chemin = usePathname();
@@ -136,27 +134,6 @@ export function SidebarBase({
               </Link>
             );
           })}
-
-          {surDeconnexion && (
-            <button
-              type="button"
-              onClick={() => {
-                surFermeture();
-                surDeconnexion();
-              }}
-              className={`w-full flex items-center rounded-xl transition-all duration-150 mt-3 text-red-300 hover:text-white hover:bg-red-500/20 ${
-                reduite ? 'md:justify-center md:px-0 py-2.5 px-3' : 'gap-3 px-3 py-2.5'
-              }`}
-              title={reduite ? "Déconnexion" : undefined}
-            >
-              <span aria-hidden className="text-base w-5 text-center shrink-0 flex items-center justify-center">
-                <LogOut size={18} />
-              </span>
-              <span className={`flex-1 text-left truncate transition-opacity duration-300 ${reduite ? 'md:hidden' : 'block'}`}>
-                Déconnexion
-              </span>
-            </button>
-          )}
         </nav>
 
         {children}

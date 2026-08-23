@@ -75,18 +75,18 @@ function BlobsAnimes() {
 // ─── Bordure animée (statique sur mobile, dégradé conique tournant 360° sur PC) ───
 function BordureAnimee({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative p-[1px] rounded-2xl flex flex-col overflow-hidden sm:overflow-visible">
+    <div className="relative p-[1px] rounded-2xl flex flex-col overflow-hidden">
       <motion.div
-        className="absolute inset-0 rounded-2xl hidden sm:block pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] aspect-square rounded-full hidden sm:block pointer-events-none"
         style={{
-          background: 'conic-gradient(from 0deg, #0B5E45, #B8923A, #0B5E45, #B8923A, #0B5E45)',
-          opacity: 0.5,
+          background: 'conic-gradient(from 0deg, #0B5E45 0deg, #B8923A 90deg, #0B5E45 180deg, #B8923A 270deg, #0B5E45 360deg)',
+          opacity: 0.6,
         }}
         animate={{ rotate: 360 }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />
       <div className="absolute inset-0 rounded-2xl sm:hidden bg-gradient-to-r from-[#0B5E45]/60 via-[#B8923A]/40 to-[#0B5E45]/60 pointer-events-none" />
-      <div className="relative rounded-2xl flex-1 flex flex-col bg-black/10">{children}</div>
+      <div className="relative rounded-2xl flex-1 flex flex-col bg-black/10 z-10">{children}</div>
     </div>
   );
 }
