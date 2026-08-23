@@ -80,7 +80,7 @@ function BordureAnimee({ children }: { children: React.ReactNode }) {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] aspect-square rounded-full hidden sm:block pointer-events-none"
         style={{
           background: 'conic-gradient(from 0deg, #0B5E45 0deg, #B8923A 90deg, #0B5E45 180deg, #B8923A 270deg, #0B5E45 360deg)',
-          opacity: 0.6,
+          opacity: 0.8,
         }}
         animate={{ rotate: 360 }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
@@ -192,7 +192,7 @@ export default function PageConnexion() {
   return (
     <div
       className="relative min-h-screen py-6 flex items-center justify-center overflow-y-auto px-4"
-      style={{ 
+      style={{
         backgroundColor: '#0D1A14',
         backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
         backgroundSize: 'cover',
@@ -224,14 +224,7 @@ export default function PageConnexion() {
       >
         <BordureAnimee>
           <div
-            className="rounded-2xl p-5 sm:p-6 flex flex-col items-center overflow-hidden backdrop-blur-md"
-            style={{
-              background: 'rgba(13, 26, 20, 0.72)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              boxShadow: '0 25px 60px rgba(11,94,69,0.4)',
-            }}
+            className="rounded-2xl p-5 sm:p-6 flex flex-col items-center overflow-hidden bg-[#0D1A14]/92 sm:bg-white/5 backdrop-blur-none sm:backdrop-blur-2xl border border-white/10 shadow-[0_25px_60px_rgba(11,94,69,0.3)]"
           >
             <motion.div
               variants={conteneurStagger}
@@ -241,10 +234,10 @@ export default function PageConnexion() {
             >
               {/* Logo de l'application */}
               <motion.div variants={enfantStagger} className="mb-2 mt-[-8px]">
-                <img 
-                  src="/mascotte/logo_equran_accademy.png" 
-                  alt="Logo Quran-Academy" 
-                  className="w-20 h-auto drop-shadow-xl" 
+                <img
+                  src="/mascotte/logo_equran_accademy.png"
+                  alt="Logo Quran-Academy"
+                  className="w-20 h-auto drop-shadow-xl"
                 />
               </motion.div>
 
@@ -512,10 +505,10 @@ export default function PageConnexion() {
                   >
                     ← Retour à l&apos;accueil
                   </Link>
-                  <img 
-                    src="/mascotte/logo_equran_accademy.png" 
-                    alt="Logo Quran-Academy" 
-                    className="w-6 h-auto opacity-70" 
+                  <img
+                    src="/mascotte/logo_equran_accademy.png"
+                    alt="Logo Quran-Academy"
+                    className="w-6 h-auto opacity-70"
                   />
                 </div>
               </motion.div>
