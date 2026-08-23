@@ -18,7 +18,7 @@ function MotifIslamiqueFond() {
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="motif-etoile-8" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <g opacity="0.04" stroke="white" fill="none">
+            <g opacity="0.14" stroke="white" fill="none">
               <rect x="20" y="20" width="40" height="40" strokeWidth="1" transform="rotate(0 40 40)" />
               <rect x="20" y="20" width="40" height="40" strokeWidth="1" transform="rotate(45 40 40)" />
               <circle cx="40" cy="40" r="24" strokeWidth="0.7" />
@@ -252,10 +252,12 @@ export default function PageInscription() {
       >
         <BordureAnimee>
           <div
-            className="rounded-2xl p-5 sm:p-6 flex flex-col overflow-hidden"
+            className="rounded-2xl p-5 sm:p-6 flex flex-col overflow-hidden backdrop-blur-md"
             style={{
-              background: 'rgba(13, 26, 20, 0.92)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: 'rgba(13, 26, 20, 0.72)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               boxShadow: '0 25px 60px rgba(11,94,69,0.4)',
             }}
           >
