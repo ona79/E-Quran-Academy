@@ -7,7 +7,7 @@ const TEMOIGNAGES = [
   { id: 1, nom: 'Fatima N.', avis: "J'ai énormément progressé dans ma lecture grâce à mon professeur. La pédagogie est excellente et la plateforme est très intuitive. Je recommande vivement pour tous ceux qui souhaitent apprendre à leur rythme.", note: 5 },
   { id: 2, nom: 'Omar D.', avis: "Les cours sont très bien structurés. Le système de réservation instantanée est un vrai plus quand on a un emploi du temps chargé. Mon Tajwid s'est beaucoup amélioré en quelques mois seulement.", note: 5 },
   { id: 3, nom: 'Aïssatou M.', avis: "La possibilité d'étudier la riwayat Warsh avec des professeurs qualifiés est exactement ce que je cherchais. L'interface est fluide et les paiements mobiles rendent tout plus simple.", note: 4.8 },
-  { id: 4, nom: 'Youssef K.', avis: "Je prends des cours depuis la France et tout se passe à merveille. Le professeur est patient, professionnel et toujours à l'heure. Une excellente initiative de la part d'E-Quran Academy.", note: 5 },
+  { id: 4, nom: 'Youssef K.', avis: "Je prends des cours depuis la France et tout se passe à merveille. Le professeur est patient, professionnel et toujours à l'heure. Une excellente initiative de la part de Quran-Academy.", note: 5 },
   { id: 5, nom: 'Mariam S.', avis: "Je suis ravie des progrès de mes enfants. Les enseignants sont très pédagogues et savent capter leur attention. C'est un réel soulagement de trouver des cours de cette qualité.", note: 5 },
 ];
 

@@ -94,7 +94,7 @@ async function bootstrap(): Promise<void> {
   // ── 5. Documentation API (Swagger) ──────────────────────────────────────
   const { DocumentBuilder, SwaggerModule } = await import('@nestjs/swagger');
   const config = new DocumentBuilder()
-    .setTitle('E-Quran Academy — API')
+    .setTitle('Quran-Academy — API')
     .setDescription('API du backend NestJS (monolithe modulaire)')
     .setVersion('0.1.0')
     .addBearerAuth()

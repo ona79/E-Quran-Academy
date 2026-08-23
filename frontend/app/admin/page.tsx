@@ -152,7 +152,7 @@ export default function PageAdmin() {
               Tableau de bord
             </h2>
             <p className="text-sm mt-1" style={{ color: 'var(--texte-secondaire)' }}>
-              Vue d&apos;ensemble de la plateforme E-Quran Academy.
+              Vue d&apos;ensemble de la plateforme Quran-Academy.
             </p>
           </div>
 

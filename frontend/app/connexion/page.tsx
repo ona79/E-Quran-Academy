@@ -246,7 +246,7 @@ export default function PageConnexion() {
               <motion.div variants={enfantStagger} className="mb-2 mt-[-8px]">
                 <img 
                   src="/mascotte/logo_equran_accademy.png" 
-                  alt="Logo E-Quran Academy" 
+                  alt="Logo Quran-Academy" 
                   className="w-20 h-auto drop-shadow-xl" 
                 />
               </motion.div>
@@ -535,7 +535,7 @@ export default function PageConnexion() {
                   </Link>
                   <img 
                     src="/mascotte/logo_equran_accademy.png" 
-                    alt="Logo E-Quran Academy" 
+                    alt="Logo Quran-Academy" 
                     className="w-6 h-auto opacity-70" 
                   />
                 </div>

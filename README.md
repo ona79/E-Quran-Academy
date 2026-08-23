@@ -1,4 +1,4 @@
-# E-Quran Academy
+# Quran-Academy
 
 > Plateforme SaaS de cours de Coran en ligne — met en relation des **professeurs certifiés** et des **étudiants / parents**, avec salle de classe virtuelle interactive et suivi pédagogique complet.
 
@@ -24,7 +24,7 @@
 
 ## 📖 À propos de la plateforme
 
-**E-Quran Academy** est une plateforme éducative islamique qui permet à des professeurs de Coran certifiés (Hafiz, Ijaza) de proposer des cours en ligne à des étudiants du monde entier.
+**Quran-Academy** est une plateforme éducative islamique qui permet à des professeurs de Coran certifiés (Hafiz, Ijaza) de proposer des cours en ligne à des étudiants du monde entier.
 
 La plateforme est conçue pour trois types d'utilisateurs :
 
@@ -39,22 +39,23 @@ La plateforme est conçue pour trois types d'utilisateurs :
 ## ✨ Fonctionnalités
 
 ### Pour l'étudiant / parent
-- Tableau de bord personnalisé
+- Tableau de bord personnalisé avec accès rapide aux cours
 - Recherche de professeurs avec filtres (langue, tarif, genre, qiraat)
 - Réservation de cours avec conversion automatique de fuseau horaire
 - Cours d'essai gratuit
 - Packs de cours (5, 10, 20 séances)
-- Messagerie avec le professeur
+- Messagerie avec le professeur (avec possibilité de supprimer un message ou une conversation de son côté)
 - Accès à la salle de classe virtuelle
-- Historique et suivi pédagogique
+- Historique et suivi pédagogique avec option de suppression définitive des cours archivés
 
 ### Pour le professeur
 - Gestion des disponibilités récurrentes (créneaux hebdomadaires)
-- Profil public complet (bio, Ijaza, extrait audio de récitation, qiraats maîtrisées)
+- Profil public complet (bio, photo de profil, Ijaza, extrait audio de récitation, qiraats maîtrisées)
 - Formulaire de fin de cours (sourate mémorisée, notes tajwid, progression)
-- Tableau de bord des revenus
-- Messagerie avec les étudiants
+- Tableau de bord des revenus et statistiques
+- Messagerie avec les étudiants (suppression fine de messages et d'historique)
 - Accès à la salle de classe virtuelle (avec contrôle du Mushaf)
+- Suppression définitive des cours passés ou annulés avec traçabilité et log d'audit serveur
 
 ### Pour l'administrateur
 - Validation et vérification des professeurs (KYC)
@@ -62,6 +63,12 @@ La plateforme est conçue pour trois types d'utilisateurs :
 - Gestion des paiements et feature flags
 - Bascule `PAYMENTS_ENABLED` pour activer/désactiver le paiement réel
 - Confirmation manuelle de crédit (paiements hors plateforme)
+
+### Interface & Ergonomie (UX)
+- **Menu Déroulant de Profil Utilisateur** : Pilule avatar avec nom, e-mail et menu popover flottant (style Notion / GitHub).
+- **Photo de profil du professeur** : Upload d'image (Multer / WebP / JPEG / PNG) et affichage dynamique dans l'avatar.
+- **Fenêtre de Confirmation sur-mesure (`ModalConfirmation`)** : Fenêtre modale glassmorphism avec flou d'arrière-plan pour la déconnexion et la suppression définitive.
+- **Suppression sur survol (Hover)** : Icônes poubelle `🗑️` apparaissant au survol sur les cartes de cours et conversations.
 
 ### Système de paiement
 Le système de paiement est **entièrement modélisé** (Stripe Connect + PayDunya / CinetPay) mais **désactivé par défaut** (`PAYMENTS_ENABLED=false`). Un écran d'administration permet la confirmation manuelle de crédit pour les paiements hors plateforme.
@@ -91,8 +98,8 @@ La salle de classe est la fonctionnalité centrale de la plateforme :
 | Cache & Files d'attente | Redis + BullMQ | Upstash |
 | Visioconférence | Daily.co (`@daily-co/daily-react`) | Daily.co |
 | WebSocket | Socket.io + `@socket.io/redis-adapter` | — |
+| Stockage d'images / fichiers | Multer + NestJS Static Serve (`/uploads/profils/`) | Cloudflare R2 / Local |
 | Texte coranique | API QuranHub (Hafs & Warsh) | Cache en base |
-| Stockage vidéo | Cloudflare R2 / Backblaze B2 | — |
 | Emails | Brevo / Resend | — |
 | Paiement | Stripe Connect + PayDunya / CinetPay | — |
 
@@ -107,30 +114,30 @@ equran-academy/
 │   ├── src/
 │   │   ├── main.ts               # Bootstrap, sécurité (Helmet, CORS, Swagger)
 │   │   ├── app.module.ts
-│   │   ├── utilisateurs/         # Inscription, auth JWT, profils étudiants & professeurs
-│   │   ├── reservations/         # Créneaux & réservations de cours
+│   │   ├── utilisateurs/         # Inscription, auth JWT, profils étudiants & professeurs (avec photoUrl)
+│   │   ├── reservations/         # Créneaux & réservations de cours (création, annulation, DELETE définitif + audit)
 │   │   ├── classe-virtuelle/     # Salles Daily.co + Gateway WebSocket Mushaf
 │   │   ├── suivi-pedagogique/    # Rapports de fin de cours, historique
 │   │   ├── paiement/             # Escrow, Stripe, PayDunya
-│   │   ├── messagerie/           # Messages asynchrones professeur ↔ étudiant
+│   │   ├── messagerie/           # Messages asynchrones & gestion fine des suppressions (messages et conversations)
 │   │   ├── avis/                 # Notes et commentaires post-cours
 │   │   ├── feature-flags/        # Activation/désactivation sans redéploiement
-│   │   └── partages/             # Guards, DTOs communs, utilitaires
+│   │   └── partages/             # Guards, DTOs communs, upload de fichiers (Multer), utilitaires
 │   ├── prisma/
 │   │   ├── schema.prisma         # Schéma PostgreSQL complet
-│   │   ├── seed.ts               # Données initiales (compte admin)
+│   │   ├── seed.ts               # Données initiales (compte admin & profs de démonstration)
 │   │   └── migrations/
 │   ├── .env.example              # Modèle de configuration (sans secrets)
 │   └── package.json
 │
 ├── frontend/                     # Application Next.js
 │   ├── app/
-│   │   ├── page.tsx              # Page d'accueil publique
+│   │   ├── page.tsx              # Page d'accueil publique (Landing Quran-Academy)
 │   │   ├── connexion/            # Authentification
 │   │   ├── inscription/          # Création de compte
 │   │   ├── professeurs/          # Catalogue public des professeurs
-│   │   ├── eleve/                # Espace étudiant (cours, réservations, messages, classe)
-│   │   ├── professeur/           # Espace professeur (disponibilités, suivi, revenus)
+│   │   ├── eleve/                # Espace étudiant (cours, réservations, messages, classe, profil)
+│   │   ├── professeur/           # Espace professeur (disponibilités, cours, suivi, revenus, profil)
 │   │   └── admin/                # Tableau de bord administrateur
 │   ├── composants/
 │   │   ├── classe-virtuelle/     # Salle de classe (vidéo + Mushaf + WebSocket)
@@ -138,8 +145,8 @@ equran-academy/
 │   │   ├── professeur/           # Composants spécifiques au professeur
 │   │   ├── auth/                 # Formulaires connexion / inscription
 │   │   ├── admin/                # Outils d'administration
-│   │   ├── layout/               # Navigation, sidebar, header global
-│   │   └── ui/                   # Boutons, modales, composants réutilisables
+│   │   ├── layout/               # Navigation, Sidebars par rôle, ShellConnecte avec Menu Profil
+│   │   └── ui/                   # Boutons, ModalConfirmation, modales et composants réutilisables
 │   ├── lib/                      # Clients API, hooks, utilitaires
 │   ├── .env.example
 │   └── package.json
@@ -193,7 +200,7 @@ cd ../frontend && npm install
 ```bash
 cd backend
 npm run prisma:migrate   # Applique les migrations et crée les tables
-npm run prisma:seed      # Crée le compte administrateur (si ADMIN_EMAIL est défini)
+npm run prisma:seed      # Crée le compte administrateur et les profils de démonstration
 ```
 
 ### 5. Lancer en développement
@@ -247,33 +254,35 @@ La documentation Swagger de l'API est sur **http://localhost:3001/api**
 
 | Route | Accès | Description |
 |-------|-------|-------------|
-| `/` | Public | Page d'accueil |
+| `/` | Public | Page d'accueil Quran-Academy |
 | `/connexion` | Public | Authentification |
 | `/inscription` | Public | Création de compte |
 | `/professeurs` | Public | Catalogue des professeurs |
-| `/eleve` | Étudiant | Tableau de bord |
+| `/eleve` | Étudiant | Tableau de bord étudiant |
 | `/eleve/reserver` | Étudiant | Réservation d'un cours |
-| `/eleve/classe` | Étudiant | Salle de classe virtuelle |
-| `/professeur` | Professeur | Tableau de bord |
-| `/professeur/disponibilites` | Professeur | Gestion des créneaux |
-| `/professeur/suivi/:id` | Professeur | Rapport de fin de cours |
-| `/professeur/classe/:id` | Professeur | Salle de classe virtuelle |
+| `/eleve/classe` | Étudiant | Liste des cours et accès classe virtuelle |
+| `/eleve/messages` | Étudiant | Messagerie élève ↔ prof |
+| `/eleve/profil` | Étudiant | Profil élève |
+| `/professeur` | Professeur | Tableau de bord professeur |
+| `/professeur/disponibilites` | Professeur | Gestion des créneaux de disponibilité |
+| `/professeur/cours` | Professeur | Gestion des cours & rapports de fin de séance |
+| `/professeur/messages` | Professeur | Messagerie professeur ↔ élève |
+| `/professeur/profil` | Professeur | Profil enseignant, bio, photo et Ijaza |
 | `/admin` | Admin | Tableau de bord administrateur |
 
 ---
 
 ## 📡 API Backend
 
-| Module | Endpoints principaux |
-|--------|----------------------|
-| `utilisateurs` | `POST /auth/inscription`, `POST /auth/connexion`, `GET /utilisateurs/moi` |
-| `reservations` | `GET /reservations`, `POST /reservations`, `PATCH /reservations/:id/annuler` |
-| `classe-virtuelle` | `POST /classe-virtuelle/salle`, `GET /classe-virtuelle/salle/:id/jeton` |
-| `suivi-pedagogique` | `POST /suivi/rapport`, `GET /suivi/:eleveId` |
-| `paiement` | `POST /paiement/initier`, `POST /paiement/liberer`, `GET /paiement/revenus` |
-| `messagerie` | `GET /messages/:conversationId`, `POST /messages` |
-| `avis` | `POST /avis`, `GET /avis/professeur/:id` |
-| `feature-flags` | `GET /feature-flags`, `PATCH /feature-flags/:cle` |
+| Module | Endpoints principaux | Description / Nouveautés |
+|--------|----------------------|--------------------------|
+| `utilisateurs` | `POST /auth/inscription`<br>`POST /auth/connexion`<br>`GET /utilisateurs/professeurs/moi`<br>`PATCH /utilisateurs/professeurs/moi` | Inscription, Auth JWT, profil professeur avec `photoUrl` |
+| `reservations` | `GET /reservations`<br>`POST /reservations`<br>`PATCH /reservations/:id/annuler`<br>`DELETE /reservations/:id` | Gestion des cours + **Suppression définitive avec audit log** |
+| `messagerie` | `GET /messagerie/messages/recus`<br>`DELETE /messagerie/messages/:id`<br>`DELETE /messagerie/conversations/:interlocuteurId` | Messagerie + **Suppression fine de messages & historique** |
+| `partages` | `POST /partages/fichiers/upload` | Upload d'images (photos de profil) enregistrées sous `/uploads/profils/` |
+| `classe-virtuelle` | `POST /classe-virtuelle/salle`<br>`GET /classe-virtuelle/salle/:id/jeton` | Création et accès aux salles Daily.co |
+| `suivi-pedagogique` | `POST /suivi/rapport`<br>`GET /suivi/:eleveId` | Rapports de séance et historique pédagogique |
+| `paiement` | `POST /paiement/initier`<br>`POST /paiement/liberer`<br>`GET /paiement/revenus` | Escrow, Stripe, PayDunya & historique financier |
 
 > Documentation complète et interactive disponible via **Swagger** : `http://localhost:3001/api`
 

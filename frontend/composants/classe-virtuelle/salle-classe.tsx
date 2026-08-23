@@ -1,6 +1,6 @@
 'use client';
 
-// Salle de classe virtuelle complète — E-Quran Academy.
+// Salle de classe virtuelle complète — Quran-Academy.
 // Layout : Vidéo gauche 60% + Mushaf droite 40% (desktop)
 //          Onglets "Vidéo" / "Mushaf" (mobile)
 //

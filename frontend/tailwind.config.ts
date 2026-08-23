@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 
-// Design system E-Quran Academy — thème coranique, modèle iTalki.
+// Design system Quran-Academy — thème coranique, modèle iTalki.
 const config: Config = {
   darkMode: ['class', '.sombre'],
   content: [

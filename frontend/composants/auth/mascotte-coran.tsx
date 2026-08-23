@@ -1,6 +1,6 @@
 'use client';
 
-// Mascotte animée de E-Quran Academy.
+// Mascotte animée de Quran-Academy.
 // Charge les 5 versions d'images PNG personnalisées fournies par l'utilisateur (normale, cacher, espionner, joyeux, triste)
 // et applique des transitions fluides de fondu (cross-fade) couplées à des mouvements physiques Framer Motion.
 

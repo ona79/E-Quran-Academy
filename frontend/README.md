@@ -1,4 +1,4 @@
-# Frontend — E-Quran Academy
+# Frontend — Quran-Academy
 
 Next.js (App Router). Un dossier par espace utilisateur :
 `(eleve)`, `(professeur)`, `(admin)` — chacun avec ses propres pages,

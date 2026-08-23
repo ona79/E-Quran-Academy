@@ -1,4 +1,4 @@
-# Backend — E-Quran Academy
+# Backend — Quran-Academy
 
 Monolithe modulaire NestJS. Chaque dossier de `src/` est un domaine métier
 autonome (voir section 6.1 du cahier des charges) :

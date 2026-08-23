@@ -62,14 +62,16 @@ export function HeaderLanding() {
         <Link href="/" className="flex items-center gap-2 cliquable group">
           <img
             src="/mascotte/logo_equran_accademy.png"
-            alt="E-Quran Academy Logo"
-            className="h-9 w-auto object-contain"
+            alt="Quran-Academy Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
             }}
           />
-          <span className="text-xl font-extrabold transition-colors duration-200" style={{ color: '#0B5E45' }}>
-            E-Quran Academy
+          <span className="text-lg font-extrabold tracking-tight" style={{ color: 'var(--texte)' }}>
+            Quran-Academy
           </span>
         </Link>
 

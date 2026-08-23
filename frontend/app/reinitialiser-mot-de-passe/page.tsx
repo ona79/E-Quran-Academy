@@ -382,7 +382,7 @@ export default function PageReinitialiserMotDePasse() {
               <motion.div variants={enfantStagger} className="mb-2 mt-[-8px]">
                 <img
                   src="/mascotte/logo_equran_accademy.png"
-                  alt="Logo E-Quran Academy"
+                  alt="Logo Quran-Academy"
                   className="w-20 h-auto drop-shadow-xl"
                 />
               </motion.div>

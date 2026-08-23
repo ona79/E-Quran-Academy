@@ -69,7 +69,7 @@ export function SidebarBase({
         >
           <div className="flex items-center gap-2.5 overflow-hidden relative">
             <div className="w-12 h-12 relative shrink-0 rounded-full overflow-hidden bg-white flex items-center justify-center p-1 shadow-sm transition-opacity group-hover:opacity-80">
-              <Image src="/mascotte/logo_equran_accademy.png" alt="E-Quran Academy Logo" width={40} height={40} className="object-contain" />
+              <Image src="/mascotte/logo_equran_accademy.png" alt="Quran-Academy Logo" width={40} height={40} className="object-contain" />
             </div>
             <div className={`transition-opacity duration-300 ${reduite ? 'hidden' : 'block'}`}>
               <span className="text-sm font-bold">Quran-</span>

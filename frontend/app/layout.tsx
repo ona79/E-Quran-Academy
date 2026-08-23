@@ -5,7 +5,7 @@ import { FournisseurAuth } from '@/composants/auth/fournisseur-auth';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
-  title: 'E-Quran Academy',
+  title: 'Quran-Academy',
   description: 'Plateforme de cours de Coran avec professeurs certifiés.',
 };
 

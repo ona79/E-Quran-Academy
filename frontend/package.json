@@ -1,7 +1,7 @@
 {
   "name": "equran-academy-frontend",
   "private": true,
-  "description": "Frontend Next.js de E-Quran Academy",
+  "description": "Frontend Next.js de Quran-Academy",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
