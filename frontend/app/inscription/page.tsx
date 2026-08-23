@@ -159,27 +159,24 @@ export default function PageInscription() {
     if (inscriptionReussie) return 'heureux';
     if (enChargement) return 'ecrire';
 
-    // Si l'utilisateur est en train de corriger (focus actif), on affiche l'action en cours
+    // Si l'utilisateur est dans le mot de passe
     if (champActif === 'password' || champActif === 'confirmer') {
       const estMasque = champActif === 'password' ? !afficherMotDePasse : !afficherConfirmerMotDePasse;
       return estMasque ? 'cacher' : 'espionner';
     }
-    if (champActif === 'nom') {
-      return nom.length >= 2 ? 'pouce' : 'ecrire';
-    }
-    if (champActif === 'email') {
-      const emailValideLocal = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      return emailValideLocal ? 'pouce' : 'ecrire';
+    // Pendant la saisie du nom ou de l'email, garder un état stable 'ecrire'
+    if (champActif === 'nom' || champActif === 'email') {
+      return 'ecrire';
     }
 
-    // Sinon, s'il y a une erreur (fausse information)
+    // Sinon, s'il y a une erreur
     if (erreur) return 'decu';
 
     // Rôle sélectionné
     if (role === 'ELEVE') return 'eleve';
     if (role === 'PROFESSEUR') return 'professeur';
 
-    // Si l'étape 1 est valide (content)
+    // Si l'étape 1 est valide (au repos)
     if (etape1Valide) return 'pouce';
 
     return 'idle';
@@ -235,7 +232,7 @@ export default function PageInscription() {
   };
 
   return (
-    <div className="relative h-screen flex items-center justify-center overflow-hidden px-4" style={{ 
+    <div className="relative min-h-screen py-6 flex items-center justify-center overflow-y-auto px-4" style={{ 
       backgroundColor: '#0D1A14',
       backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
       backgroundSize: 'cover',
@@ -246,8 +243,8 @@ export default function PageInscription() {
       <MotifIslamiqueFond />
 
       <motion.div
-        className="relative z-10"
-        style={{ width: 'min(420px, calc(100vw - 32px))', maxHeight: 'calc(100vh - 32px)' }}
+        className="relative z-10 my-auto"
+        style={{ width: 'min(420px, calc(100vw - 32px))' }}
         initial={{ opacity: 0, y: 24 }}
         animate={secouer ? { opacity: 1, y: 0, x: [0, -8, 8, -8, 8, 0] } : { opacity: 1, y: 0 }}
         transition={secouer ? { duration: 0.4, ease: 'easeInOut' } : { duration: 0.5, ease: 'easeOut' }}

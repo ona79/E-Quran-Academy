@@ -135,20 +135,19 @@ export default function PageConnexion() {
     if (connexionReussie) return 'heureux';
     if (enChargement) return 'ecrire';
 
-    // Si l'utilisateur est en train de corriger (focus actif), on affiche l'action en cours
+    // Si l'utilisateur est dans le mot de passe
     if (champActif === 'password') {
       return afficherMotDePasse ? 'espionner' : 'cacher';
     }
+    // Si l'utilisateur est dans l'email : reste stable sur 'ecrire' pendant la saisie
     if (champActif === 'email') {
-      // Si l'email est valide, on montre un pouce levé de satisfaction
-      const emailValide = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      return emailValide ? 'pouce' : 'ecrire';
+      return 'ecrire';
     }
 
-    // Sinon, s'il y a une erreur (fausse information)
+    // Si une erreur est affichée
     if (erreur) return 'decu';
 
-    // Si rempli et valide (content)
+    // Si rempli et valide au repos
     const emailValide = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (emailValide && motDePasse.length >= 8) {
       return 'pouce';
@@ -194,7 +193,7 @@ export default function PageConnexion() {
 
   return (
     <div
-      className="relative h-screen flex items-center justify-center overflow-hidden px-4"
+      className="relative min-h-screen py-6 flex items-center justify-center overflow-y-auto px-4"
       style={{ 
         backgroundColor: '#0D1A14',
         backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
@@ -211,8 +210,8 @@ export default function PageConnexion() {
 
       {/* Carte principale */}
       <motion.div
-        className="relative z-10"
-        style={{ width: 'min(420px, calc(100vw - 32px))', maxHeight: 'calc(100vh - 32px)' }}
+        className="relative z-10 my-auto"
+        style={{ width: 'min(420px, calc(100vw - 32px))' }}
         initial={{ opacity: 0, y: 24 }}
         animate={
           secouer

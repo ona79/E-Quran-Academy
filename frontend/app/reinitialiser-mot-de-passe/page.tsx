@@ -343,7 +343,7 @@ function FormulaireReinitialisation() {
 export default function PageReinitialiserMotDePasse() {
   return (
     <div
-      className="relative h-screen flex items-center justify-center overflow-hidden px-4"
+      className="relative min-h-screen py-6 flex items-center justify-center overflow-y-auto px-4"
       style={{
         backgroundColor: '#0D1A14',
         backgroundImage: 'url("/mascotte/image_fond_login_inscription.png")',
@@ -356,8 +356,8 @@ export default function PageReinitialiserMotDePasse() {
       <MotifIslamiqueFond />
 
       <motion.div
-        className="relative z-10"
-        style={{ width: 'min(420px, calc(100vw - 32px))', maxHeight: 'calc(100vh - 32px)' }}
+        className="relative z-10 my-auto"
+        style={{ width: 'min(420px, calc(100vw - 32px))' }}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}

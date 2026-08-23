@@ -4,6 +4,7 @@
 // Charge les 5 versions d'images PNG personnalisées fournies par l'utilisateur (normale, cacher, espionner, joyeux, triste)
 // et applique des transitions fluides de fondu (cross-fade) couplées à des mouvements physiques Framer Motion.
 
+import { memo } from 'react';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 
 export type EtatMascotte =
@@ -31,7 +32,7 @@ const IMAGES_MASCOTTE = {
   triste: '/mascotte/triste.png',
 };
 
-export function MascotteCoran({ etat }: PropsMascotte) {
+export const MascotteCoran = memo(function MascotteCoran({ etat }: PropsMascotte) {
   // --- Sélection de l'image active en fonction de l'état ---
   let activeImageKey: keyof typeof IMAGES_MASCOTTE = 'normale';
   if (etat === 'cacher') {
@@ -140,7 +141,7 @@ export function MascotteCoran({ etat }: PropsMascotte) {
   };
 
   return (
-    <div className="relative w-fit mx-auto mb-2 h-[120px] sm:h-[140px] flex flex-col justify-center items-center">
+    <div className="relative w-fit mx-auto mb-2 h-[110px] sm:h-[130px] flex-shrink-0 flex flex-col justify-center items-center pointer-events-none select-none">
       {/* Halo lumineux émeraude et or en arrière-plan */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
@@ -151,7 +152,7 @@ export function MascotteCoran({ etat }: PropsMascotte) {
       />
 
       {/* Wrapper principal de la mascotte */}
-      <div className="relative w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] z-10">
+      <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] z-10 flex-shrink-0">
         
         {/* Conteneur de la mascotte animé en bobbing, rotation et échelle */}
         <motion.div
@@ -172,14 +173,14 @@ export function MascotteCoran({ etat }: PropsMascotte) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isActive ? 1 : 0 }}
                 transition={{ duration: 0.22, ease: 'easeInOut' }}
-                style={{ pointerEvents: isActive ? 'auto' : 'none' }}
+                style={{ pointerEvents: 'none' }}
               />
             );
           })}
         </motion.div>
       </div>
 
-      {/* Ombre au sol animée (indépendante du conteneur pour l'effet de flottement) */}
+      {/* Ombre au sol animée */}
       <svg width="100" height="10" viewBox="0 0 100 10" className="absolute bottom-0 z-0 select-none pointer-events-none">
         <motion.ellipse
           cx="50"
@@ -230,4 +231,5 @@ export function MascotteCoran({ etat }: PropsMascotte) {
       </AnimatePresence>
     </div>
   );
-}
+});
+
