@@ -186,28 +186,30 @@ export default function PageFacturationEleve() {
               </div>
             )}
 
-            <form onSubmit={simulerRecharge} className="flex gap-3">
-              <input
-                id="montant-recharge"
-                type="number"
-                min="100"
-                step="100"
-                placeholder="Ex : 5000"
-                value={montant}
-                onChange={(e) => setMontant(e.target.value)}
-                className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2"
-                style={{
-                  backgroundColor: 'var(--fond)',
-                  borderColor: 'var(--bordure)',
-                  color: 'var(--texte)',
-                }}
-                required
-              />
-              <span className="flex items-center text-sm font-medium" style={{ color: 'var(--texte-secondaire)' }}>FCFA</span>
+            <form onSubmit={simulerRecharge} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+              <div className="flex-1 flex items-center gap-2">
+                <input
+                  id="montant-recharge"
+                  type="number"
+                  min="100"
+                  step="100"
+                  placeholder="Ex : 5000"
+                  value={montant}
+                  onChange={(e) => setMontant(e.target.value)}
+                  className="w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none focus:ring-2"
+                  style={{
+                    backgroundColor: 'var(--fond)',
+                    borderColor: 'var(--bordure)',
+                    color: 'var(--texte)',
+                  }}
+                  required
+                />
+                <span className="text-sm font-medium shrink-0" style={{ color: 'var(--texte-secondaire)' }}>FCFA</span>
+              </div>
               <button
                 type="submit"
                 disabled={rechargeEnCours}
-                className="rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity disabled:opacity-50"
+                className="rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity disabled:opacity-50 shrink-0"
                 style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
               >
                 {rechargeEnCours ? 'Chargement…' : 'Recharger'}
@@ -220,25 +222,25 @@ export default function PageFacturationEleve() {
             className="rounded-2xl shadow-sm border overflow-hidden"
             style={{ backgroundColor: 'var(--fond-surface)', borderColor: 'var(--bordure)' }}
           >
-            <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--bordure)' }}>
+            <div className="px-4 sm:px-6 py-4 border-b" style={{ borderColor: 'var(--bordure)' }}>
               <h2 className="text-lg font-semibold" style={{ color: 'var(--texte)' }}>Historique des transactions</h2>
             </div>
 
             {chargement ? (
-              <div className="p-6 space-y-3">
+              <div className="p-4 sm:p-6 space-y-3">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="h-14 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--fond)' }} />
                 ))}
               </div>
             ) : transactions.length === 0 ? (
-              <div className="p-12 text-center">
+              <div className="p-8 sm:p-12 text-center">
                 <p className="text-4xl mb-3">📄</p>
                 <p className="text-sm" style={{ color: 'var(--texte-secondaire)' }}>Aucune transaction pour le moment.</p>
               </div>
           ) : (
             <div className="divide-y" style={{ borderColor: 'var(--bordure)' }}>
               {transactions.map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between px-6 py-4">
+                <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 gap-2">
                   <div>
                     <p className="text-sm font-medium" style={{ color: 'var(--texte)' }}>
                       Cours du{' '}
@@ -253,7 +255,7 @@ export default function PageFacturationEleve() {
                       {new Date(tx.creeLe).toLocaleDateString('fr-FR')} · {tx.methode}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-gray-800">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${COULEUR_STATUT[tx.statutEscrow] ?? ''}`}
                     >

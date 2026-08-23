@@ -37,7 +37,7 @@ export function PacksCours() {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <h2 className="text-xl font-semibold">Packs de cours</h2>
         <span
           className="text-xs px-2 py-1 rounded-full"

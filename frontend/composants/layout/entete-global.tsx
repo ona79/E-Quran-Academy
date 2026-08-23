@@ -209,7 +209,27 @@ export function EnteteGlobal() {
           >
             Comment ça marche
           </Link>
-          {!utilisateur && (
+          {utilisateur ? (
+            <div className="pt-2 border-t border-[var(--bordure)] space-y-1">
+              <Link
+                href={lienEspace}
+                className="block py-2 text-sm font-semibold text-[var(--couleur-primaire)]"
+                onClick={() => setMenuOuvert(false)}
+              >
+                Mon espace
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOuvert(false);
+                  setModalDeconnexion(true);
+                }}
+                className="block w-full text-left py-2 text-sm text-red-600 font-semibold"
+              >
+                Déconnexion
+              </button>
+            </div>
+          ) : (
             <div className="flex gap-2 pt-2">
               <LienBouton href="/connexion" variante="secondaire" pleineLargeur>
                 Connexion

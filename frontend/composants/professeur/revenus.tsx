@@ -72,7 +72,7 @@ export function RevenusProfesseur() {
       {erreur && <p className="carte text-sm" style={{ color: 'var(--erreur)' }}>{erreur}</p>}
 
       <div className="carte" style={{ borderLeft: '4px solid var(--accent)' }}>
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div>
             <p className="text-sm font-medium" style={{ color: 'var(--texte-secondaire)' }}>
               Solde total disponible

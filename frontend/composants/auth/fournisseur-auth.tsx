@@ -106,11 +106,10 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
   };
 
   const deconnexion = () => {
-    apiClient.post('/utilisateurs/deconnexion').finally(() => {
-      localStorage.removeItem('jeton_ws');
-      setUtilisateur(null);
-      window.location.href = '/';
-    });
+    localStorage.removeItem('jeton_ws');
+    setUtilisateur(null);
+    window.location.replace('/');
+    apiClient.post('/utilisateurs/deconnexion').catch(() => {});
   };
 
   return (

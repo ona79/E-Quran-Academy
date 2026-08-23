@@ -217,7 +217,7 @@ export function MessagerieEleve() {
         surFermeture={() => setContactAEffacer(null)}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[75vh]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-150px)] md:h-[75vh] min-h-[420px]">
         {/* 1. Liste des conversations (à gauche) */}
         <aside
           className={`overflow-y-auto flex flex-col rounded-2xl p-4 ${

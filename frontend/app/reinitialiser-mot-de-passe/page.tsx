@@ -49,15 +49,16 @@ function BlobsAnimes() {
             left: blob.x,
             top: blob.y,
             background: `radial-gradient(circle, ${blob.couleur} 0%, transparent 70%)`,
-            filter: 'blur(80px)',
-            opacity: 0.2,
+            filter: 'blur(120px)',
+            opacity: 0.25,
           }}
           animate={{
-            x: [0, 20, -15, 0],
-            y: [0, -15, 10, 0],
+            x: [0, 30, -20, 15, 0],
+            y: [0, -25, 15, -10, 0],
+            scale: [1, 1.08, 0.95, 1.05, 1],
           }}
           transition={{
-            duration: 20,
+            duration: 18,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: blob.delai,
@@ -70,7 +71,17 @@ function BlobsAnimes() {
 
 function BordureAnimee({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-[#0B5E45]/60 via-[#B8923A]/40 to-[#0B5E45]/60">
+    <div className="relative p-[1px] rounded-2xl overflow-hidden sm:overflow-visible">
+      <motion.div
+        className="absolute inset-0 rounded-2xl hidden sm:block pointer-events-none"
+        style={{
+          background: 'conic-gradient(from 0deg, #0B5E45, #B8923A, #0B5E45, #B8923A, #0B5E45)',
+          opacity: 0.5,
+        }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+      />
+      <div className="absolute inset-0 rounded-2xl sm:hidden bg-gradient-to-r from-[#0B5E45]/60 via-[#B8923A]/40 to-[#0B5E45]/60 pointer-events-none" />
       <div className="relative rounded-2xl">{children}</div>
     </div>
   );
