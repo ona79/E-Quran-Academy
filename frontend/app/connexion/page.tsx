@@ -41,7 +41,7 @@ const BLOBS = [
 
 function BlobsAnimes() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 hidden sm:block" aria-hidden>
       {BLOBS.map((blob, i) => (
         <motion.div
           key={i}
@@ -52,16 +52,15 @@ function BlobsAnimes() {
             left: blob.x,
             top: blob.y,
             background: `radial-gradient(circle, ${blob.couleur} 0%, transparent 70%)`,
-            filter: 'blur(120px)',
-            opacity: 0.25,
+            filter: 'blur(80px)',
+            opacity: 0.2,
           }}
           animate={{
-            x: [0, 30, -20, 15, 0],
-            y: [0, -25, 15, -10, 0],
-            scale: [1, 1.08, 0.95, 1.05, 1],
+            x: [0, 20, -15, 0],
+            y: [0, -15, 10, 0],
           }}
           transition={{
-            duration: 18,
+            duration: 20,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: blob.delai,
@@ -72,22 +71,10 @@ function BlobsAnimes() {
   );
 }
 
-// ─── Bordure animée en gradient conique ───
+// ─── Bordure animée optimisée (statique sur mobile, animée sur desktop) ───
 function BordureAnimee({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative p-[1px] rounded-2xl">
-      {/* Gradient conique qui tourne */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl"
-        style={{
-          background:
-            'conic-gradient(from 0deg, #0B5E45, #B8923A, #0B5E45, #B8923A, #0B5E45)',
-          opacity: 0.5,
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-      />
-      {/* Contenu avec le fond glassmorphism */}
+    <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-[#0B5E45]/60 via-[#B8923A]/40 to-[#0B5E45]/60">
       <div className="relative rounded-2xl">{children}</div>
     </div>
   );
@@ -228,11 +215,9 @@ export default function PageConnexion() {
           <div
             className="rounded-2xl p-5 sm:p-6 flex flex-col items-center overflow-hidden"
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 25px 60px rgba(11,94,69,0.3)',
+              background: 'rgba(13, 26, 20, 0.92)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              boxShadow: '0 25px 60px rgba(11,94,69,0.4)',
             }}
           >
             <motion.div
