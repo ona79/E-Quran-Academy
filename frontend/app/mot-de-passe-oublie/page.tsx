@@ -221,7 +221,7 @@ export default function PageMotDePasseOublie() {
                 </motion.div>
               ) : (
                 <form onSubmit={soumettre} className="w-full space-y-4">
-                  <motion.div variants={enfantStagger}>
+                  <div>
                     <label
                       htmlFor="email-recuperation"
                       className="block font-medium mb-1.5"
@@ -249,20 +249,19 @@ export default function PageMotDePasseOublie() {
                         }}
                         onFocus={gererFocus}
                         onBlur={gererBlur}
-                        className="w-full pl-10 rounded-xl outline-none transition-all duration-300"
+                        className="w-full pl-10 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
                         style={{
                           paddingTop: '8px',
                           paddingBottom: '8px',
                           paddingRight: '12px',
                           fontSize: '14px',
                           background: 'rgba(255,255,255,0.05)',
-                          border: estFocus ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)',
+                          border: '1px solid rgba(255,255,255,0.1)',
                           color: '#FFFFFF',
-                          boxShadow: estFocus ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none',
                         }}
                       />
                     </div>
-                  </motion.div>
+                  </div>
 
                   <AnimatePresence>
                     {erreur && (

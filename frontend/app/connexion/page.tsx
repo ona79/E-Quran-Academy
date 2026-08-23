@@ -245,7 +245,7 @@ export default function PageConnexion() {
               {/* Formulaire */}
               <form onSubmit={soumettre} className="w-full space-y-4">
                 {/* Champ Email */}
-                <motion.div variants={enfantStagger}>
+                <div>
                   <label
                     htmlFor="email-connexion"
                     className="block font-medium mb-1.5"
@@ -266,35 +266,29 @@ export default function PageConnexion() {
                       required
                       autoComplete="email"
                       placeholder="vous@exemple.com"
+                      value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
                         if (erreur) setErreur(null);
                       }}
                       onFocus={gererFocusEmail}
                       onBlur={gererBlur}
-                      className="w-full pl-10 rounded-xl outline-none transition-all duration-300"
+                      className="w-full pl-10 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
                       style={{
                         paddingTop: '7px',
                         paddingBottom: '7px',
                         paddingRight: '12px',
                         fontSize: '14px',
                         background: 'rgba(255,255,255,0.05)',
-                        border:
-                          champActif === 'email'
-                            ? '1px solid #0B5E45'
-                            : '1px solid rgba(255,255,255,0.1)',
+                        border: '1px solid rgba(255,255,255,0.1)',
                         color: '#FFFFFF',
-                        boxShadow:
-                          champActif === 'email'
-                            ? '0 0 0 3px rgba(11,94,69,0.3)'
-                            : 'none',
                       }}
                     />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Champ Mot de passe */}
-                <motion.div variants={enfantStagger}>
+                <div>
                   <label
                     htmlFor="motdepasse-connexion"
                     className="block font-medium mb-1.5"
@@ -315,28 +309,22 @@ export default function PageConnexion() {
                       required
                       autoComplete="current-password"
                       placeholder="••••••••"
+                      value={motDePasse}
                       onChange={(e) => {
                         setMotDePasse(e.target.value);
                         if (erreur) setErreur(null);
                       }}
                       onFocus={gererFocusMotDePasse}
                       onBlur={gererBlur}
-                      className="w-full pl-10 rounded-xl outline-none transition-all duration-300"
+                      className="w-full pl-10 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
                       style={{
                         paddingTop: '7px',
                         paddingBottom: '7px',
                         paddingRight: '12px',
                         fontSize: '14px',
                         background: 'rgba(255,255,255,0.05)',
-                        border:
-                          champActif === 'password'
-                            ? '1px solid #0B5E45'
-                            : '1px solid rgba(255,255,255,0.1)',
+                        border: '1px solid rgba(255,255,255,0.1)',
                         color: '#FFFFFF',
-                        boxShadow:
-                          champActif === 'password'
-                            ? '0 0 0 3px rgba(11,94,69,0.3)'
-                            : 'none',
                       }}
                     />
                     <button
@@ -344,12 +332,6 @@ export default function PageConnexion() {
                       onClick={() => setAfficherMotDePasse(!afficherMotDePasse)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors duration-200"
                       style={{ color: 'rgba(255,255,255,0.4)' }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')
-                      }
                       aria-label={
                         afficherMotDePasse
                           ? 'Masquer le mot de passe'
@@ -363,7 +345,7 @@ export default function PageConnexion() {
                       )}
                     </button>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Ligne options */}
                 <motion.div

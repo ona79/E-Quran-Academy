@@ -281,11 +281,10 @@ function FormulaireReinitialisation() {
               }}
               onFocus={() => setChampActif('conf')}
               onBlur={() => setChampActif(null)}
-              className="w-full pl-10 pr-10 py-2 rounded-xl outline-none transition-all duration-300 text-sm text-white"
+              className="w-full pl-10 pr-10 py-2 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30 text-sm text-white"
               style={{
                 background: 'rgba(255,255,255,0.05)',
-                border: champActif === 'conf' ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)',
-                boxShadow: champActif === 'conf' ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none',
+                border: '1px solid rgba(255,255,255,0.1)',
               }}
             />
           </div>

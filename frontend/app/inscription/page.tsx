@@ -337,8 +337,8 @@ export default function PageInscription() {
                                   }}
                                   onFocus={() => setChampActif('nom')}
                                   onBlur={() => setChampActif(null)}
-                                  className="w-full pl-9 rounded-xl outline-none transition-all duration-300"
-                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: champActif === 'nom' ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', boxShadow: champActif === 'nom' ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none' }}
+                                  className="w-full pl-9 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
+                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF' }}
                                 />
                               </div>
                             </div>
@@ -357,8 +357,8 @@ export default function PageInscription() {
                                   }}
                                   onFocus={() => setChampActif('email')}
                                   onBlur={() => setChampActif(null)}
-                                  className="w-full pl-9 rounded-xl outline-none transition-all duration-300"
-                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: champActif === 'email' ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', boxShadow: champActif === 'email' ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none' }}
+                                  className="w-full pl-9 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
+                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF' }}
                                 />
                               </div>
                             </div>
@@ -377,8 +377,8 @@ export default function PageInscription() {
                                   }}
                                   onFocus={() => setChampActif('password')}
                                   onBlur={() => setChampActif(null)}
-                                  className="w-full pl-9 pr-10 rounded-xl outline-none transition-all duration-300"
-                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: champActif === 'password' ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', boxShadow: champActif === 'password' ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none' }}
+                                  className="w-full pl-9 pr-10 rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
+                                  style={{ paddingTop: '7px', paddingBottom: '7px', paddingRight: '12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF' }}
                                 />
                                 <button type="button" onClick={() => setAfficherMotDePasse(!afficherMotDePasse)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg" style={{ color: 'rgba(255,255,255,0.4)' }}>
                                   {afficherMotDePasse ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -408,8 +408,8 @@ export default function PageInscription() {
                                   }}
                                   onFocus={() => setChampActif('confirmer')}
                                   onBlur={() => setChampActif(null)}
-                                  className="w-full pl-9 pr-[60px] rounded-xl outline-none transition-all duration-300"
-                                  style={{ paddingTop: '7px', paddingBottom: '7px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: champActif === 'confirmer' ? '1px solid #0B5E45' : '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF', boxShadow: champActif === 'confirmer' ? '0 0 0 3px rgba(11,94,69,0.3)' : 'none' }}
+                                  className="w-full pl-9 pr-[60px] rounded-xl outline-none transition-all duration-200 focus:border-[#0B5E45] focus:ring-2 focus:ring-[#0B5E45]/30"
+                                  style={{ paddingTop: '7px', paddingBottom: '7px', fontSize: '13px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#FFFFFF' }}
                                 />
                                 <button type="button" onClick={() => setAfficherConfirmerMotDePasse(!afficherConfirmerMotDePasse)} className="absolute right-8 top-1/2 -translate-y-1/2 p-1 rounded-lg" style={{ color: 'rgba(255,255,255,0.4)' }}>
                                   {afficherConfirmerMotDePasse ? <EyeOff size={16} /> : <Eye size={16} />}
