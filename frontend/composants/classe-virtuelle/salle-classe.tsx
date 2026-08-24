@@ -183,13 +183,14 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
   }, [reservationId, utilisateurId, role]);
 
   // ── 3. WebSocket Mushaf ───────────────────────────────────────────────────
+  const idPourWs = seance?.id || reservationId || '';
   const {
     etatMushaf,
     modeRepliActif,
     connecte: wsConnecte,
     surligner,
     signalerBandePassante,
-  } = useSalleClasse(seance?.id ?? '');
+  } = useSalleClasse(idPourWs);
 
   const statutConnexion: StatutConnexion = !wsConnecte
     ? 'deconnecte'

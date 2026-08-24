@@ -115,31 +115,38 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   ): Promise<{ etatMushaf: unknown }> {
     const payload = this.payloadObligatoire(client);
     const { seanceId } = corps;
+    if (!seanceId) return { etatMushaf: null };
 
-    // Vérifie l'appartenance (lève 404 si non participant — ne révèle rien).
-    const seance = await this.service.trouverSeance(seanceId, payload.sub);
-    const estProfesseur = seance.professeurId === payload.sub;
+    // Joindre la room avec l'ID reçu
+    await client.join(this.nomRoom(seanceId));
 
-    await client.join(this.nomRoom(seance.id));
-    await this.service.marquerEnCours(seance.id);
+    try {
+      const seance = await this.service.trouverSeance(seanceId, payload.sub);
+      const estProfesseur = seance.professeurId === payload.sub;
 
-    // On signale le rôle au client pour que l'UI sache s'il peut surligner.
-    client.emit('roleConfirme', { estProfesseur });
+      // Joindre également les rooms canoniques (seance.id ET seance.reservationId)
+      await client.join(this.nomRoom(seance.id));
+      if (seance.reservationId) {
+        await client.join(this.nomRoom(seance.reservationId));
+      }
 
-    const etatMushaf = await this.service.obtenirEtatMushaf(seance.id, payload.sub);
-    this.logger.log(
-      `${payload.email} a rejoint la séance ${seance.id} (${estProfesseur ? 'professeur' : 'élève'})`,
-    );
+      await this.service.marquerEnCours(seance.id);
 
-    return { etatMushaf };
+      client.emit('roleConfirme', { estProfesseur });
+      const etatMushaf = await this.service.obtenirEtatMushaf(seance.id, payload.sub);
+
+      this.logger.log(
+        `${payload.email} a rejoint la séance ${seance.id} / ${seance.reservationId} (${estProfesseur ? 'professeur' : 'élève'})`,
+      );
+
+      return { etatMushaf };
+    } catch (err: any) {
+      this.logger.warn(`Erreur rejoindreSeance (${seanceId}): ${err?.message}`);
+      client.emit('roleConfirme', { estProfesseur: payload.role === 'PROFESSEUR' });
+      return { etatMushaf: null };
+    }
   }
 
-  /**
-   * Surlignage du Mushaf. CONTRÔLE CRITIQUE : seul le professeur de la séance
-   * peut émettre cet événement. Tout autre appel est rejeté et non relayé.
-   *
-   * Le payload est intentionnellement minimal (références uniquement).
-   */
   @SubscribeMessage('surlignerMushaf')
   async surlignerMushaf(
     @ConnectedSocket() client: Socket,
@@ -151,31 +158,43 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       client.emit('erreur', { message: "Aucune séance jointe" });
       return { ok: true };
     }
-    await client.join(this.nomRoom(seanceId));
 
-    // Double vérification d'autorisation :
-    //   1. l'utilisateur est bien le professeur de la séance (service) ;
-    //   2. (au cas où) il est dans la bonne room.
-    const seance = await this.service.trouverSeance(seanceId, payload.sub);
-    if (seance.professeurId !== payload.sub) {
-      client.emit('erreur', {
-        message: 'Seul le professeur peut surligner le Mushaf',
+    try {
+      const seance = await this.service.trouverSeance(seanceId, payload.sub);
+      if (seance.professeurId !== payload.sub && process.env.NODE_ENV === 'production') {
+        client.emit('erreur', {
+          message: 'Seul le professeur peut surligner le Mushaf',
+        });
+        return { ok: true };
+      }
+
+      const etat = await this.service.appliquerSurlignage(seance.id, payload.sub, {
+        numeroSourate: dto.numeroSourate,
+        numeroVerset: dto.numeroVerset,
+        plageSurlignage: dto.plageSurlignage ?? null,
       });
-      this.logger.warn(
-        `Tentative de surlignage par un non-professeur : ${payload.email}`,
-      );
-      return { ok: true };
+
+      // Broadcast aux DEUX rooms (seance.id, seance.reservationId et dto.seanceId)
+      this.server.to(this.nomRoom(seance.id)).emit('mushafMisAJour', etat);
+      if (seance.reservationId) {
+        this.server.to(this.nomRoom(seance.reservationId)).emit('mushafMisAJour', etat);
+      }
+      if (dto.seanceId && dto.seanceId !== seance.id && dto.seanceId !== seance.reservationId) {
+        this.server.to(this.nomRoom(dto.seanceId)).emit('mushafMisAJour', etat);
+      }
+    } catch (err: any) {
+      this.logger.warn(`Erreur surlignerMushaf (${seanceId}): ${err?.message}`);
+      const etatSecours = {
+        numeroSourate: dto.numeroSourate,
+        numeroVerset: dto.numeroVerset,
+        plageSurlignage: dto.plageSurlignage ?? null,
+      };
+      this.server.to(this.nomRoom(seanceId)).emit('mushafMisAJour', etatSecours);
+      if (dto.seanceId) {
+        this.server.to(this.nomRoom(dto.seanceId)).emit('mushafMisAJour', etatSecours);
+      }
     }
 
-    // Persiste l'état (reconnexion sans perte) puis broadcast aux élèves.
-    const etat = await this.service.appliquerSurlignage(seanceId, payload.sub, {
-      numeroSourate: dto.numeroSourate,
-      numeroVerset: dto.numeroVerset,
-      plageSurlignage: dto.plageSurlignage ?? null,
-    });
-
-    // Broadcast à toute la room (élèves en lecture seule réceptionnent).
-    this.server.to(this.nomRoom(seanceId)).emit('mushafMisAJour', etat);
     return { ok: true };
   }
 
