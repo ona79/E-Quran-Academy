@@ -24,31 +24,60 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
   const [succes, setSucces] = useState<string | null>(null);
   const [enEnvoi, setEnEnvoi] = useState(false);
   const [eleveIdAuto, setEleveIdAuto] = useState<string | null>(eleveId ?? null);
+  const [seanceIdAuto, setSeanceIdAuto] = useState<string | null>(seanceId ?? null);
   const [nomEleve, setNomEleve] = useState<string | null>(null);
 
   useEffect(() => {
-    const chargerEleve = async () => {
+    const chargerInfos = async () => {
       let targetEleveId = eleveIdAuto;
-      if (!targetEleveId && reservationId) {
+      let targetSeanceId = seanceIdAuto;
+
+      // 1. Tenter via l'API classe virtuelle (marche que reservationId soit un seanceId ou reservationId)
+      if (reservationId) {
         try {
-          const res = await apiClient.get<{ eleveId: string }>(`/reservations/${reservationId}`);
-          targetEleveId = res.eleveId;
-          setEleveIdAuto(res.eleveId);
+          const seanceInfo = await apiClient.get<{ id: string; eleveId: string }>(
+            `/classe-virtuelle/seances/${reservationId}`
+          );
+          if (seanceInfo) {
+            if (!targetSeanceId) {
+              targetSeanceId = seanceInfo.id;
+              setSeanceIdAuto(seanceInfo.id);
+            }
+            if (!targetEleveId) {
+              targetEleveId = seanceInfo.eleveId;
+              setEleveIdAuto(seanceInfo.eleveId);
+            }
+          }
         } catch {
           /* ignore */
         }
       }
+
+      // 2. Si l'élève n'est pas encore trouvé, tenter via l'API réservation
+      if (!targetEleveId && reservationId) {
+        try {
+          const resInfo = await apiClient.get<{ eleveId: string }>(`/reservations/${reservationId}`);
+          if (resInfo?.eleveId) {
+            targetEleveId = resInfo.eleveId;
+            setEleveIdAuto(resInfo.eleveId);
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      // 3. Charger le nom de l'élève
       if (targetEleveId) {
         try {
           const eleve = await apiClient.get<{ nomComplet: string }>(`/utilisateurs/${targetEleveId}`);
           setNomEleve(eleve.nomComplet);
         } catch {
-          setNomEleve(targetEleveId);
+          setNomEleve('Étudiant');
         }
       }
     };
-    chargerEleve();
-  }, [reservationId, eleveIdAuto]);
+    chargerInfos();
+  }, [reservationId]);
 
   const soumettre = async (e: FormEvent) => {
     e.preventDefault();
@@ -56,21 +85,16 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
     setSucces(null);
     setEnEnvoi(true);
     try {
-      // L'API de suivi attend un seanceId. On tente d'abord de récupérer
-      // la séance liée à la réservation, sinon on utilise le reservationId directement.
-      let idSeance = seanceId ?? '';
-      if (!idSeance) {
-        try {
-          const seance = await apiClient.get<{ id: string }>(`/classe-virtuelle/seances/${reservationId}`);
-          idSeance = seance.id;
-        } catch {
-          throw new Error('Impossible de récupérer la séance, veuillez réessayer.');
-        }
+      const idFinalEleve = eleveIdAuto || eleveId;
+      const idFinalSeance = seanceIdAuto || seanceId || reservationId;
+
+      if (!idFinalEleve) {
+        throw new Error("Impossible d'identifier l'élève de cette séance.");
       }
 
       await apiClient.post('/suivi-pedagogique/notes', {
-        seanceId: idSeance,
-        eleveId: eleveIdAuto ?? reservationId, // Fallback ultime
+        seanceId: idFinalSeance,
+        eleveId: idFinalEleve,
         sourateMemorisee: sourateMemorisee.trim() || undefined,
         sourateRevisee: sourateRevisee.trim() || undefined,
         pointsTajwid: pointsTajwid.trim() || undefined,

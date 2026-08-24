@@ -41,31 +41,36 @@ export function SuiviProfesseur() {
         apiClient.get<Page<NoteSession>>('/suivi-pedagogique/notes/moi-professeur?page=1&taille=50').catch(() => ({ donnees: [] as NoteSession[] })),
         apiClient.get<Page<Reservation>>('/reservations/moi-professeur?page=1&taille=100').catch(() => ({ donnees: [] as Reservation[] })),
       ]);
-      // Extraire les étudiants uniques (des réservations ET des notes)
-      const elevesIds = Array.from(new Set([
-        ...resPage.donnees.map((r) => r.eleveId),
-        ...notesPage.donnees.map((n) => n.eleveId)
-      ]));
-      const cacheEleves: Record<string, string> = {};
-      await Promise.all(
-        elevesIds.map(async (id) => {
-          try {
-            const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
-            // On stocke le vrai nom uniquement si l'appel réussit
-            cacheEleves[id] = e.nomComplet || 'Étudiant inconnu';
-          } catch {
-            // En cas d'échec on met un libellé lisible, PAS l'UUID brut
-            cacheEleves[id] = 'Étudiant inconnu';
-          }
-        })
-      );
+      // Les notes incluent déjà nomEleve depuis le backend (join SQL)
+      // On les stocke directement sans re-fetch inutile
+      setNotes(notesPage.donnees);
 
-      // Enrichir AUSSI les notes avec le nom de l'élève
-      const notesEnrichies = notesPage.donnees.map((n) => ({
-        ...n,
-        nomEleve: cacheEleves[n.eleveId] ?? 'Étudiant inconnu',
-      }));
-      setNotes(notesEnrichies);
+      // Extraire les étudiants uniques uniquement depuis les réservations
+      // (pour enrichir les réservations ET peupler le dropdown du formulaire)
+      const elevesIds = Array.from(new Set(resPage.donnees.map((r) => r.eleveId)));
+
+      const cacheEleves: Record<string, string> = {};
+
+      // Pré-remplir le cache depuis les noms déjà fournis par les notes
+      notesPage.donnees.forEach((n) => {
+        if (n.nomEleve && n.eleveId) {
+          cacheEleves[n.eleveId] = n.nomEleve;
+        }
+      });
+
+      // Compléter avec les élèves des réservations pas encore dans le cache
+      await Promise.all(
+        elevesIds
+          .filter((id) => !cacheEleves[id])
+          .map(async (id) => {
+            try {
+              const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
+              cacheEleves[id] = e.nomComplet || 'Étudiant inconnu';
+            } catch {
+              cacheEleves[id] = 'Étudiant inconnu';
+            }
+          })
+      );
 
       const resEnrichies = resPage.donnees.map((r) => ({ ...r, nomEleve: cacheEleves[r.eleveId] ?? 'Étudiant inconnu' }));
       setReservations(resEnrichies);

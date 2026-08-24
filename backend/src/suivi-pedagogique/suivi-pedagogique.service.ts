@@ -39,10 +39,28 @@ export class SuiviPedagogiqueService {
       throw new ConflictException('Une note existe déjà pour cette séance');
     }
 
+    let eleveIdFinal = dto.eleveId;
+    const userEleve = await this.prisma.user.findUnique({ where: { id: eleveIdFinal } });
+    if (!userEleve) {
+      const seance = await this.prisma.seanceCours.findFirst({
+        where: { OR: [{ id: dto.seanceId }, { id: eleveIdFinal }, { reservationId: eleveIdFinal }] },
+      });
+      if (seance) {
+        eleveIdFinal = seance.eleveId;
+      } else {
+        const res = await this.prisma.reservation.findFirst({
+          where: { OR: [{ id: dto.seanceId }, { id: eleveIdFinal }] },
+        });
+        if (res) {
+          eleveIdFinal = res.eleveId;
+        }
+      }
+    }
+
     const cree = await this.prisma.noteSession.create({
       data: {
         seanceId: dto.seanceId,
-        eleveId: dto.eleveId,
+        eleveId: eleveIdFinal,
         professeurId,
         sourateMemorisee: dto.sourateMemorisee,
         sourateRevisee: dto.sourateRevisee,
@@ -83,6 +101,34 @@ export class SuiviPedagogiqueService {
       select: { id: true, nomComplet: true },
     });
     const mapNoms = new Map(eleves.map((e) => [e.id, e.nomComplet]));
+
+    // Résolution de secours si eleveId est un UUID de séance ou de réservation
+    const manquantIds = elevesIds.filter((id) => !mapNoms.has(id));
+    if (manquantIds.length > 0) {
+      const seances = await this.prisma.seanceCours.findMany({
+        where: { OR: [{ id: { in: manquantIds } }, { reservationId: { in: manquantIds } }] },
+        include: { eleve: { select: { nomComplet: true } } },
+      });
+      for (const s of seances) {
+        if (s.eleve?.nomComplet) {
+          mapNoms.set(s.id, s.eleve.nomComplet);
+          mapNoms.set(s.reservationId, s.eleve.nomComplet);
+        }
+      }
+
+      const encoreManquants = manquantIds.filter((id) => !mapNoms.has(id));
+      if (encoreManquants.length > 0) {
+        const reservations = await this.prisma.reservation.findMany({
+          where: { id: { in: encoreManquants } },
+          include: { eleve: { select: { nomComplet: true } } },
+        });
+        for (const r of reservations) {
+          if (r.eleve?.nomComplet) {
+            mapNoms.set(r.id, r.eleve.nomComplet);
+          }
+        }
+      }
+    }
 
     return {
       total,
