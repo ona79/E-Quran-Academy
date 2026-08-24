@@ -47,7 +47,7 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   constructor(
     private readonly service: ClasseVirtuelleService,
     private readonly jwt: JwtService,
-  ) {}
+  ) { }
 
   /**
    * Branche l'adaptateur Redis dès l'initialisation du serveur. Indispensable
@@ -77,22 +77,19 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   // ─────────────────────── Connexion / déconnexion ───────────────────────
 
   /**
-   * Authentification au handshake.
+   * Authentification au handshake. Le client doit fournir un jeton JWT valide
+   * (en query `?jeton=...`). Sans jeton ou jeton invalide → déconnexion.
    */
   async handleConnection(client: Socket): Promise<void> {
-    let payload = this.verifierJeton(client);
+    const payload = this.verifierJeton(client);
     if (!payload) {
-      if (process.env.NODE_ENV !== 'production') {
-        payload = { sub: `dev-user-${client.id.slice(0, 6)}`, email: 'dev@equran.com', role: 'ELEVE' as any };
-        this.logger.log(`Connexion WebSocket acceptée en mode dev (id=${client.id})`);
-      } else {
-        this.logger.warn(`Connexion refusée : jeton invalide (id=${client.id})`);
-        client.emit('erreur', { message: 'Authentification requise' });
-        client.disconnect(true);
-        return;
-      }
+      this.logger.warn(`Connexion refusée : jeton invalide (id=${client.id})`);
+      client.emit('erreur', { message: 'Authentification requise' });
+      client.disconnect(true);
+      return;
     }
 
+    // On attache le payload au socket pour les handlers suivants.
     (client.data as { payload: PayloadJwt }).payload = payload;
     this.logger.log(`Connecté : ${payload.email} (id=${client.id})`);
   }
@@ -106,6 +103,11 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   // ──────────────────────────── Événements ───────────────────────────────
 
+  /**
+   * Rejoindre la room d'une séance. Autorisé uniquement aux participants
+   * (élève ou professeur). Renvoie immédiatement l'état courant du Mushaf —
+   * c'est ce qui permet la reconnexion sans perte.
+   */
   @SubscribeMessage('rejoindreSeance')
   async rejoindreSeance(
     @ConnectedSocket() client: Socket,
@@ -113,31 +115,31 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   ): Promise<{ etatMushaf: unknown }> {
     const payload = this.payloadObligatoire(client);
     const { seanceId } = corps;
-    if (!seanceId) return { etatMushaf: null };
 
-    await client.join(this.nomRoom(seanceId));
+    // Vérifie l'appartenance (lève 404 si non participant — ne révèle rien).
+    const seance = await this.service.trouverSeance(seanceId, payload.sub);
+    const estProfesseur = seance.professeurId === payload.sub;
 
-    let estProfesseur = false;
-    let etatMushaf: unknown = null;
+    await client.join(this.nomRoom(seance.id));
+    await this.service.marquerEnCours(seance.id);
 
-    try {
-      const seance = await this.service.trouverSeance(seanceId, payload.sub);
-      estProfesseur = seance.professeurId === payload.sub;
-      await this.service.marquerEnCours(seance.id);
-      etatMushaf = await this.service.obtenirEtatMushaf(seance.id, payload.sub);
-    } catch {
-      // Fallback dev / simulation
-      estProfesseur = payload.role === 'PROFESSEUR' || payload.email === 'dev@equran.com';
-    }
-
+    // On signale le rôle au client pour que l'UI sache s'il peut surligner.
     client.emit('roleConfirme', { estProfesseur });
+
+    const etatMushaf = await this.service.obtenirEtatMushaf(seance.id, payload.sub);
     this.logger.log(
-      `${payload.email} a rejoint la séance ${seanceId} (${estProfesseur ? 'professeur' : 'élève'})`,
+      `${payload.email} a rejoint la séance ${seance.id} (${estProfesseur ? 'professeur' : 'élève'})`,
     );
 
     return { etatMushaf };
   }
 
+  /**
+   * Surlignage du Mushaf. CONTRÔLE CRITIQUE : seul le professeur de la séance
+   * peut émettre cet événement. Tout autre appel est rejeté et non relayé.
+   *
+   * Le payload est intentionnellement minimal (références uniquement).
+   */
   @SubscribeMessage('surlignerMushaf')
   async surlignerMushaf(
     @ConnectedSocket() client: Socket,
@@ -151,30 +153,28 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
     await client.join(this.nomRoom(seanceId));
 
-    let etat: any;
-    try {
-      const seance = await this.service.trouverSeance(seanceId, payload.sub);
-      if (seance.professeurId !== payload.sub && process.env.NODE_ENV === 'production') {
-        client.emit('erreur', {
-          message: 'Seul le professeur peut surligner le Mushaf',
-        });
-        return { ok: true };
-      }
-      etat = await this.service.appliquerSurlignage(seanceId, payload.sub, {
-        numeroSourate: dto.numeroSourate,
-        numeroVerset: dto.numeroVerset,
-        plageSurlignage: dto.plageSurlignage ?? null,
+    // Double vérification d'autorisation :
+    //   1. l'utilisateur est bien le professeur de la séance (service) ;
+    //   2. (au cas où) il est dans la bonne room.
+    const seance = await this.service.trouverSeance(seanceId, payload.sub);
+    if (seance.professeurId !== payload.sub) {
+      client.emit('erreur', {
+        message: 'Seul le professeur peut surligner le Mushaf',
       });
-    } catch {
-      // En cas de fallback
-      etat = {
-        numeroSourate: dto.numeroSourate,
-        numeroVerset: dto.numeroVerset,
-        plageSurlignage: dto.plageSurlignage ?? null,
-      };
+      this.logger.warn(
+        `Tentative de surlignage par un non-professeur : ${payload.email}`,
+      );
+      return { ok: true };
     }
 
-    // Broadcast à toute la room (professeur + élèves)
+    // Persiste l'état (reconnexion sans perte) puis broadcast aux élèves.
+    const etat = await this.service.appliquerSurlignage(seanceId, payload.sub, {
+      numeroSourate: dto.numeroSourate,
+      numeroVerset: dto.numeroVerset,
+      plageSurlignage: dto.plageSurlignage ?? null,
+    });
+
+    // Broadcast à toute la room (élèves en lecture seule réceptionnent).
     this.server.to(this.nomRoom(seanceId)).emit('mushafMisAJour', etat);
     return { ok: true };
   }
