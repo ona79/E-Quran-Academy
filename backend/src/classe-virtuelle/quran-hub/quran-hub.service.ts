@@ -109,15 +109,24 @@ export class QuranHubService {
       return JSON.parse(cached) as Verset[];
     }
 
-    // mushaf=6 pour Warsh, mushaf=1 pour Hafs (Quran.com API v4)
+    const enTetes = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json',
+    };
+
+    // mushaf=6 (Warsh) / mushaf=1 (Hafs)
     const mushafId = modeQiraat === 'WARSH' ? 6 : 1;
     let url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani,text_uthmani_tajweed&mushaf=${mushafId}&per_page=300`;
 
-    let reponse = await fetch(url);
+    let reponse = await fetch(url, { headers: enTetes });
+    if (!reponse.ok && modeQiraat === 'WARSH') {
+      // Repli alternative Warsh (mushaf=2)
+      url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani,text_uthmani_tajweed&mushaf=2&per_page=300`;
+      reponse = await fetch(url, { headers: enTetes });
+    }
     if (!reponse.ok) {
-      // Repli si le paramètre mushaf échoue
       url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani&per_page=300`;
-      reponse = await fetch(url);
+      reponse = await fetch(url, { headers: enTetes });
     }
 
     if (!reponse.ok) {
