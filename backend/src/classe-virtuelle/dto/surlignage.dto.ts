@@ -19,6 +19,11 @@ import { IsInt, IsOptional, IsString, Matches, Max, Min } from 'class-validator'
 const FORMAT_PLAGE = /^\d+(-\d+)?$/;
 
 export class SurlignageDto implements PayloadSurlignage {
+  @ApiPropertyOptional({ description: 'Identifiant de la séance' })
+  @IsOptional()
+  @IsString()
+  seanceId?: string;
+
   @ApiProperty({ minimum: 1, maximum: 114, example: 1, description: 'Numéro de sourate' })
   @Type(() => Number)
   @IsInt()
@@ -37,7 +42,5 @@ export class SurlignageDto implements PayloadSurlignage {
     description: 'Plage de versets surlignés ("debut-fin" ou "5"), ou null pour effacer',
   })
   @IsOptional()
-  @IsString()
-  @Matches(FORMAT_PLAGE, { message: "plageSurlignage doit être au format 'debut-fin' ou 'debut'" })
   plageSurlignage?: string | null;
 }

@@ -90,12 +90,13 @@ export function useSalleClasse(seanceId: string): UseSalleClasse {
   const surligner = useCallback(
     (etat: EtatMushaf) => {
       socketRef.current?.emit('surlignerMushaf', {
+        seanceId,
         numeroSourate: etat.numeroSourate,
         numeroVerset: etat.numeroVerset,
         plageSurlignage: etat.plageSurlignage ?? null,
       });
     },
-    [],
+    [seanceId],
   );
 
   /** Signale le niveau de bande passante (déclenche le mode repli si FAIBLE). */

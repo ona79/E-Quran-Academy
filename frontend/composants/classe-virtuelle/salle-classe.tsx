@@ -18,7 +18,7 @@ import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { Reservation, SeanceCours, EtatMushaf, Role } from '@/lib/types';
 import { useSalleClasse } from './use-salle-classe';
 import { MushafInteractif } from './mushaf-interactif';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 
 // ─── Types locaux ──────────────────────────────────────────────────────────
@@ -314,17 +314,52 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
     }
   }, [seance, role]);
 
-  const activerPleinEcran = useCallback(() => {
-    if (dailyContainerRef.current) {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        dailyContainerRef.current.requestFullscreen().catch((err) => {
-          console.error("Erreur plein écran:", err);
-        });
-      }
-    }
+  const [estEnPleinEcran, setEstEnPleinEcran] = useState(false);
+
+  // Écouter les événements natifs de changement de plein écran (ex: touche Échap)
+  useEffect(() => {
+    const auChangementPleinEcran = () => {
+      setEstEnPleinEcran(!!(document.fullscreenElement || (document as any).webkitFullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', auChangementPleinEcran);
+    document.addEventListener('webkitfullscreenchange', auChangementPleinEcran);
+    return () => {
+      document.removeEventListener('fullscreenchange', auChangementPleinEcran);
+      document.removeEventListener('webkitfullscreenchange', auChangementPleinEcran);
+    };
   }, []);
+
+  const basculerPleinEcran = useCallback(() => {
+    const conteneur = dailyContainerRef.current;
+    
+    // Si on est déjà en plein écran (natif ou CSS)
+    if (document.fullscreenElement || (document as any).webkitFullscreenElement || estEnPleinEcran) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      }
+      setEstEnPleinEcran(false);
+    } else if (conteneur) {
+      // Essayer le plein écran HTML5 natif
+      if (conteneur.requestFullscreen) {
+        conteneur.requestFullscreen()
+          .then(() => setEstEnPleinEcran(true))
+          .catch(() => {
+            // Fallback CSS (ex: mobile Safari où requestFullscreen sur DIV est bloqué)
+            setEstEnPleinEcran(true);
+          });
+      } else if ((conteneur as any).webkitRequestFullscreen) {
+        (conteneur as any).webkitRequestFullscreen();
+        setEstEnPleinEcran(true);
+      } else {
+        // Fallback CSS mobile
+        setEstEnPleinEcran(true);
+      }
+    } else {
+      setEstEnPleinEcran((prev) => !prev);
+    }
+  }, [estEnPleinEcran]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Rendus états de chargement / erreur
@@ -379,7 +414,11 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         {!estModeSimule && (
           <div 
             ref={dailyContainerRef} 
-            className="absolute inset-0 w-full h-full bg-[#101a22]"
+            className={
+              estEnPleinEcran
+                ? "fixed inset-0 z-50 w-screen h-screen bg-[#101a22] flex flex-col justify-center items-center"
+                : "absolute inset-0 w-full h-full bg-[#101a22]"
+            }
             style={{ display: videoMasquee ? 'none' : 'block' }}
           />
         )}
@@ -387,12 +426,24 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         {/* Bouton Plein écran superposé */}
         {!estModeSimule && !videoMasquee && (
           <button
-            onClick={activerPleinEcran}
-            className="absolute top-3 right-3 z-10 bg-black/80 hover:bg-black text-white p-2.5 rounded-xl border border-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 shadow-lg"
-            title="Plein écran"
+            onClick={basculerPleinEcran}
+            className={`bg-black/80 hover:bg-black text-white p-2.5 rounded-xl border border-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 shadow-lg active:scale-95 ${
+              estEnPleinEcran ? 'fixed top-4 right-4 z-[60]' : 'absolute top-3 right-3 z-10'
+            }`}
+            title={estEnPleinEcran ? "Quitter le plein écran" : "Plein écran"}
+            type="button"
           >
-            <Maximize2 size={16} className="text-white shrink-0" />
-            <span className="hidden sm:inline">Plein écran</span>
+            {estEnPleinEcran ? (
+              <>
+                <Minimize2 size={16} className="text-white shrink-0" />
+                <span className="hidden sm:inline">Quitter plein écran</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 size={16} className="text-white shrink-0" />
+                <span className="hidden sm:inline">Plein écran</span>
+              </>
+            )}
           </button>
         )}
 

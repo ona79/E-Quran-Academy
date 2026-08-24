@@ -146,11 +146,12 @@ export class MushafGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     @MessageBody() dto: SurlignageDto,
   ): Promise<{ ok: true }> {
     const payload = this.payloadObligatoire(client);
-    const seanceId = this.seanceDeLaRoom(client);
+    let seanceId = this.seanceDeLaRoom(client) || dto.seanceId;
     if (!seanceId) {
       client.emit('erreur', { message: "Aucune séance jointe" });
       return { ok: true };
     }
+    await client.join(this.nomRoom(seanceId));
 
     // Double vérification d'autorisation :
     //   1. l'utilisateur est bien le professeur de la séance (service) ;
