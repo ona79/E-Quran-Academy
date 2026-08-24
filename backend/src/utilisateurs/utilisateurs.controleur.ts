@@ -16,6 +16,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -113,8 +114,14 @@ export class UtilisateursControleur {
   @UseGuards(JwtAuthGarde)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Profil de l’utilisateur connecté' })
-  moi(@UtilisateurCourant() utilisateur: PayloadJwt): Promise<UtilisateurReponseDto> {
-    return this.service.trouverParId(utilisateur.sub);
+  async moi(
+    @UtilisateurCourant() utilisateur: PayloadJwt,
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: any,
+  ): Promise<UtilisateurReponseDto & { jeton?: string }> {
+    const infos = await this.service.trouverParId(utilisateur.sub);
+    const jeton = req.cookies?.jwt_access || req.headers?.authorization?.replace('Bearer ', '');
+    return { ...infos, jeton };
   }
 
   @Patch('moi')

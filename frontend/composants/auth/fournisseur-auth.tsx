@@ -37,8 +37,13 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
   // Au montage : on récupère le profil si le cookie de session est actif.
   useEffect(() => {
     apiClient
-      .get<Utilisateur>('/utilisateurs/moi')
-      .then(setUtilisateur)
+      .get<Utilisateur & { jeton?: string }>('/utilisateurs/moi')
+      .then((data) => {
+        setUtilisateur(data);
+        if (data.jeton) {
+          localStorage.setItem('jeton_ws', data.jeton);
+        }
+      })
       .catch(() => {
         setUtilisateur(null);
       })
