@@ -41,8 +41,6 @@ export function SuiviProfesseur() {
         apiClient.get<Page<NoteSession>>('/suivi-pedagogique/notes/moi-professeur?page=1&taille=50').catch(() => ({ donnees: [] as NoteSession[] })),
         apiClient.get<Page<Reservation>>('/reservations/moi-professeur?page=1&taille=100').catch(() => ({ donnees: [] as Reservation[] })),
       ]);
-      setNotes(notesPage.donnees);
-
       // Extraire les étudiants uniques (des réservations ET des notes)
       const elevesIds = Array.from(new Set([
         ...resPage.donnees.map((r) => r.eleveId),
@@ -53,14 +51,23 @@ export function SuiviProfesseur() {
         elevesIds.map(async (id) => {
           try {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
-            cacheEleves[id] = e.nomComplet;
+            // On stocke le vrai nom uniquement si l'appel réussit
+            cacheEleves[id] = e.nomComplet || 'Étudiant inconnu';
           } catch {
-            cacheEleves[id] = id;
+            // En cas d'échec on met un libellé lisible, PAS l'UUID brut
+            cacheEleves[id] = 'Étudiant inconnu';
           }
         })
       );
 
-      const resEnrichies = resPage.donnees.map((r) => ({ ...r, nomEleve: cacheEleves[r.eleveId] }));
+      // Enrichir AUSSI les notes avec le nom de l'élève
+      const notesEnrichies = notesPage.donnees.map((n) => ({
+        ...n,
+        nomEleve: cacheEleves[n.eleveId] ?? 'Étudiant inconnu',
+      }));
+      setNotes(notesEnrichies);
+
+      const resEnrichies = resPage.donnees.map((r) => ({ ...r, nomEleve: cacheEleves[r.eleveId] ?? 'Étudiant inconnu' }));
       setReservations(resEnrichies);
       setEleves(Object.entries(cacheEleves).map(([id, nom]) => ({ id, nom })));
     } catch (err) {
@@ -285,7 +292,7 @@ export function SuiviProfesseur() {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="font-semibold text-sm" style={{ color: 'var(--texte)' }}>
-                      {n.nomEleve || eleves.find((e) => e.id === n.eleveId)?.nom || n.eleveId}
+                      👤 {n.nomEleve ?? eleves.find((e) => e.id === n.eleveId)?.nom ?? 'Étudiant inconnu'}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
                       📝 {formaterDate(n.creeLe)}
