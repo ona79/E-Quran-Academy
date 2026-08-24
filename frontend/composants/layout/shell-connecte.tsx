@@ -241,7 +241,6 @@ export function ShellConnecte({ children, sansPadding = false }: { children: Rea
         liens={liens}
         ouverte={drawerOuvert}
         surFermeture={() => setDrawerOuvert(false)}
-        surDeconnexion={() => setModalDeconnexion(true)}
       />
 
       {/* Contenu principal */}
