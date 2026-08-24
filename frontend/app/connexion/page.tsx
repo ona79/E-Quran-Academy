@@ -497,14 +497,17 @@ export default function PageConnexion() {
                   </Link>
                 </p>
 
-                <div className="flex items-center justify-between w-full mt-2">
-                  <Link
+                <div className="flex items-center justify-between w-full mt-3 pt-2 border-t border-white/10">
+                  <a
                     href="/"
-                    className="transition-all duration-200 hover:underline"
-                    style={{ color: 'rgba(255,255,255,0.4)' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = '/';
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-white/5 transition-all cursor-pointer min-h-[44px]"
                   >
                     ← Retour à l&apos;accueil
-                  </Link>
+                  </a>
                   <img
                     src="/mascotte/logo_equran_accademy.png"
                     alt="Logo Quran-Academy"

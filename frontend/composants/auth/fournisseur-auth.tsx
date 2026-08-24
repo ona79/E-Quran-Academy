@@ -105,11 +105,15 @@ export function FournisseurAuth({ children }: { children: ReactNode }) {
     await connexion(email, motDePasse);
   };
 
-  const deconnexion = () => {
+  const deconnexion = async () => {
     localStorage.removeItem('jeton_ws');
+    try {
+      await apiClient.post('/utilisateurs/deconnexion');
+    } catch {
+      /* ignore API errors on logout */
+    }
     setUtilisateur(null);
-    window.location.replace('/');
-    apiClient.post('/utilisateurs/deconnexion').catch(() => {});
+    window.location.href = '/';
   };
 
   return (

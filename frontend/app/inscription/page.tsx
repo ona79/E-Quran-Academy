@@ -274,13 +274,17 @@ export default function PageInscription() {
                   Votre demande est en cours de validation par l&apos;administrateur.<br />
                   Vous recevrez un email de confirmation à <strong className="text-white">{email}</strong> dès que votre compte sera activé.
                 </p>
-                <Link
+                <a
                   href="/"
-                  className="px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 shadow-[0_4px_20px_rgba(11,94,69,0.4)]"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/';
+                  }}
+                  className="px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 shadow-[0_4px_20px_rgba(11,94,69,0.4)] cursor-pointer inline-block"
                   style={{ background: 'linear-gradient(135deg, #0B5E45 0%, #B8923A 100%)' }}
                 >
                   Retour à l&apos;accueil
-                </Link>
+                </a>
               </motion.div>
             ) : (
               // ─── Formulaire Inscription ───
@@ -565,10 +569,17 @@ export default function PageInscription() {
                       </Link>
                     </p>
 
-                    <div className="flex items-center justify-between w-full mt-2">
-                      <Link href="/" className="transition-all duration-200 hover:underline" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    <div className="flex items-center justify-between w-full mt-3 pt-2 border-t border-white/10">
+                      <a
+                        href="/"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = '/';
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-white/5 transition-all cursor-pointer min-h-[44px]"
+                      >
                         ← Retour à l&apos;accueil
-                      </Link>
+                      </a>
                       <img
                         src="/mascotte/logo_equran_accademy.png"
                         alt="Logo Quran-Academy"
