@@ -11,6 +11,9 @@ export class NoteSessionReponseDto {
   @ApiProperty({ description: 'UUID de l’élève' })
   eleveId!: string;
 
+  @ApiPropertyOptional({ description: 'Nom complet de l’élève' })
+  nomEleve?: string;
+
   @ApiProperty({ description: 'UUID du professeur' })
   professeurId!: string;
 

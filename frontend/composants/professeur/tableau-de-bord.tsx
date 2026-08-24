@@ -51,7 +51,7 @@ export function TableauDeBordProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cacheEleves[id] = e.nomComplet;
           } catch {
-            cacheEleves[id] = `Étudiant ${id.slice(0, 8)}`;
+            cacheEleves[id] = id;
           }
         })
       );

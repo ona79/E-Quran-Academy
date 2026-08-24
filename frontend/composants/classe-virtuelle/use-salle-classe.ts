@@ -83,7 +83,6 @@ export function useSalleClasse(seanceId: string): UseSalleClasse {
       socket.off('mushafMisAJour');
       socket.off('modeRepliMisAJour');
       socket.off('erreur');
-      fermerSocket();
     };
   }, [seanceId]);
 

@@ -45,7 +45,7 @@ export function CoursProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cache[id] = e.nomComplet;
           } catch {
-            cache[id] = `Étudiant ${id.slice(0, 8)}`;
+            cache[id] = id;
           }
         })
       );

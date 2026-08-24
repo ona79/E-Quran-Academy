@@ -77,11 +77,21 @@ export class SuiviPedagogiqueService {
       }),
     ]);
 
+    const elevesIds = Array.from(new Set(lignes.map((n) => n.eleveId)));
+    const eleves = await this.prisma.user.findMany({
+      where: { id: { in: elevesIds } },
+      select: { id: true, nomComplet: true },
+    });
+    const mapNoms = new Map(eleves.map((e) => [e.id, e.nomComplet]));
+
     return {
       total,
       page: pagination.page ?? 1,
       taille: take,
-      donnees: lignes.map(this.sanitiser),
+      donnees: lignes.map((n) => ({
+        ...this.sanitiser(n),
+        nomEleve: mapNoms.get(n.eleveId) ?? undefined,
+      })),
     };
   }
 

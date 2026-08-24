@@ -24,13 +24,30 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
   const [succes, setSucces] = useState<string | null>(null);
   const [enEnvoi, setEnEnvoi] = useState(false);
   const [eleveIdAuto, setEleveIdAuto] = useState<string | null>(eleveId ?? null);
+  const [nomEleve, setNomEleve] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!eleveIdAuto) {
-      apiClient.get<{ eleveId: string }>(`/reservations/${reservationId}`)
-        .then(res => setEleveIdAuto(res.eleveId))
-        .catch(() => {});
-    }
+    const chargerEleve = async () => {
+      let targetEleveId = eleveIdAuto;
+      if (!targetEleveId && reservationId) {
+        try {
+          const res = await apiClient.get<{ eleveId: string }>(`/reservations/${reservationId}`);
+          targetEleveId = res.eleveId;
+          setEleveIdAuto(res.eleveId);
+        } catch {
+          /* ignore */
+        }
+      }
+      if (targetEleveId) {
+        try {
+          const eleve = await apiClient.get<{ nomComplet: string }>(`/utilisateurs/${targetEleveId}`);
+          setNomEleve(eleve.nomComplet);
+        } catch {
+          setNomEleve(targetEleveId);
+        }
+      }
+    };
+    chargerEleve();
   }, [reservationId, eleveIdAuto]);
 
   const soumettre = async (e: FormEvent) => {
@@ -88,6 +105,11 @@ export function FormulaireSuivi({ reservationId, eleveId, seanceId }: Props) {
           <h2 className="text-xl sm:text-2xl font-bold mb-1 tracking-tight" style={{ color: 'var(--texte)' }}>
             Bilan de la séance ✨
           </h2>
+          {nomEleve && (
+            <p className="text-sm font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full inline-block mt-1">
+              👤 Élève : {nomEleve}
+            </p>
+          )}
         </div>
 
         <form onSubmit={soumettre} className="space-y-5">

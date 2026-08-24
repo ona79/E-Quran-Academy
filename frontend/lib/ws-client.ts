@@ -15,20 +15,22 @@ let socket: Socket | null = null;
 export function obtenirSocket(): Socket {
   if (socket && socket.connected) return socket;
 
+  const jeton = typeof window !== 'undefined' ? localStorage.getItem('jeton_ws') : null;
+
   socket = io(URL_WS, {
-    // Ne pas utiliser le proxy Next.js car il supprime les trailing slashes (308 Redirect)
-    // ce qui casse la connexion avec Socket.io.
     withCredentials: true,
+    auth: { token: jeton },
+    query: jeton ? { jeton } : undefined,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
   });
 
   return socket;
 }
 
-/** Déconnecte proprement le socket (à la sortie de la salle). */
+/** Déconnecte proprement le socket. */
 export function fermerSocket(): void {
   if (socket) {
     socket.removeAllListeners();

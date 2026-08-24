@@ -24,6 +24,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -56,8 +57,11 @@ export class ClasseVirtuelleControleur {
 
   @Get('mushaf/versets/:sourate')
   @ApiOperation({ summary: "Versets d'une sourate (cache QuranHub)" })
-  async listerVersets(@Param('sourate') sourate: string) {
-    return this.quranHub.listerVersets(Number(sourate));
+  async listerVersets(
+    @Param('sourate') sourate: string,
+    @Query('qiraat') qiraat?: string,
+  ) {
+    return this.quranHub.listerVersets(Number(sourate), qiraat);
   }
 
   // ─── Endpoints protégés (JWT requis) ─────────────────────────────────────

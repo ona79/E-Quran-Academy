@@ -19,7 +19,7 @@ export default function PageSuiviCoursSpecifique({ params }: PageProps) {
           <div>
             <h1 className="text-xl font-bold">Suivi pédagogique</h1>
             <p className="text-xs" style={{ color: 'var(--texte-secondaire)' }}>
-              Remplissez le rapport d&apos;apprentissage de la séance (ID : {params.sessionId}).
+              Remplissez le rapport d&apos;apprentissage de la séance.
             </p>
           </div>
 

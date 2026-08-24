@@ -38,6 +38,7 @@ interface MushafInteractifProps {
 export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafInteractifProps) {
   const [sourate, setSourate] = useState(etat?.numeroSourate ?? 1);
   const [versetCourant, setVersetCourant] = useState(etat?.numeroVerset ?? 1);
+  const [qiraat, setQiraat] = useState<'HAFS' | 'WARSH'>('HAFS');
 
   const [sourates, setSourates] = useState<Sourate[]>([]);
   const [versets, setVersets] = useState<Verset[]>([]);
@@ -56,12 +57,12 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
       .finally(() => setChargementSourates(false));
   }, []);
 
-  // ── Charger les versets à chaque changement de sourate ──────────────────
-  const chargerVersets = useCallback(async (numeroSourate: number) => {
+  // ── Charger les versets à chaque changement de sourate ou récitation ───
+  const chargerVersets = useCallback(async (numeroSourate: number, qiraatCourante: 'HAFS' | 'WARSH') => {
     setChargementVersets(true);
     try {
       const data = await apiClient.get<Verset[]>(
-        `/classe-virtuelle/mushaf/versets/${numeroSourate}`,
+        `/classe-virtuelle/mushaf/versets/${numeroSourate}?qiraat=${qiraatCourante}`,
       );
       setVersets(data);
     } catch {
@@ -72,8 +73,8 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
   }, []);
 
   useEffect(() => {
-    chargerVersets(sourate);
-  }, [sourate, chargerVersets]);
+    chargerVersets(sourate, qiraat);
+  }, [sourate, qiraat, chargerVersets]);
 
   const [plageLocale, setPlageLocale] = useState<string | null>(etat?.plageSurlignage ?? null);
 
@@ -119,8 +120,6 @@ export function MushafInteractif({ etat, estProfesseur, surSurlignage }: MushafI
   };
 
   const sourateCourante = sourates.find((s) => s.numero === sourate);
-
-  const [qiraat, setQiraat] = useState<'HAFS' | 'WARSH'>('HAFS');
 
   return (
     <div className="carte flex flex-col h-full">

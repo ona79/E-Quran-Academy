@@ -93,22 +93,33 @@ export class QuranHubService {
   }
 
   /**
-   * Retourne les versets d'une sourate avec leur texte Uthmani.
+   * Retourne les versets d'une sourate avec leur texte selon la récitation (Hafs / Warsh).
    * @param numeroSourate numéro de la sourate (1–114)
+   * @param qiraat récitation ('HAFS' | 'WARSH')
    */
-  async listerVersets(numeroSourate: number): Promise<Verset[]> {
+  async listerVersets(numeroSourate: number, qiraat: string = 'HAFS'): Promise<Verset[]> {
     if (numeroSourate < 1 || numeroSourate > 114) {
       throw new Error('Numéro de sourate invalide (1–114 attendu)');
     }
 
-    const cle = this.cleVersets(numeroSourate);
+    const modeQiraat = (qiraat ?? 'HAFS').toUpperCase() === 'WARSH' ? 'WARSH' : 'HAFS';
+    const cle = `${this.cleVersets(numeroSourate)}:${modeQiraat}`;
     const cached = await this.lireCache(cle);
     if (cached) {
       return JSON.parse(cached) as Verset[];
     }
 
-    const url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani&per_page=300`;
-    const reponse = await fetch(url);
+    // mushaf=6 pour Warsh, mushaf=1 pour Hafs (Quran.com API v4)
+    const mushafId = modeQiraat === 'WARSH' ? 6 : 1;
+    let url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani,text_uthmani_tajweed&mushaf=${mushafId}&per_page=300`;
+
+    let reponse = await fetch(url);
+    if (!reponse.ok) {
+      // Repli si le paramètre mushaf échoue
+      url = `${this.baseUrl}/verses/by_chapter/${numeroSourate}?language=fr&fields=text_uthmani&per_page=300`;
+      reponse = await fetch(url);
+    }
+
     if (!reponse.ok) {
       throw new Error(
         `QuranHub: échec GET /verses/by_chapter/${numeroSourate} (HTTP ${reponse.status})`,
@@ -116,17 +127,17 @@ export class QuranHubService {
     }
 
     const corps = (await reponse.json()) as {
-      verses: { verse_number?: number; verse_key: string; text_uthmani: string }[];
+      verses: { verse_number?: number; verse_key: string; text_uthmani?: string; text_uthmani_tajweed?: string }[];
     };
 
     const versets: Verset[] = corps.verses.map((v, i) => ({
       numero: v.verse_number ?? i + 1,
-      texte: v.text_uthmani,
+      texte: v.text_uthmani ?? v.text_uthmani_tajweed ?? '',
     }));
 
     await this.ecrireCache(cle, JSON.stringify(versets));
     this.logger.log(
-      `QuranHub : ${versets.length} versets sourate ${numeroSourate} mis en cache.`,
+      `QuranHub : ${versets.length} versets (${modeQiraat}) sourate ${numeroSourate} mis en cache.`,
     );
     return versets;
   }

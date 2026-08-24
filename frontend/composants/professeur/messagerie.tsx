@@ -44,9 +44,8 @@ export function MessagerieProfesseur() {
       setCacheNoms((prev) => ({ ...prev, [id]: el.nomComplet }));
       return el.nomComplet;
     } catch {
-      const nomF = `Étudiant ${id.slice(0, 8)}`;
-      setCacheNoms((prev) => ({ ...prev, [id]: nomF }));
-      return nomF;
+      setCacheNoms((prev) => ({ ...prev, [id]: id }));
+      return id;
     }
   }, [cacheNoms]);
 
@@ -238,7 +237,7 @@ export function MessagerieProfesseur() {
               {interlocuteurs.map((id) => {
                 const dernier = boiteReception.find((m) => m.expediteurId === id);
                 const nonLus = boiteReception.filter((m) => m.expediteurId === id && !m.lu).length;
-                const nom = cacheNoms[id] || `Étudiant ${id.slice(0, 8)}`;
+                const nom = cacheNoms[id] || id;
                 return (
                   <li key={id} className="group relative flex items-center">
                     <button
@@ -305,7 +304,7 @@ export function MessagerieProfesseur() {
                   </button>
                   <div>
                     <h3 className="font-bold text-sm" style={{ color: 'var(--texte)' }}>
-                      {cacheNoms[interlocuteurId] || `Étudiant ${interlocuteurId.slice(0, 8)}`}
+                      {cacheNoms[interlocuteurId] || interlocuteurId}
                     </h3>
                     <p className="text-[10px]" style={{ color: 'var(--texte-secondaire)' }}>En ligne ou asynchrone</p>
                   </div>

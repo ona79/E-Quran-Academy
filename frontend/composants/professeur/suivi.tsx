@@ -55,7 +55,7 @@ export function SuiviProfesseur() {
             const e = await apiClient.get<EleveInfo>(`/utilisateurs/${id}`);
             cacheEleves[id] = e.nomComplet;
           } catch {
-            cacheEleves[id] = id.slice(0, 8);
+            cacheEleves[id] = id;
           }
         })
       );
@@ -163,7 +163,7 @@ export function SuiviProfesseur() {
               >
                 <option value="" disabled>-- Choisir --</option>
                 {eleves.map((e) => (
-                  <option key={e.id} value={e.id}>{e.id.slice(0, 8)}</option>
+                  <option key={e.id} value={e.id}>{e.nom}</option>
                 ))}
               </select>
             </div>
@@ -285,11 +285,7 @@ export function SuiviProfesseur() {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="font-semibold text-sm" style={{ color: 'var(--texte)' }}>
-                      {(() => {
-                        const nom = eleves.find(e => e.id === n.eleveId)?.nom;
-                        const isJustId = nom === n.eleveId.slice(0, 8);
-                        return isJustId || !nom ? n.eleveId.slice(0, 8) : `${nom} (${n.eleveId.slice(0, 8)})`;
-                      })()}
+                      {n.nomEleve || eleves.find((e) => e.id === n.eleveId)?.nom || n.eleveId}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: 'var(--texte-secondaire)' }}>
                       📝 {formaterDate(n.creeLe)}

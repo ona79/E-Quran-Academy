@@ -18,6 +18,7 @@ import { apiClient, ErreurApi } from '@/lib/api-client';
 import type { Reservation, SeanceCours, EtatMushaf, Role } from '@/lib/types';
 import { useSalleClasse } from './use-salle-classe';
 import { MushafInteractif } from './mushaf-interactif';
+import { Maximize2 } from 'lucide-react';
 import { utiliserAuth } from '@/composants/auth/fournisseur-auth';
 
 // ─── Types locaux ──────────────────────────────────────────────────────────
@@ -387,10 +388,10 @@ export function SalleDeClasse({ reservationId }: { reservationId: string }) {
         {!estModeSimule && !videoMasquee && (
           <button
             onClick={activerPleinEcran}
-            className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-lg backdrop-blur-sm transition-colors text-xs font-semibold flex items-center gap-2"
+            className="absolute top-3 right-3 z-10 bg-black/80 hover:bg-black text-white p-2.5 rounded-xl border border-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 shadow-lg"
             title="Plein écran"
           >
-            <span>⛶</span>
+            <Maximize2 size={16} className="text-white shrink-0" />
             <span className="hidden sm:inline">Plein écran</span>
           </button>
         )}

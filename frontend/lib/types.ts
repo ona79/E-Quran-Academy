@@ -96,6 +96,7 @@ export interface NoteSession {
   id: string;
   seanceId: string;
   eleveId: string;
+  nomEleve?: string;
   professeurId: string;
   sourateMemorisee?: string | null;
   sourateRevisee?: string | null;
