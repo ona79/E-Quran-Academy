@@ -195,6 +195,15 @@ export function TableauDeBordProfesseur() {
                             <Video size={14} /> Démarrer
                           </button>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => changerStatut(r.id, 'ANNULE')}
+                          className="btn-secondaire text-xs !py-1.5 !px-2.5"
+                          style={{ borderColor: 'var(--erreur)', color: 'var(--erreur)' }}
+                          title="Annuler ce cours"
+                        >
+                          Annuler
+                        </button>
                       </div>
                     </div>
                   );

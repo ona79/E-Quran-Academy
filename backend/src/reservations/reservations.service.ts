@@ -29,21 +29,22 @@ import {
 import {
   heureLocaleVersUtc,
   utcVersHeureLocale,
+  utcVersJourSemaineLocale,
 } from '../partages/fuseau-horaire/fuseau-horaire.utilitaire';
 import { CreerDisponibiliteDto } from './dto/creer-disponibilite.dto';
 import { CreerReservationDto } from './dto/creer-reservation.dto';
 import { DisponibiliteReponseDto } from './dto/disponibilite.reponse.dto';
 import { ReservationReponseDto } from './dto/reservation.reponse.dto';
 
-// Mapping numéro de jour JS (0=dimanche … 6=samedi) -> énumération métier.
-const JOUR_VERS_ENUM: Record<number, JourSemaine> = {
-  0: JourSemaine.DIMANCHE,
+// Mapping numéro de jour (1=lundi … 7=dimanche) -> énumération métier.
+const NUM_JOUR_VERS_ENUM: Record<number, JourSemaine> = {
   1: JourSemaine.LUNDI,
   2: JourSemaine.MARDI,
   3: JourSemaine.MERCREDI,
   4: JourSemaine.JEUDI,
   5: JourSemaine.VENDREDI,
   6: JourSemaine.SAMEDI,
+  7: JourSemaine.DIMANCHE,
 };
 
 @Injectable()
@@ -133,30 +134,28 @@ export class ReservationsService {
       throw new NotFoundException('Disponibilité introuvable');
     }
 
-    // Annuler les réservations EN_ATTENTE qui tombaient dans ce créneau
+    // Annuler les réservations EN_ATTENTE et CONFIRME qui tombaient dans ce créneau
     const professeur = await this.prisma.user.findUnique({
       where: { id: professeurId },
       select: { fuseauHoraire: true },
     });
 
+    const fuseauProf = professeur?.fuseauHoraire ?? 'UTC';
+
     const reservationsAttente = await this.prisma.reservation.findMany({
       where: {
         professeurId,
         statut: { in: [StatutReservation.EN_ATTENTE, StatutReservation.CONFIRME] },
-        creneauDebut: { gte: new Date() }, // Seulement dans le futur
       },
     });
 
     for (const res of reservationsAttente) {
-      const debutLocal = this.projeterUtcVersLocale(res.creneauDebut, professeur!.fuseauHoraire);
+      const debutLocal = this.projeterUtcVersLocale(res.creneauDebut, fuseauProf);
       if (
         debutLocal.jour === dispo.jour &&
         debutLocal.heure >= dispo.heureDebut &&
         debutLocal.heure < dispo.heureFin
       ) {
-        // On passe directement par Prisma pour éviter de bypasser d'autres logiques,
-        // mais this.changerStatut gère proprement les remboursements etc si nécessaire.
-        // Puisqu'elle est EN_ATTENTE, l'annulation est triviale.
         await this.changerStatut(res.id, StatutReservation.ANNULE, professeurId);
       }
     }
@@ -420,7 +419,7 @@ export class ReservationsService {
 
   // ─────────────────────────── Utilitaires ───────────────────────────
 
-  /** Vérifie que l'heure de début précède strictement l'heure de fin. */
+  /** Vérifie que l'heure de début précède strictly l'heure de fin. */
   private verifierOrdreHeures(heureDebut: string, heureFin: string): void {
     if (heureDebut >= heureFin) {
       throw new BadRequestException("L'heure de fin doit être après l'heure de début");
@@ -436,7 +435,8 @@ export class ReservationsService {
     fuseauProfesseur: string,
   ): { jour: JourSemaine; heure: string } {
     const heure = utcVersHeureLocale(dateUtc, fuseauProfesseur);
-    const jourEnum = JOUR_VERS_ENUM[dateUtc.getUTCDay()] ?? JourSemaine.DIMANCHE;
+    const numJour = utcVersJourSemaineLocale(dateUtc, fuseauProfesseur);
+    const jourEnum = NUM_JOUR_VERS_ENUM[numJour] ?? JourSemaine.DIMANCHE;
     return { jour: jourEnum, heure };
   }
 

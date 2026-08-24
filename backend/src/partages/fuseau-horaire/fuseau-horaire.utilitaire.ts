@@ -43,3 +43,11 @@ export function utcVersHeureLocale(dateUtc: Date, fuseau: string): string {
 export function utcVersDateLocale(dateUtc: Date, fuseau: string): string {
   return formatInTimeZone(dateUtc, fuseau, 'yyyy-MM-dd', { locale: fr });
 }
+
+/**
+ * Projette une Date UTC en numéro du jour de la semaine locale (1=Lundi, ..., 7=Dimanche) dans le fuseau demandé.
+ */
+export function utcVersJourSemaineLocale(dateUtc: Date, fuseau: string): number {
+  return parseInt(formatInTimeZone(dateUtc, fuseau, 'i', { locale: fr }), 10);
+}
+

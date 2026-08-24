@@ -72,6 +72,16 @@ export function CoursProfesseur() {
     }
   };
 
+  const annulerCours = async (id: string) => {
+    try {
+      const maj = await apiClient.patch<Reservation>(`/reservations/${id}/statut`, { nouveauStatut: 'ANNULE' });
+      setReservations((prev) => prev.map((r) => (r.id === id ? { ...r, statut: maj.statut } : r)));
+      toast.success('Cours annulé avec succès');
+    } catch {
+      toast.error('Erreur lors de l\'annulation du cours');
+    }
+  };
+
   useEffect(() => { charger(); }, [charger]);
 
   const aVenir = reservations
@@ -154,17 +164,30 @@ export function CoursProfesseur() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <BadgeStatut statut={r.statut} />
-                  {onglet === 'A_VENIR' && r.statut === 'CONFIRME' && (
-                    demarrable ? (
-                      <Link href={`/professeur/classe/${r.id}`} className="btn-primaire text-xs !py-1.5 !px-3">
-                        🎥 Démarrer
-                      </Link>
-                    ) : (
-                      <button disabled className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
-                        title="Disponible 15 min avant">
-                        🎥 Démarrer
+                  {onglet === 'A_VENIR' && (
+                    <>
+                      {r.statut === 'CONFIRME' && (
+                        demarrable ? (
+                          <Link href={`/professeur/classe/${r.id}`} className="btn-primaire text-xs !py-1.5 !px-3">
+                            🎥 Démarrer
+                          </Link>
+                        ) : (
+                          <button disabled className="btn-primaire text-xs !py-1.5 !px-3 opacity-40 cursor-not-allowed"
+                            title="Disponible 15 min avant">
+                            🎥 Démarrer
+                          </button>
+                        )
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => annulerCours(r.id)}
+                        className="btn-secondaire text-xs !py-1.5 !px-2.5"
+                        style={{ borderColor: 'var(--erreur)', color: 'var(--erreur)' }}
+                        title="Annuler ce cours"
+                      >
+                        Annuler
                       </button>
-                    )
+                    </>
                   )}
                   {onglet === 'PASSES' && r.statut === 'REALISE' && (
                     <Link

@@ -371,7 +371,7 @@ export function DisponibilitesProfesseur() {
             </div>
             <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--texte)' }}>Supprimer ce créneau ?</h3>
             <p className="text-xs mb-6" style={{ color: 'var(--texte-secondaire)' }}>
-              Cette action retirera ce créneau de vos disponibilités. Les réservations existantes ne seront pas annulées.
+              Cette action retirera ce créneau de vos disponibilités et annulera les réservations associées sur ce créneau.
             </p>
             
             <div className="flex gap-3">
