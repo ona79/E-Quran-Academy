@@ -1,12 +1,11 @@
-# Architecture du projet — vue d'ensemble
-
-backend/   -> monolithe modulaire NestJS (1 dossier = 1 domaine métier)
-frontend/  -> Next.js, 1 dossier par espace utilisateur
-prisma/    -> schéma de base de données (backend/prisma/schema.prisma)
-
-Principes directeurs (cahier des charges, section 6) :
-1. Extensibilité  : ajouter une fonctionnalité = ajouter un module, sans
-   toucher à l'existant.
-2. Load balancing dès le lancement : au moins 2 instances du backend.
-3. Conventions en français : tout le vocabulaire métier (variables,
-   colonnes, endpoints) s'écrit en français.
+> **⚠️ Ce fichier est obsolète.**
+> Il a été remplacé par une documentation professionnelle complète.
+>
+> 👉 Consultez le nouveau portail : [docs/README.md](./README.md)
+>
+> Les documents disponibles sont :
+> - [Cahier des charges & Besoins](./cahier-des-charges-et-besoins.md)
+> - [Cas d'utilisation (Use Cases + Diagrammes UML)](./cas-d-utilisation.md)
+> - [Diagrammes de Classes UML](./diagrammes-de-classes.md)
+> - [Architecture Technique, ERD, Séquences, États](./architecture-technique.md)
+> - [Spécification API, Sécurité, Feature Flags](./api-et-securite.md)
